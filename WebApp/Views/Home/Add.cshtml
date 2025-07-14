@@ -1,0 +1,30 @@
+﻿@model Models.Process
+@{
+    ViewBag.Title = "Thêm mới tiến trình";
+    bool isEdit = Model.ProcessId > 0;
+    string actionUrl = isEdit ? Url.Action("Update", "Case") : Url.Action("Add", "Case");
+}
+
+<form id="form-addTienTrinh" autocomplete="off" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.ProcessId)
+    @*<input type="hidden" id="Id" value=" @Model.Id" />*@
+    <div class="modal-body" style="color:black">
+        <div class="form-group row">
+            <label>Tên tiến trình</label>
+            <input type="text" class="form-control" id="ProcessName" name="ProcessName" placeholder="Tên tiến trình" value="@Model.ProcessName" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Toà nhà</label>
+            @Html.DropDownListFor(m => m.BuildingId, (SelectList)ViewBag.Buildings, "-- Chọn toà nhà --", new { @class = "form-control" })
+        </div>
+        <div class="form-group row">
+            <label>Tài khoản</label>
+            @Html.DropDownListFor(m => m.AccountId, (SelectList)ViewBag.Users, "-- Chọn tài khoản --", new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modaltientrinh"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" onclick="SaveTienTrinh()" class="btn btn-primary"> <i class="fas fa-save"></i> Lưu</button>
+    </div>
+</form>
+

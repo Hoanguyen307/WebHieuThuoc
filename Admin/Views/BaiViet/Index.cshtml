@@ -1,0 +1,84 @@
+﻿@model PagedList.IPagedList<Models.Post>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Danh sách bài viết";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h3>Danh sách bài viết</h3>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="LoadForm()">
+                        <i class="fas fa-plus"></i>
+                        Thêm mới
+                    </button>
+                    <div class="main_content form-row d-flex justify-content-center">
+
+                        <table class="table table-hover" id="ds-baiviet">
+                            <thead style="background-color: #2e3b57; color: white;">
+                                <tr>
+                                    <th><input type="checkbox" id="SelectAll" /></th>
+                                    <th>STT</th>
+                                    <th>Tiêu đề</th>
+                                    <th>Nội dung</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="baiviet-body">
+                                @if (Model != null && Model.Any())
+                                {
+                                    var i = 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr id="trow_@item.Id">
+                                            <td></td>
+                                            <td>@i</td>
+                                            <td>@item.TieuDe</td>
+                                            <td>@item.NoiDung</td>
+                                            <td id="status_@item.Id" style="color:@(item.TrangThai ? "green" : "red")">
+                                                @(item.TrangThai ? "Hiển thị" : "Ẩn")
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateBaiViet('@item.Id')"><i class="fas fa-edit"></i></button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('@item.Id')"><i class="fas fa-trash-alt"></i></button>
+                                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleStatus('@item.Id')">
+                                                    @(item.TrangThai ? "Ẩn" : "Hiển thị")
+                                                </button>
+                                            </td>
+
+                                        </tr>
+                                        i++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal" id="modalBaiViet" style="color:black">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalBaiVietLabel">Thông tin bài viết</h5>
+                                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="color: black">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+    <script src="~/Content/assets/js/BaiViet.js?v=(@DateTime.Now.Ticks)"></script>
+}
+

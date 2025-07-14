@@ -1,0 +1,61 @@
+﻿@model Models.NhanVien
+@{
+    ViewBag.Title = "Thêm mới nhân viên";
+    bool isEdit = Model.Id > 0;
+    string actionUrl = isEdit ? Url.Action("Update", "NhanVien") : Url.Action("Add", "NhanVien");
+}
+
+<form id="form-addNhanVien" autocomplete="off" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.Id)
+    @*<input type="hidden" id="Id" value=" @Model.Id" />*@
+    <div class="modal-body" style="color:black">
+        <div class="form-group row">
+            <label>Họ và tên</label>
+            <input type="text" class="form-control" id="FullName" name="FullName" placeholder="Họ và tên" value="@Model.FullName" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Giới tính</label>
+            <select class="form-control" id="Gender" name="Gender">
+                <option value="true" @(Model.Gender ? "selected" : "")>Nam</option>
+                <option value="false" @(!Model.Gender ? "selected" : "")>Nữ</option>
+            </select>
+        </div>
+        <div class="form-group row">
+            <label>Ngày sinh</label>
+            <input type="date" class="form-control" id="BirthDate" name="BirthDate" value="@(Model.BirthDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="form-group row">
+            <label>Số điện thoại</label>
+            <input type="text" class="form-control" id="Phone" name="Phone" value="@Model.Phone" placeholder="Số điện thoại" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Email</label>
+            <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" placeholder="Email" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Chức vụ</label>
+            @Html.DropDownListFor(m => m.PositionId, (SelectList)ViewBag.Positions, "-- Chọn chức vụ --", new { @class = "form-control" })
+        </div>
+        <div class="form-group row">
+            <label>Lương</label>
+            <input type="text" class="form-control" id="Salary" name="Salary" value="@Model.Salary" placeholder="Lương" />
+        </div>
+        <div class="form-group row">
+            <label>Ngày bắt đầu</label>
+            <input type="date" class="form-control" id="StartDate" name="StartDate" value="@(Model.StartDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="form-group row">
+            <label>Ca làm</label>
+            @Html.DropDownListFor(m => m.ShiftId, (SelectList)ViewBag.Calams, "-- Chọn ca làm --", new { @class = "form-control" })
+        </div>
+        <div class="form-group row">
+            <label>Tài khoản</label>
+            @Html.DropDownListFor(m => m.UsersId, (SelectList)ViewBag.Users, "-- Chọn tài khoản --", new { @class = "form-control" })
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modalnhanvien"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" onclick="SaveNhanVien()" class="btn btn-primary"> <i class="fas fa-save"></i> Lưu</button>
+    </div>
+</form>
+

@@ -1,0 +1,246 @@
+﻿<!doctype html>
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg">
+
+
+<!-- Mirrored from themesbrand.com/velzon/html/default/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 25 May 2022 13:13:54 GMT -->
+<head>
+
+    <meta charset="utf-8" />
+    <title>QUẢN LÝ MỸ PHẨM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/Content/assets/img/ThucDon/favicon.ico">
+
+    <!-- jsvectormap css -->
+    <link href="~/Content/assets/libs/jsvectormap/css/jsvectormap.min.css" rel="stylesheet" type="text/css" />
+
+    <!--Swiper slider css-->
+    <link href="~/Content/assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Layout config Js -->
+    <script src="~/Content/assets/js/layout.js"></script>
+    <!-- Bootstrap Css -->
+    <link href="~/Content/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Icons Css -->
+    <link href="~/Content/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <!-- App Css-->
+    <link href="~/Content/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    <!-- custom Css-->
+    <link href="~/Content/assets/css/custom.min.css" rel="stylesheet" type="text/css" />
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- jQuery (cần thiết cho DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!--Bootstrap-->
+    <!-- Bootstrap 5 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!--ajax-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</head>
+<body>
+    @RenderSection("naviheader", required: false)
+    @RenderBody()
+    @RenderSection("scripts", required: false)
+    @RenderSection("Styles", required: false)
+
+    <div id="layout-wrapper">
+        <header id="page-topbar">
+            <div class="layout-width">
+                <div class="navbar-header">
+                    <div class="d-flex">
+                        <!-- LOGO -->
+                        <div class="navbar-brand-box horizontal-logo">
+                            <a href="@Url.Action("Index", "Admin")" class="logo logo-dark">
+                                <span class="logo-sm">
+                                    <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="100">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="70">
+                                </span>
+                            </a>
+
+                            <a href="@Url.Action("Index", "Admin")" class="logo logo-light">
+                                <span class="logo-sm">
+                                    <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="100">
+                                </span>
+                                <span class="logo-lg">
+                                    <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="70" />
+                                </span>
+                            </a>
+                        </div>
+
+                        <div class="d-flex align-items-center" style="margin-bottom: 15px">
+                            <button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
+                                    id="topnav-hamburger-icon">
+                                <span class="hamburger-icon">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </span>
+                            </button>
+                            <form class="app-search d-none d-md-block">
+                                <div class="position-relative">
+                                    <input type="text" class="form-control" placeholder="Tìm kiếm..." autocomplete="off"
+                                           id="search-options">
+                                    <span class="mdi mdi-magnify search-widget-icon"></span>
+                                    <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none"
+                                          id="search-close-options"></span>
+                                </div>
+                            </form>
+
+                            <div class="app-title ms-2">
+                                <h3 class="fw-bold mb-0">QUẢN LÝ MỸ PHẨM</h3>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="d-flex align-items-center">
+
+                        <div class="ms-1 header-item d-none d-sm-flex">
+                            <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
+                                    data-toggle="fullscreen">
+                                <i class='bx bx-fullscreen fs-22'></i>
+                            </button>
+                        </div>
+
+                        <div class="ms-1 header-item d-none d-sm-flex">
+                            <button type="button"
+                                    class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode">
+                                <i class='bx bx-moon fs-22'></i>
+                            </button>
+                        </div>
+
+                        <div class="dropdown ms-sm-3 header-item topbar-user">
+                            <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                <span class="d-flex align-items-center">
+                                    <img src="~/Content/assets/images/Logo/Logo.png" alt="Logo" class="rounded-circle" style="width: 40px; height: 40px;">
+                                </span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <!-- item-->
+                                <a class="dropdown-item" href="#">
+                                    <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span class="align-middle">Thay đổi mật khẩu</span>
+                                </a>
+                                <a class="dropdown-item" href="@Url.Action("Login", "Account")">
+                                    <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span class="align-middle" data-key="t-logout">Đăng xuất</span>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="app-menu navbar-menu">
+            <!-- LOGO -->
+            <div class="navbar-brand-box">
+                <!-- Dark Logo-->
+                <a href="@Url.Action("Index", "Admin")" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="100">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="70">
+                    </span>
+                </a>
+                <!-- Light Logo-->
+                <a href="@Url.Action("Index", "Admin")" class="logo logo-light">
+                    <span class="logo-sm">
+                        <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="100">
+                    </span>
+                    <span class="logo-lg">
+                        <img src="~/Content/assets/images/Logo/Logo.png" alt="" height="70">
+                    </span>
+                </a>
+                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
+                    <i class="ri-record-circle-line"></i>
+                </button>
+            </div>
+            @Html.Partial("_PartiaSideBar")
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="~/Content/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Content/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/Content/assets/libs/node-waves/waves.min.js"></script>
+    <script src="~/Content/assets/libs/feather-icons/feather.min.js"></script>
+    <script src="~/Content/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
+    <script src="~/Content/assets/js/plugins.js"></script>
+
+    <!-- apexcharts -->
+    <script src="~/Content/assets/libs/apexcharts/apexcharts.min.js"></script>
+
+    <!-- Vector map-->
+    <script src="~/Content/assets/libs/jsvectormap/js/jsvectormap.min.js"></script>
+    <script src="~/Content/assets/libs/jsvectormap/maps/world-merc.js"></script>
+
+    <!--Swiper slider js-->
+    <script src="~/Content/assets/libs/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Dashboard init -->
+    <script src="~/Content/assets/js/pages/dashboard-ecommerce.init.js"></script>
+
+    <!-- App js -->
+    <script src="~/Content/assets/js/app.js"></script>
+
+    <!----------------------------------------------------------------------------------------------------------- -->
+    <!-- jQuery -->
+    <!--<script src="~/Content/Clients/plugins/jquery/jquery.min.js"></script>-->
+    <!-- Bootstrap 4 -->
+    <!--<script src="~/Content/Clients/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>-->
+    <!-- Select2 -->
+    <!--<script src="~/Content/Clients/plugins/select2/js/select2.full.min.js"></script>-->
+    <!-- Bootstrap4 Duallistbox -->
+    <!--<script src="~/Content/Clients/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>-->
+    <!-- InputMask -->
+    <!--<script src="~/Content/Clients/plugins/moment/moment.min.js"></script>
+    <script src="~/Content/Clients/plugins/inputmask/jquery.inputmask.min.js"></script>-->
+    <!-- date-range-picker -->
+    <!--<script src="~/Content/Clients/plugins/daterangepicker/daterangepicker.js"></script>-->
+    <!-- bootstrap color picker -->
+    <!--<script src="~/Content/Clients/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>-->
+    <!-- Tempusdominus Bootstrap 4 -->
+    <!--<script src="~/Content/Clients/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>-->
+    <!-- Bootstrap Switch -->
+    <!--<script src="~/Content/Clients/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>-->
+    <!-- BS-Stepper -->
+    <!--<script src="~/Content/Clients/plugins/bs-stepper/js/bs-stepper.min.js"></script>-->
+    <!-- dropzonejs -->
+    <!--<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Content/Clients/plugins/dropzone/min/dropzone.min.js"></script>-->
+    <!-- AdminLTE App -->
+    <!--<script src="~/Content/Clients/dist/js/adminlte.min.js"></script>-->
+
+    <script src="~/Content/ckeditor/ckeditor.js"></script>
+    <script src="~/Content/ckfinder/ckfinder.js"></script>
+    @section scripts{
+        <script src="~/Content/assets/js/QUANLY.js?v=@(DateTime.Now.Ticks)"></script>
+    }
+</body>
+</html>
+
+
+

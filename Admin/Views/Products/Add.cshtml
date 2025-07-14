@@ -1,0 +1,77 @@
+﻿@model Models.Product
+@{
+    ViewBag.Title = "Thêm mới danh mục";
+    bool isEdit = Model.Id > 0;
+    string actionUrl = isEdit ? Url.Action("Update", "Product") : Url.Action("Add", "Product");
+}
+
+<form id="form-addProduct" autocomplete="off" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.Id)
+    @*<input type="hidden" id="Id" value=" @Model.Id" />*@
+    <div class="modal-body" style="color:black">
+        <div class="form-group row">
+            <label>Tên sản phẩm</label>
+            <input type="text" class="form-control" id="Name" name="Name" placeholder="Tên sản phẩm" value="@Model.Name" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Url</label>
+            <input type="text" class="form-control" id="Slug" name="Slug" value="@Model.Slug" placeholder="Đường dẫn" />
+        </div>
+        <div class="form-group row">
+            <label>Mô tả</label>
+            <input type="text" class="form-control" id="Description" name="Description" value="@Model.Description" placeholder="Mô tả" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Giá gốc</label>
+            <input type="text" class="form-control" id="Price" name="Price" value="@Model.Price" placeholder="Giá gốc" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Giá KM</label>
+            <input type="text" class="form-control" id="SalePrice" name="SalePrice" value="@Model.SalePrice" placeholder="Giá KM" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Danh mục</label>
+            @Html.DropDownListFor(m => m.CategoryId, (SelectList)ViewBag.Categories, "-- Chọn danh mục --", new { @class = "form-control" })
+        </div>
+        <div class="form-group row">
+            <label>Ảnh</label>
+            <input type="file" class="form-control" id="ImageFile" name="ImageFile" accept="image/*" />
+            @if (!string.IsNullOrEmpty(Model.Image))
+            {
+                <div class="mt-2">
+                    <p>Ảnh hiện tại:</p>
+                    <img src="@Url.Content(Model.Image)" style="max-height: 100px; border: 1px solid #ccc; padding: 4px;" />
+                </div>
+                <input type="hidden" name="Image" value="@Model.Image" />
+            }
+        </div>
+        <div class="form-group row">
+            <label>Số lượng</label>
+            <input type="number" class="form-control" id="Quantity" name="Quantity" value="@Model.Quantity" placeholder="Số lượng" min="1"
+                   step="1" />
+        </div>
+        <div class="form-group row">
+            <div class="col-6">
+                <div class="form-check">
+                    <input type="hidden" name="IsActive" value="false" />
+                    <input type="checkbox" class="form-check-input" id="IsActive" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
+                    <label class="form-check-label" for="IsActive">Hiển thị danh mục</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-group row">
+                    <div class="form-check">
+                        <input type="hidden" name="IsActive" value="false" />
+                        <input type="checkbox" class="form-check-input" id="IsFeatured" name="IsFeatured" value="true" @(Model.IsFeatured ? "checked" : "") />
+                        <label class="form-check-label" for="IsFeatured">Nổi bật</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modalproduct"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" onclick="SaveProduct()" class="btn btn-primary"> <i class="fas fa-save"></i> Lưu</button>
+    </div>
+</form>
+

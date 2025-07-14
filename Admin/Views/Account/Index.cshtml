@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Models.ApplicationUser>
+@{
+    ViewBag.Title = "Quản lý tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var Stt = 1;
+}
+
+<div class="main-content">
+    <div class="page-content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col">
+                    <h3>Danh sách tài khoản</h3>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="LoadAddForm()">
+                        <i class="fas fa-plus"></i>
+                        Thêm mới
+                    </button>
+                    <div class="main_content form-row d-flex justify-content-center">
+                        <table class="table table-hover" id="ds-nguoidung">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên Đăng Nhập</th>
+                                    <th>Họ và tên</th>
+                                    <th>Email</th>
+                                    <th>Số điện thoại</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr id="trow_@item.Id">
+                                            <td>@Stt</td>
+                                            <td>@item.UserName</td>
+                                            <td>@item.FullName</td>
+                                            <td>@item.Email</td>
+                                            <td>@item.Phone</td>
+                                            @*<td>@item.ngaytao</td>*@
+                                            <td>
+                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateNguoiDung('@item.Id')"><i class="fas fa-edit"></i></button>
+                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('@item.Id')"><i class="fas fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                        Stt++;
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal" id="modalnguoidung" style="color:black">
+                        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="modalnguoidungLabel">Thông tin Người Dùng</h5>
+                                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body" style="color: black">
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+
+    <script src="~/Content/assets/js/NguoiDung.js?v=(@DateTime.Now.Ticks)"></script>
+}
+
+

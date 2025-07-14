@@ -1,0 +1,52 @@
+﻿@model Models.KhachHang
+@{
+    ViewBag.Title = "Thêm mới khách hàng";
+    bool isEdit = Model.Id > 0;
+    string actionUrl = isEdit ? Url.Action("Update", "KhachHang") : Url.Action("Add", "KhachHang");
+}
+
+<form id="form-addKhachHang" autocomplete="off" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.Id)
+    @*<input type="hidden" id="Id" value=" @Model.Id" />*@
+    <div class="modal-body" style="color:black">
+        <div class="form-group row">
+            <label>Họ và tên</label>
+            <input type="text" class="form-control" id="FullName" name="FullName" placeholder="Họ và tên" value="@Model.FullName" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Giới tính</label>
+            <select class="form-control" id="Gender" name="Gender">
+                <option value="true" @(Model.Gender ? "selected" : "")>Nam</option>
+                <option value="false" @(!Model.Gender ? "selected" : "")>Nữ</option>
+            </select>
+        </div>
+        <div class="form-group row">
+            <label>Ngày sinh</label>
+            <input type="date" class="form-control" id="BirthDate" name="BirthDate" value="@(Model.BirthDate?.ToString("yyyy-MM-dd"))" />
+        </div>
+        <div class="form-group row">
+            <label>Địa chỉ</label>
+            <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address" placeholder="Địa chỉ" />
+        </div>
+        <div class="form-group row">
+            <label>Số điện thoại</label>
+            <input type="text" class="form-control" id="Phone" name="Phone" value="@Model.Phone" placeholder="Số điện thoại" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Email</label>
+            <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" placeholder="Email" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Mật khẩu</label>
+            <input type="password" class="form-control" id="PasswordHash" name="PasswordHash" value="@Model.PasswordHash" placeholder="Mật khẩu" autocomplete="off" />
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modalkhachhang"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" id="btnLuu" onclick="SaveKhachHang()" class="btn btn-primary">
+            <span class="text"><i class="fas fa-save"></i>Lưu</span>
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span> 
+        </button>
+    </div>
+</form>
+

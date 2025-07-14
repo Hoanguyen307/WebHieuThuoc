@@ -1,0 +1,37 @@
+﻿/* Style cho form */
+.card {
+	margin-top: 50px;
+	background-image: url(https://bizweb.dktcdn.net/100/413/259/articles/nguyen-lieu-lam-my-pham-organic.jpg?v=1678435630920);
+}
+
+.card-header {
+	background-color: #007bff;
+	color: white;
+}
+
+.card-body {
+	padding: 30px;
+	margin-top: 38px;
+}
+
+/* Style cho các label */
+.control-label {
+	font-weight: bold;
+}
+
+/* Style cho các input */
+.form-control {
+	margin-bottom: 15px;
+}
+
+/* Style cho nút đăng ký */
+.btn-primary {
+	background-color: #007bff;
+	border-color: #007bff;
+	color: white;
+}
+
+	.btn-primary:hover {
+		background-color: #0056b3;
+		border-color: #0056b3;
+	}

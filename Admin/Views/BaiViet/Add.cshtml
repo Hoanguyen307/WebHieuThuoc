@@ -1,0 +1,38 @@
+﻿@model Models.Post
+@{
+    ViewBag.Title = "Thêm mới bài viết";
+    bool isEdit = Model.Id > 0;
+    string actionUrl = isEdit ? Url.Action("Update", "BaiViet") : Url.Action("Add", "BaiViet");
+}
+
+<form id="form-addBaiViet" autocomplete="off" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.Id)
+    @*<input type="hidden" id="Id" value=" @Model.Id" />*@
+    <div class="modal-body" style="color:black">
+        <div class="form-group row">
+            <label>Tiêu đề</label>
+            <input type="text" class="form-control" id="TieuDe" name="TieuDe" placeholder="Tiêu đề" value="@Model.TieuDe" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Nội dung</label>
+            <input type="text" class="form-control" id="NoiDung" name="NoiDung" value="@Model.NoiDung" placeholder="Nội dung" />
+        </div>
+        <div class="form-group row">
+            <label>Ảnh</label>
+            <input type="file" class="form-control" id="ImageFile" name="ImageFile" accept="image/*" />
+            @if (!string.IsNullOrEmpty(Model.AnhDaiDien))
+            {
+                <div class="mt-2">
+                    <p>Ảnh hiện tại:</p>
+                    <img src="@Url.Content(Model.AnhDaiDien)" style="max-height: 100px; border: 1px solid #ccc; padding: 4px;" />
+                </div>
+                <input type="hidden" name="Image" value="@Model.AnhDaiDien" />
+            }
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modalbaiviet"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" onclick="SaveBaiViet()" class="btn btn-primary"> <i class="fas fa-save"></i> Lưu</button>
+    </div>
+</form>
+

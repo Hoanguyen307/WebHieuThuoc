@@ -1,0 +1,156 @@
+﻿@model PagedList.IPagedList<Models.KhachHang>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
+
+<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+    <input type="hidden" id="Id" name="Id" />
+    <div class="d-flex justify-content-between mb-3" style="padding: 70px 10px 0 260px;">
+        <h4>Danh sách khách hàng</h4>
+        <div>
+            <button class="btn btn-outline-success">Excel operations <i class="fa fa-download"></i></button>
+            <button type="button" class="btn btn-primary" onclick="LoadForm()">
+                <i class="fas fa-plus"></i>
+                Thêm mới
+            </button>
+        </div>
+    </div>
+    <div class="input-group mb-3" style="width: 100%;padding: 0 10px 0 260px;">
+        <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm...">
+        <button class="btn btn-primary" type="button" id="searchBtn">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
+
+    <div class="main-content" style="flex:1; overflow: auto;">
+        <div style=" overflow-x: auto;">
+            <table id="ds-khachhang" class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;">
+                <thead class="thead-light">
+                    <tr>
+                        <th><input type="checkbox" id="SelectAll" /></th>
+                        <th>STT</th>
+                        <th>Họ và tên</th>
+                        <th>Giới tính</th>
+                        <th>Ngày sinh</th>
+                        <th>Địa chỉ</th>
+                        <th>Số điện thoại</th>
+                        <th>Email</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="khachhang-body">
+                    @if (Model != null && Model.Any())
+                    {
+                        var i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr id="trow_@item.Id" onclick="loadLichSuDonHang(@item.Id)" style="cursor:pointer;">
+                                <td></td>
+                                <td>@i</td>
+                                <td>@item.FullName</td>
+                                <td>@(item.Gender ? "Nam" : "Nữ")</td>
+                                <td>@(item.BirthDate != null ? item.BirthDate.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td>@item.Address</td>
+                                <td>@item.Phone</td>
+                                <td>@item.Email</td>
+                                <td id="status_@item.Id" style="color:@(item.IsActive ? "green" : "red")">
+                                    @(item.IsActive ? "Đang hoạt động" : "Đã khóa")
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateKhachHang('@item.Id')"><i class="fas fa-edit"></i></button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('@item.Id')"><i class="fas fa-trash-alt"></i></button>
+                                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleStatus('@item.Id')">
+                                        @(item.IsActive ? "Khóa" : "Mở khóa")
+                                    </button>
+                                </td>
+
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination" class="d-flex justify-content-end mt-2"></div>
+    </div>
+
+    <div class="history-fixed">
+        <ul class="nav nav-tabs" id="tabKhachHang" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="lichsu-tab" data-toggle="tab" href="#lichsu" role="tab">Lịch sử đơn hàng</a>
+            </li>
+            @*<li class="nav-item">
+                    <a class="nav-link" id="khac-tab" data-toggle="tab" href="#khac" role="tab">Thông tin khác</a>
+                </li>*@
+        </ul>
+        <div>
+            <div class="tab-content mt-3" id="tabContentKhachHang">
+                <div class="tab-pane fade show active" id="lichsu" role="tabpanel">
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã đơn</th>
+                                <th>Ngày đặt</th>
+                                <th>Trạng thái</th>
+                                <th>Tổng tiền</th>
+                                <th>Thanh toán</th>
+                                <th>Địa chỉ</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lichSuBody">
+                            <tr>
+                                <td colspan="8" class="text-center">Vui lòng chọn khách hàng...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                @*<div class="tab-pane fade" id="khac" role="tabpanel">
+                        <p>Thông tin khác...</p>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modalKhachHang" style="color:black">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalKhachHangLabel">Thông tin khách hàng</h5>
+                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="color: black">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div id="loadingOverlay" style="
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(255, 255, 255, 0.5);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;">
+        <div style="margin-top: 20px; font-weight: bold; font-size: 18px; color: #333;">
+            Đang xử lý...
+        </div>
+    </div>*@
+@section Scripts {
+
+    <script src="~/Content/assets/js/KhachHang.js?v=(@DateTime.Now.Ticks)"></script>
+}
+
