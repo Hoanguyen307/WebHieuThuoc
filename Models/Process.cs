@@ -16,10 +16,10 @@ namespace Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
         public int ProcessId { get; set; }
 
-        public int? AccountId { get; set; }
+        public int AccountId { get; set; }
 
-        [ForeignKey("UsersId")]
-        public virtual LoginViewModel User { get; set; }
+        [ForeignKey("AccountId")]
+        public virtual User User { get; set; }
 
         [Required] 
         [MaxLength(255)] 
@@ -30,11 +30,9 @@ namespace Models
         public int LastCompletedStep { get; set; } = 0; 
         public int TotalSteps { get; set; }
 
-        [Required]
         public int Status { get; set; } = 0; 
 
-        [Required]
-        public DateTime? LastUpdatedDate { get; set; } = DateTime.Now; 
+        public DateTime? LastUpdatedDate { get; set; } 
 
         public int? BuildingId { get; set; }
         public string BuildingName { get; set; }

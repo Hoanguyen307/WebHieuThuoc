@@ -40,5 +40,16 @@ namespace Models
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<Wishlist> Wishlists { get; set; }
         public virtual Order Order { get; set; }
+
+        public class ProductFilter
+        {
+            public string Name { get; set; }
+            public int? Month { get; set; }
+            public int? Year { get; set; }
+            public int? CategoryId { get; set; }
+            public string CategoryName { get; set; }
+            public decimal? MinPrice { get; set; }
+            public decimal? MaxPrice { get; set; }
+        }
     }
 }

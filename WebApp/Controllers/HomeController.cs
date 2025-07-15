@@ -87,15 +87,15 @@ namespace WebApp.Controllers
                 {
                     return Json(new { success = false, message = "Không tìm thấy tiến trình." });
                 }
-                int updatedLastCompletedStep = model.LastCompletedStep > existing.LastCompletedStep
+                /*int updatedLastCompletedStep = model.LastCompletedStep > existing.LastCompletedStep
                     ? model.LastCompletedStep
-                    : existing.LastCompletedStep;
+                    : existing.LastCompletedStep;*/
                 int totalSteps = 7;
                 var processToUpdate = new Process
                 {
                     ProcessId = model.ProcessId,
                     CurrentStep = model.CurrentStep,
-                    LastCompletedStep = updatedLastCompletedStep,
+                    LastCompletedStep = model.LastCompletedStep,
                     LastUpdatedDate = DateTime.Now
                 };
 
@@ -199,5 +199,49 @@ namespace WebApp.Controllers
 
             return View();
         }
+
+        [HttpGet]
+        public JsonResult GetLatestProcessState()
+        {
+            try
+            {
+                var latestId = Process_DAL.GetLatestProcessId();
+                if (latestId.HasValue)
+                {
+                    var process = Process_DAL.GetProcessState(latestId.Value);
+                    if (process != null)
+                    {
+                        return Json(new
+                        {
+                            success = true,
+                            processId = process.ProcessId,
+                            currentStep = process.CurrentStep,
+                            lastCompletedStep = process.LastCompletedStep
+                        }, JsonRequestBehavior.AllowGet);
+                    }
+                }
+
+                return Json(new
+                {
+                    success = false,
+                    message = "Không tìm thấy tiến trình nào.",
+                    processId = 0,
+                    currentStep = 1,
+                    lastCompletedStep = 0
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Lỗi khi lấy tiến trình mới nhất: " + ex.Message,
+                    processId = 0,
+                    currentStep = 1,
+                    lastCompletedStep = 0
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

@@ -142,5 +142,32 @@ textarea.form-control {
 	border-top: 1px solid #ddd;
 	z-index: 999;
 }
+.filter-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+	margin-left: 260px;
+	margin-bottom: 15px;
+}
+
+	.filter-form .form-control,
+	.filter-form .form-select {
+		min-width: 110px;
+		max-width: 165px;
+		font-size: 0.875rem;
+		padding: 0.25rem 0.5rem;
+	}
+
+	.filter-form .search-input {
+		flex: 1;
+		min-width: 200px;
+	}
+
+	.filter-form .btn {
+		padding: 0.3rem 0.75rem;
+		font-size: 0.875rem;
+	}
+
 
 

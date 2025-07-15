@@ -5,16 +5,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Models;
+using static Models.Product;
 
 namespace DAL
 {
     public class Product_DAL
     {
-        public List<Product> Select_Product_All()
+        public List<Product> Select_Product_All(ProductFilter filter)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
+                param.Add("@Name", filter.Name);
+                param.Add("@Month", filter.Month);
+                param.Add("@Year", filter.Year);
+                param.Add("@CategoryId", filter.CategoryId);
+                param.Add("@MinPrice", filter.MinPrice);
+                param.Add("@MaxPrice", filter.MaxPrice);
                 var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_GetAll",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;

@@ -28,6 +28,12 @@
     </nav>
     @Scripts.Render("~/bundles/jquery")
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
+    <script>
+        dayjs.extend(dayjs_plugin_customParseFormat);
+    </script>
+
     <div class="container body-content">
         @RenderBody()
         @RenderSection("scripts", required: false)

@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static Models.Process;
+using static Models.Product;
 
 namespace Admin.Controllers
 {
@@ -14,16 +16,51 @@ namespace Admin.Controllers
     {
         private DBConnect db = new DBConnect();
 
-        public ActionResult Index(string searchString, int? page)
+        public ActionResult Index(string searchString, decimal? MinPrice, decimal? MaxPrice, int? CategoryId, int? Month, int? Year)
         {
-            List<Product> product = new Product_DAL().Select_Product_All();
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
+            var currentYear = DateTime.Now.Year;
+            var currentMonth = DateTime.Now.Month;
+            var year = Enumerable.Range(currentYear - 5, 11).Select(y => new { Id = y, Name = y.ToString() }).ToList();
+            ViewBag.Years = new SelectList(year, "Id", "Name", Year);
 
-            //return View(product);
-            return View(product.OrderBy(p => p.Id).ToPagedList(pageNumber, pageSize));
+            var months = Enumerable.Range(1, 12).Select(m => new { Id = m, Name = $"Tháng {m}" }).ToList();
+            ViewBag.Months = new SelectList(months, "Id", "Name", Month);
+
+            var listCategory = new Category_DAL().Select_Category_All();
+            ViewBag.Categories = new SelectList(listCategory, "Id", "Name", CategoryId);
+
+            ViewBag.MinPrice = MinPrice;
+            ViewBag.MaxPrice = MaxPrice;
+
+            return View();
         }
+        [HttpGet]
+        public JsonResult GetProduct(string searchString, decimal? MinPrice, decimal? MaxPrice, int? CategoryId, int? Month, int? Year, int page = 1, int pageSize = 10)
+        {
+            if (Month == 0) Month = null;
+            if (Year == 0) Year = null;
 
+            ProductFilter filter = new ProductFilter
+            {
+                Name = string.IsNullOrWhiteSpace(searchString) ? null : searchString,
+                CategoryId = CategoryId,
+                Month = Month,
+                Year = Year,
+                MinPrice = MinPrice,
+                MaxPrice = MaxPrice
+            };
+
+            var processes = new Product_DAL().Select_Product_All(filter);
+            var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+
+            return Json(new
+            {
+                items = pagedList.ToList(),
+                totalCount = pagedList.TotalItemCount,
+                currentPage = pagedList.PageNumber,
+                pageSize = pagedList.PageSize
+            }, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult Add(int? id)
         {
             var product = new Product();

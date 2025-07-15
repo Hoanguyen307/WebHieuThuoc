@@ -16,7 +16,7 @@ namespace WebApp.Controllers
     {
         private DBConnect db = new DBConnect();
         // GET: Case
-        public ActionResult Index(string searchString, int? AccountId, int? BuildingId, int? Month, int? Year, int page = 1, int pageSize = 10)
+        public ActionResult Index(string searchString, int? AccountId, int? BuildingId, int? Month, int? Year)
         {
             var currentYear = DateTime.Now.Year;
             var currentMonth = DateTime.Now.Month;
@@ -43,7 +43,7 @@ namespace WebApp.Controllers
 
             List<Process> tt = new Process_DAL().Select_Process_All(filter);
 
-            return View(tt.OrderBy(p => p.CreatedDate).ToPagedList(page, pageSize));
+            return View();
         }
         public ActionResult GetDropdownData()
         {
@@ -134,6 +134,32 @@ namespace WebApp.Controllers
             {
                 return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
+        }
+
+        [HttpGet]
+        public JsonResult GetProcesses(string searchString, int? BuildingId, int? Month, int? Year, int page = 1, int pageSize = 10)
+        {
+            if (Month == 0) Month = null;
+            if (Year == 0) Year = null;
+
+            ProcessFilter filter = new ProcessFilter
+            {
+                ProcessName = searchString,
+                BuildingId = BuildingId,
+                Month = Month,
+                Year = Year
+            };
+
+            var processes = new Process_DAL().Select_Process_All(filter);
+            var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+
+            return Json(new
+            {
+                items = pagedList.ToList(),
+                totalCount = pagedList.TotalItemCount,
+                currentPage = pagedList.PageNumber,
+                pageSize = pagedList.PageSize
+            }, JsonRequestBehavior.AllowGet);
         }
     }
 }

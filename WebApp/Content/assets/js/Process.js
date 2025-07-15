@@ -32,74 +32,62 @@ function updateProcessStepsUI() {
     document.querySelectorAll('.step').forEach(stepElement => {
         const idNumber = parseInt(stepElement.dataset.stepNumber);
 
-        // 1. Reset tất cả các class trạng thái cũ
         stepElement.classList.remove('active', 'disabled', 'pending', 'done');
 
-        // 2. Reset màu mũi tên mặc định
         const nextArrow = stepElement.nextElementSibling;
         if (nextArrow && nextArrow.classList.contains('arrow')) {
-            nextArrow.style.color = '#ccc'; // Màu xám mặc định
+            nextArrow.style.color = '#ccc'; 
         }
 
-        // 3. Cập nhật trạng thái của các vòng tròn bước (pending, active, done) và mũi tên
         if (!currentProcessId || currentProcessId === 0) {
-            // Trường hợp CHƯA CÓ TIẾN TRÌNH nào được chọn/tạo
             if (idNumber === 1) {
-                stepElement.classList.add('pending'); // Bước 1 chờ để được tạo
+                stepElement.classList.add('pending'); 
             } else {
-                stepElement.classList.add('disabled'); // Các bước khác bị vô hiệu hóa
+                stepElement.classList.add('disabled'); 
             }
         } else {
-            // Trường hợp ĐÃ CÓ TIẾN TRÌNH được chọn/tạo
             if (idNumber === currentStep) {
-                stepElement.classList.add('active'); // Bước hiện tại (đang làm việc)
+                stepElement.classList.add('active'); 
                 if (nextArrow) {
-                    nextArrow.style.color = '#dc3545'; // Mũi tên màu đỏ (active)
+                    nextArrow.style.color = '#dc3545'; 
                 }
             } else if (idNumber <= lastCompletedStep) {
-                stepElement.classList.add('done'); // Bước đã hoàn thành
+                stepElement.classList.add('done'); 
                 if (nextArrow) {
-                    nextArrow.style.color = 'blue'; // Mũi tên màu xanh (hoàn thành)
+                    nextArrow.style.color = 'blue'; 
                 }
             }  else {
-                stepElement.classList.add('pending'); // Các bước chưa đến
+                stepElement.classList.add('pending'); 
             }
         }
 
-        // 4. Quản lý trạng thái (enable/disable) của các nút trong mỗi bước
         const btnNext = stepElement.querySelector('.btn-next-step');
         const btnBack = stepElement.querySelector('.btn-back-step');
         const btnDetail = stepElement.querySelector('.btn-detail');
-        const btnCreateNew = stepElement.querySelector('#btnCreateNewProcess'); // Nếu nút này nằm trong step
+        const btnCreateNew = stepElement.querySelector('#btnCreateNewProcess'); 
 
-        // Mặc định vô hiệu hóa tất cả các nút
         if (btnNext) { btnNext.style.pointerEvents = 'none'; btnNext.style.opacity = '0.5'; }
         if (btnBack) { btnBack.style.pointerEvents = 'none'; btnBack.style.opacity = '0.5'; }
         if (btnDetail) { btnDetail.style.pointerEvents = 'none'; btnDetail.style.opacity = '0.5'; }
-        if (btnCreateNew) { btnCreateNew.style.pointerEvents = 'none'; btnCreateNew.style.opacity = '0.5'; } // Disable mặc định
+        if (btnCreateNew) { btnCreateNew.style.pointerEvents = 'none'; btnCreateNew.style.opacity = '0.5'; } 
 
 
         if (!currentProcessId || currentProcessId === 0) {
-            // Nếu không có tiến trình nào được chọn/tạo
             if (idNumber === 1 && btnCreateNew) {
-                btnCreateNew.style.pointerEvents = 'auto'; // Chỉ bật nút tạo mới ở bước 1
+                btnCreateNew.style.pointerEvents = 'auto'; 
                 btnCreateNew.style.opacity = '1';
             }
-            // Các nút "Next", "Back", "Detail" vẫn disabled
         } else {
-            // Nếu có tiến trình được chọn/tạo
-            if (btnCreateNew) { // Vô hiệu hóa nút tạo mới khi đã có processId
+            if (btnCreateNew) { 
                 btnCreateNew.style.pointerEvents = 'none';
                 btnCreateNew.style.opacity = '0.5';
             }
 
-            // Bật nút "Chi tiết" cho các bước ĐÃ HOÀN THÀNH hoặc ĐANG LÀ BƯỚC HIỆN TẠI
             if (idNumber <= currentStep && btnDetail) {
                 btnDetail.style.pointerEvents = 'auto';
                 btnDetail.style.opacity = '1';
             }
 
-            // Logic cho các nút Next/Back (chỉ bật ở bước HIỆN TẠI)
             if (idNumber === currentStep) {
                 if (btnNext && currentStep < totalSteps) {
                     btnNext.style.pointerEvents = 'auto';
@@ -176,24 +164,26 @@ function backStep() {
     }
 
     const prevStepNumber = currentStep - 1;
+    const newLastCompletedStep = prevStepNumber - 1;
 
-    // Lấy LastCompletedStep từ sessionStorage (đã lưu khi tiến bước)
-    const lastCompletedStep = parseInt(sessionStorage.getItem('lastCompletedStep')) || 0;
+    //const lastCompletedStep = parseInt(sessionStorage.getItem('lastCompletedStep')) || 0;
 
     if (confirm(`Bạn có muốn quay lại Bước ${prevStepNumber} không?`)) {
         $.ajax({
-            url: '/Home/UpdateProcessStep', // Dùng lại action hiện có
+            url: '/Home/UpdateProcessStep', 
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
                 ProcessId: currentProcessId,
                 CurrentStep: prevStepNumber,
-                LastCompletedStep: lastCompletedStep // Gửi kèm để không làm mất
+                LastCompletedStep: newLastCompletedStep 
             }),
             success: function (response) {
                 if (response.success) {
                     currentStep = prevStepNumber;
+                    lastCompletedStep = newLastCompletedStep; 
                     sessionStorage.setItem('currentStep', currentStep.toString());
+                    sessionStorage.setItem('lastCompletedStep', lastCompletedStep.toString());
                     updateProcessStepsUI();
                 } else {
                     showProcessMessage(response.message || "Lỗi khi quay lại bước.", 'error');
@@ -382,11 +372,32 @@ $(document).ready(function () {
     } else if (idFromUrl && parseInt(idFromUrl) > 0) {
         loadProcessStateFromServer(parseInt(idFromUrl));
     } else {
-        currentProcessId = 0;
-        currentStep = 1;
-        lastCompletedStep = 0;
-        sessionStorage.clear();
-        updateProcessStepsUI();
+        $.ajax({
+            url: '/Home/GetLatestProcessState',
+            type: 'GET',
+            success: function (res) {
+                if (res.success) {
+                    currentProcessId = res.processId;
+                    currentStep = res.currentStep || 1;
+                    lastCompletedStep = res.lastCompletedStep || 0;
+
+                    sessionStorage.setItem('currentProcessId', currentProcessId);
+                    sessionStorage.setItem('currentStep', currentStep);
+                    sessionStorage.setItem('lastCompletedStep', lastCompletedStep);
+
+                    window.location.href = '/Home/Index?processId=' + currentProcessId;
+
+                    //updateProcessStepsUI();
+                } else {
+                    showProcessMessage(res.message || "Không có tiến trình để hiển thị.", 'warning');
+                    updateProcessStepsUI();
+                }
+            },
+            error: function () {
+                showProcessMessage("Lỗi kết nối khi lấy tiến trình mới nhất.", 'error');
+                updateProcessStepsUI();
+            }
+        });
     }
 
 

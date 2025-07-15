@@ -114,5 +114,20 @@ namespace DAL
                 return null; 
             }
         }
+        public static int? GetLatestProcessId()
+        {
+            using (var db = new DBConnect())
+            {
+                var latest = db.Processes
+                               .AsNoTracking() // ✅ Không theo dõi, tránh lazy loading User
+                               .Where(p => !p.IsDeleted)
+                               .OrderByDescending(p => p.ProcessId)
+                               .Select(p => p.ProcessId) // ✅ Chỉ lấy ProcessId
+                               .FirstOrDefault();
+
+                return latest;
+            }
+        }
+
     }
 }
