@@ -20,12 +20,35 @@
             </button>
         </div>
     </div>
-    <div class="input-group mb-3" style="width: 100%;padding: 0 10px 0 260px;">
-        <input type="text" class="form-control" id="searchInput" placeholder="Tìm kiếm...">
-        <button class="btn btn-primary" type="button" id="searchBtn">
-            <i class="fa fa-search"></i>
+    <form id="filterForm" class="filter-form">
+
+        <input type="text" class="form-control form-control-sm search-input"
+               id="searchString" name="searchString"
+               placeholder="Tìm kiếm theo tên khách hàng..." />
+
+        <!-- Tháng -->
+        <select id="month" name="Month" class="form-select form-select-sm" style=" width: 95px !important;">
+            <option value="">Tháng</option>
+            @foreach (var m in ViewBag.Months as SelectList)
+            {
+                <option value="@m.Value">@m.Text</option>
+            }
+        </select>
+
+        <!-- Năm -->
+        <select id="year" name="Year" class="form-select form-select-sm" style=" width: 75px !important;">
+            <option value="">Năm</option>
+            @foreach (var y in ViewBag.Years as SelectList)
+            {
+                <option value="@y.Value">@y.Text</option>
+            }
+        </select>
+
+        <!-- Nút lọc -->
+        <button class="btn btn-primary" type="submit" id="searchBtn">
+            <i class="fa fa-search"></i> Lọc
         </button>
-    </div>
+    </form>
 
     <div class="main-content" style="flex:1; overflow: auto;">
         <div style=" overflow-x: auto;">
@@ -45,35 +68,7 @@
                     </tr>
                 </thead>
                 <tbody id="khachhang-body">
-                    @if (Model != null && Model.Any())
-                    {
-                        var i = 1;
-                        foreach (var item in Model)
-                        {
-                            <tr id="trow_@item.Id" onclick="loadLichSuDonHang(@item.Id)" style="cursor:pointer;">
-                                <td></td>
-                                <td>@i</td>
-                                <td>@item.FullName</td>
-                                <td>@(item.Gender ? "Nam" : "Nữ")</td>
-                                <td>@(item.BirthDate != null ? item.BirthDate.Value.ToString("dd/MM/yyyy") : "")</td>
-                                <td>@item.Address</td>
-                                <td>@item.Phone</td>
-                                <td>@item.Email</td>
-                                <td id="status_@item.Id" style="color:@(item.IsActive ? "green" : "red")">
-                                    @(item.IsActive ? "Đang hoạt động" : "Đã khóa")
-                                </td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateKhachHang('@item.Id')"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('@item.Id')"><i class="fas fa-trash-alt"></i></button>
-                                    <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleStatus('@item.Id')">
-                                        @(item.IsActive ? "Khóa" : "Mở khóa")
-                                    </button>
-                                </td>
-
-                            </tr>
-                            i++;
-                        }
-                    }
+                    
                 </tbody>
             </table>
         </div>

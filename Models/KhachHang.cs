@@ -31,5 +31,12 @@ namespace Models
         public bool IsActive { get; set; }
         public int SkipCount { get; set; }
         public int MaxResultCount { get; set; }
+
+        public class KhachHangFilter
+        {
+            public string FullName { get; set; }
+            public int? Month { get; set; }
+            public int? Year { get; set; }
+        }
     }
 }

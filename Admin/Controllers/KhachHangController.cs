@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static Models.KhachHang;
+using static Models.Product;
 
 namespace Admin.Controllers
 {
@@ -13,13 +15,43 @@ namespace Admin.Controllers
     {
         // GET: KhachHang
         private DBConnect db = new DBConnect();
-        public ActionResult Index(string searchString, int? page)
+        public ActionResult Index(string searchString, int? Month, int? Year)
         {
-            List<KhachHang> kh = new KhachHang_DAL().Select_KhachHang_All();
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
+            var currentYear = DateTime.Now.Year;
+            var currentMonth = DateTime.Now.Month;
+            var year = Enumerable.Range(currentYear - 5, 11).Select(y => new { Id = y, Name = y.ToString() }).ToList();
+            ViewBag.Years = new SelectList(year, "Id", "Name", Year);
 
-            return View(kh.OrderBy(p => p.Id).ToPagedList(pageNumber, pageSize));
+            var months = Enumerable.Range(1, 12).Select(m => new { Id = m, Name = $"Tháng {m}" }).ToList();
+            ViewBag.Months = new SelectList(months, "Id", "Name", Month);
+
+
+            return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetKhachHang(string searchString, int? Month, int? Year, int page = 1, int pageSize = 10)
+        {
+            if (Month == 0) Month = null;
+            if (Year == 0) Year = null;
+
+            KhachHangFilter filter = new KhachHangFilter
+            {
+                FullName = string.IsNullOrWhiteSpace(searchString) ? null : searchString,
+                Month = Month,
+                Year = Year
+            };
+
+            var processes = new KhachHang_DAL().Select_KhachHang_All(filter);
+            var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+
+            return Json(new
+            {
+                items = pagedList.ToList(),
+                totalCount = pagedList.TotalItemCount,
+                currentPage = pagedList.PageNumber,
+                pageSize = pagedList.PageSize
+            }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Add(int? id)

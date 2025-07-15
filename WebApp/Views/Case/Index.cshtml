@@ -13,10 +13,6 @@
         <h4>Danh sách tiến trình</h4>
         <div>
             <button class="btn btn-outline-success">Excel operations <i class="fa fa-download"></i></button>
-            @*<button type="button" class="btn btn-primary" onclick="LoadForm()">
-                    <i class="fas fa-plus"></i>
-                    Thêm mới
-                </button>*@
         </div>
     </div>
     <form method="get" action="@Url.Action("Index", "Case")" class="input-group input-group-sm mb-3" style=" width: 335px !important;">
@@ -66,32 +62,7 @@
                     </tr>
                 </thead>
                 <tbody id="tientrinh-body">
-                    @*@if (Model != null && Model.Any())
-                        {
-                            var i = 1;
-                            foreach (var item in Model)
-                            {
-                                <tr id="trow_@item.ProcessId" onclick="loadTienTrinh(@item.ProcessId)" style="cursor:pointer;">
-                                    <td></td>
-                                    <td>@i</td>
-                                    <td>@item.ProcessName</td>
-                                    <td>@item.LastCompletedStep</td>
-                                    <td>@(item.CreatedDate != null ? item.CreatedDate.Value.ToString("dd/MM/yyyy") : "")</td>
-                                    <td>@(item.LastUpdatedDate != null ? item.LastUpdatedDate.Value.ToString("dd/MM/yyyy") : "")</td>
-                                    <td>@item.BuildingName</td>
-                                    <td>
-                                        @(item.Status == 2 ? "Đã hoàn thành" :
-                                        item.Status == 1 ? "Đang xử lý" :
-                                        item.Status == 0 ? "Chờ xử lý" : "Không xác định")
-                                    </td>
-                                    <td>
-                                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateTienTrinh(@item.ProcessId, @item.LastCompletedStep); event.stopPropagation();"><i class="fas fa-edit"></i></button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('@item.ProcessId'); event.stopPropagation();"><i class="fas fa-trash-alt"></i></button>
-                                    </td>
-                                </tr>
-                                i++;
-                            }
-                        }*@
+                    
                 </tbody>
             </table>
         </div>

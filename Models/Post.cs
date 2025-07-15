@@ -15,5 +15,12 @@ namespace Models
         public string NoiDung { get; set; }
         public string AnhDaiDien { get; set; }
         public bool TrangThai { get; set; }
+
+        public class PostFilter
+        {
+            public string FullName { get; set; }
+            public int? Month { get; set; }
+            public int? Year { get; set; }
+        }
     }
 }

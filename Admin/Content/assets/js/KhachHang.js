@@ -44,20 +44,71 @@ function handleFormUpdateKhachHang(id) {
         }
     });
 }
+function formatDate(dateStr) {
+    if (!dateStr) return '';
 
-function loadKhachHang() {
-    /*$("#loadingOverlay").show();*/
+    const match = /\/Date\((\d+)(?:[+-]\d+)?\)\//.exec(dateStr);
+    if (!match) return 'Invalid Date';
+
+    const timestamp = parseInt(match[1]);
+    const d = dayjs(timestamp);
+
+    if (!d.isValid()) return 'Invalid Date';
+
+    return d.format('DD/MM/YYYY HH:mm:ss');
+}
+
+function loadKhachHang(page = 1) {
+    $("#loadingOverlay").show();
+    const month = $('#month').val();
+    const year = $('#year').val();
+    const name = $('#searchString').val();
+
     $.ajax({
-        url: '/KhachHang/Index',
+        url: '/KhachHang/GetKhachHang',
         type: 'GET',
-        success: function (data) {
+        data: {
+            Month: month,
+            Year: year,
+            searchString: name,
+            page: page,
+            pageSize: 10
+        },
+        success: function (res) {
+            const tbody = $('#khachhang-body');
+            tbody.empty();
 
-            $('#ds-khachhang').html(data);
+            let index = (res.currentPage - 1) * res.pageSize + 1;
+
+            res.items.forEach(item => {
+                const row = `
+                    <tr id="trow_${item.Id}" onclick="loadLichSuDonHang(${item.Id})" style="cursor:pointer;">
+            <td></td>
+            <td>${index + 1}</td>
+            <td>${item.FullName}</td>
+            <td>${item.Gender ? 'Nam' : 'Nữ'}</td>
+            <td>${item.BirthDate ? formatDate(item.BirthDate) : ''}</td>
+            <td>${item.Address}</td>
+            <td>${item.Phone}</td>
+            <td>${item.Email}</td>
+            <td id="status_${item.Id}" style="color:${item.IsActive ? 'green' : 'red'}">
+                ${item.IsActive ? 'Đang hoạt động' : 'Đã khóa'}
+            </td>
+            <td>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateKhachHang('${item.Id}')"><i class="fas fa-edit"></i></button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}')"><i class="fas fa-trash-alt"></i></button>
+                <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleStatus('${item.Id}')">
+                    ${item.IsActive ? 'Khóa' : 'Mở khóa'}
+                </button>
+            </td>
+        </tr>`;
+                tbody.append(row);
+            });
             const pageSize = 10;
-            const totalCount = res.result.totalCount || 0;
+            const totalCount = res.totalCount ?? res.items.length;
             const totalPages = Math.ceil(totalCount / pageSize);
-
             renderPagination(totalPages, page);
+
         },
         complete: function () {
             $("#loadingOverlay").hide();
@@ -196,3 +247,20 @@ function renderPagination(totalPages, currentPage) {
     });
 }
 
+$(document).ready(function () {
+
+    loadKhachHang(1);
+    renderPagination();
+
+    $('#filterForm').on('submit', function (e) {
+        e.preventDefault();
+
+        loadKhachHang();
+    });
+
+    $('#searchBtn').on('click', function (e) {
+        e.preventDefault();
+        loadKhachHang(1);
+    });
+    $("#loadingOverlay").hide();
+});

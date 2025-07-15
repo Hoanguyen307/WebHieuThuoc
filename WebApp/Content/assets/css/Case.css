@@ -40,11 +40,13 @@
 	justify-content: center;
 	align-items: center;
 	padding: 15px 20px;
+	height: 60px;
+	width: 150px;
 	border-radius: 50%;
 	border: 2px solid #dc3545;
 	font-weight: bold;
 	font-size: 16px;
-	margin: 0 auto 10px auto;
+	margin: 0 auto 0 auto;
 	white-space: nowrap;
 	background-color: #fff;
 	color: #dc3545;
@@ -69,7 +71,7 @@
 	font-weight: bold;
 	font-size: 16px;
 	white-space: nowrap;
-	margin: 0 auto 10px auto;
+	margin: 0 auto 0 auto;
 	text-align: center;
 	background-color: #fff;
 	color: #dc3545;

@@ -61,6 +61,7 @@ namespace WebApp.Controllers
                         processId = newProcessId,
                         currentStep = 1,
                         lastCompletedStep = 0,
+                        processName = model.ProcessName,
                         code = 200,
                         msg = "Thêm mới thành công"
                     }, JsonRequestBehavior.AllowGet);
@@ -124,7 +125,7 @@ namespace WebApp.Controllers
 
                 if (process != null)
                 {
-                    return Json(new { success = true, processId = processId, currentStep = process.CurrentStep, lastCompletedStep = process.LastCompletedStep }, JsonRequestBehavior.AllowGet);
+                    return Json(new { success = true, processId = processId, currentStep = process.CurrentStep, lastCompletedStep = process.LastCompletedStep, processName = process.ProcessName }, JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
@@ -216,7 +217,8 @@ namespace WebApp.Controllers
                             success = true,
                             processId = process.ProcessId,
                             currentStep = process.CurrentStep,
-                            lastCompletedStep = process.LastCompletedStep
+                            lastCompletedStep = process.LastCompletedStep,
+                            processName = process.ProcessName
                         }, JsonRequestBehavior.AllowGet);
                     }
                 }

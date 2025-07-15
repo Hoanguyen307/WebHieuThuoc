@@ -100,6 +100,16 @@ function updateProcessStepsUI() {
             }
         }
     });
+    const step1 = document.querySelector('#step1');
+    if (step1) {
+        if (currentProcessId && currentProcessId > 0 && currentStep > 1) {
+            step1.style.pointerEvents = 'none';
+        } else {
+            step1.style.pointerEvents = 'auto';
+            step1.style.opacity = '1';
+        }
+    }
+
     updateStepTotalDisplay();
 }
 
@@ -220,6 +230,11 @@ function loadProcessStateFromServer(processIdFromUrlOrSession) {
                     sessionStorage.setItem('currentStep', currentStep.toString());
                     sessionStorage.setItem('lastCompletedStep', lastCompletedStep.toString());
 
+                    if (response.processName) {
+                        sessionStorage.setItem('currentProcessName', response.processName);
+                        updateProcessTitle(response.processName);
+                    }
+
                     updateProcessStepsUI();
                 } else {
                     showProcessMessage('Không thể tải trạng thái tiến trình: ' + response?.message, 'error');
@@ -334,16 +349,15 @@ function SaveTienTrinh() {
                 $('#form-addTienTrinh').modal('hide');
 
                 currentProcessId = response.processId;
-                currentStep = response.currentStep || 1; // Đảm bảo có giá trị mặc định
-                lastCompletedStep = response.lastCompletedStep || 0; // Đảm bảo có giá trị mặc định
+                currentStep = response.currentStep || 1; 
+                lastCompletedStep = response.lastCompletedStep || 0;
 
-                // LƯU VÀO SESSION STORAGE
                 sessionStorage.setItem('currentProcessId', currentProcessId.toString());
                 sessionStorage.setItem('currentStep', currentStep.toString());
                 sessionStorage.setItem('lastCompletedStep', lastCompletedStep.toString());
+                sessionStorage.setItem('currentProcessName', $('#ProcessName').val()); 
 
                 window.location.href = '/Home/Index?processId=' + currentProcessId;
-                //updateProcessStepsUI(); // Cập nhật giao diện
             } else {
                 showProcessMessage(response.message, 'error');
             }
@@ -351,6 +365,32 @@ function SaveTienTrinh() {
         error: function (xhr, status, error) {
             showProcessMessage('Lỗi khi thêm tiến trình.', 'error');
             console.error('AJAX Error adding process:', error, xhr.responseText);
+        }
+    });
+}
+
+function updateProcessTitle(name) {
+    $("#process-title").text(name || "Không xác định");
+    if (name) {
+        sessionStorage.setItem('currentProcessName', name);
+    }
+}
+
+function fetchProcessTitle(processId) {
+    $.ajax({
+        url: '/Home/GetProcessState',
+        type: 'GET',
+        data: { processId: processId },
+        success: function (res) {
+            console.log("GetProcessState response:", res);
+            if (res && res.success && res.processName) {
+                updateProcessTitle(res.processName);
+            } else {
+                updateProcessTitle(null);
+            }
+        },
+        error: function () {
+            updateProcessTitle(null);
         }
     });
 }
@@ -369,6 +409,7 @@ $(document).ready(function () {
         currentStep = parseInt(storedCurrentStep) || 1;
         lastCompletedStep = parseInt(storedLastCompletedStep) || 0;
         updateProcessStepsUI();
+        fetchProcessTitle(currentProcessId);
     } else if (idFromUrl && parseInt(idFromUrl) > 0) {
         loadProcessStateFromServer(parseInt(idFromUrl));
     } else {
@@ -399,6 +440,7 @@ $(document).ready(function () {
             }
         });
     }
+    
 
 
     document.querySelectorAll('.btn-next-step').forEach(button => {
@@ -523,4 +565,5 @@ $(document).ready(function () {
             }
         });
     });
+
 });

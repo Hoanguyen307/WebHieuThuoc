@@ -5,16 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Models;
+using static Models.Product;
+using static Models.KhachHang;
 
 namespace DAL
 {
     public class KhachHang_DAL
     {
-        public List<KhachHang> Select_KhachHang_All()
+        public List<KhachHang> Select_KhachHang_All(KhachHangFilter filter)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
+                param.Add("@FullName", filter.FullName);
+                param.Add("@Month", filter.Month);
+                param.Add("@Year", filter.Year);
                 var result = SqlMapper.Query<KhachHang>(Connection.getConnection(), "sp_Customers_GetAll",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;

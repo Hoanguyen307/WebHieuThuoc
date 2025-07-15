@@ -40,5 +40,12 @@ namespace Models
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<ThongKe> ThongKes { get; set; }
         public virtual ICollection<Product> Products { get; set; }
+
+        public class OrderFilter
+        {
+            public string FullName { get; set; }
+            public int? Month { get; set; }
+            public int? Year { get; set; }
+        }
     }
 }

@@ -49,5 +49,12 @@ namespace Models
         public virtual LoginViewModel User { get; set; }
 
         public virtual ICollection<LichSu_ChucVu> LichSuChucVu { get; set; }
+
+        public class NhanVienFilter
+        {
+            public string FullName { get; set; }
+            public int? Month { get; set; }
+            public int? Year { get; set; }
+        }
     }
 }
