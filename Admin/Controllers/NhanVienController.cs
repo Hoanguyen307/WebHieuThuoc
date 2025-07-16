@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using static Models.KhachHang;
+using static Models.NhanVien;
 
 namespace Admin.Controllers
 {
@@ -14,15 +16,52 @@ namespace Admin.Controllers
         // GET: Admin/NhanVien
         private DBConnect db = new DBConnect();
 
-        public ActionResult Index(string searchString, int? page)
+        public ActionResult Index(string searchString, int? Month, int? Year, int? PositionId, int? ShiftId)
         {
+            var currentYear = DateTime.Now.Year;
+            var currentMonth = DateTime.Now.Month;
+            var year = Enumerable.Range(currentYear - 5, 11).Select(y => new { Id = y, Name = y.ToString() }).ToList();
+            ViewBag.Years = new SelectList(year, "Id", "Name", Year);
 
-            List<NhanVien> nhanvien = new NhanVien_DAL().Select_NhanVien_All();
-            //List<LichSu_ChucVu> lscv = new NhanVien_DAL().Select_LichSu_All();
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            return View(nhanvien.OrderBy(p => p.Id).ToPagedList(pageNumber, pageSize));
+            var months = Enumerable.Range(1, 12).Select(m => new { Id = m, Name = $"Tháng {m}" }).ToList();
+            ViewBag.Months = new SelectList(months, "Id", "Name", Month);
+
+            var listPosition = new NhanVien_DAL().Select_Position_All();
+            ViewBag.Positions = new SelectList(listPosition, "Id", "Name", PositionId);
+
+            var listCaLam = new NhanVien_DAL().Select_CaLam_All();
+            ViewBag.Calams = new SelectList(listCaLam, "Id", "Name", ShiftId);
+
+            return View();
         }
+
+        [HttpGet]
+        public JsonResult GetNhanVien(string searchString, int? Month, int? Year, int? PositionId, int? ShiftId, int page = 1, int pageSize = 10)
+        {
+            if (Month == 0) Month = null;
+            if (Year == 0) Year = null;
+
+            NhanVienFilter filter = new NhanVienFilter
+            {
+                FullName = string.IsNullOrWhiteSpace(searchString) ? null : searchString,
+                Month = Month,
+                Year = Year,
+                PositionId = PositionId,
+                ShiftId = ShiftId,
+            };
+
+            var processes = new NhanVien_DAL().Select_NhanVien_All(filter);
+            var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+
+            return Json(new
+            {
+                items = pagedList.ToList(),
+                totalCount = pagedList.TotalItemCount,
+                currentPage = pagedList.PageNumber,
+                pageSize = pagedList.PageSize
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult LichSuChucVu(int id)
         {
             try

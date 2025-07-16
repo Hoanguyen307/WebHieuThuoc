@@ -1,6 +1,56 @@
 ﻿function closeModal() {
     $('#modalNhanVien').modal('hide');
 }
+function renderPagination(totalPages, currentPage) {
+    if (totalPages === 0) {
+        $('#pagination').html('');
+        return;
+    }
+
+    let html = '<ul class="pagination pagination-sm justify-content-end">';
+
+    const pageItem = (label, page, disabled = false, active = false) => `
+        <li class="page-item ${disabled ? 'disabled' : ''} ${active ? 'active' : ''}">
+            <a class="page-link" href="#" data-page="${page}">${label}</a>
+        </li>
+    `;
+
+    html += pageItem("&laquo;", 1, currentPage === 1);
+    html += pageItem("&lsaquo;", currentPage - 1, currentPage === 1);
+
+    const range = 2;
+    const start = Math.max(1, currentPage - range);
+    const end = Math.min(totalPages, currentPage + range);
+
+    for (let i = start; i <= end; i++) {
+        html += pageItem(i, i, false, currentPage === i);
+    }
+
+    html += pageItem("&rsaquo;", currentPage + 1, currentPage === totalPages);
+    html += pageItem("&raquo;", totalPages, currentPage === totalPages);
+    html += "</ul>";
+
+    $('#pagination').html(html);
+
+    $('#pagination').off('click').on('click', 'a.page-link', function (e) {
+        e.preventDefault();
+        const page = parseInt($(this).data("page"));
+        if (!isNaN(page) && page !== currentPage) {
+            loadData(page);
+        }
+    });
+}
+function formatDate(dateStr, includeTime = false) {
+    if (!dateStr) return '';
+
+    // Parse chuỗi có định dạng yyyy/MM/dd
+    const d = dayjs(dateStr, 'YYYY/MM/DD', true); // strict mode
+
+    if (!d.isValid()) return 'Invalid Date';
+
+    return includeTime ? d.format('DD/MM/YYYY HH:mm:ss') : d.format('DD/MM/YYYY');
+}
+
 function LoadForm() {
     $.ajax({
         url: '/NhanVien/Add',
@@ -37,13 +87,64 @@ function handleFormUpdateNhanVien(id) {
     });
 }
 
-function loadNhanVien() {
-    $.ajax({
-        url: '/NhanVien/Index',
-        type: 'GET',
-        success: function (data) {
+function loadNhanVien(page = 1) {
+    $("#loadingOverlay").show();
+    const month = $('#month').val();
+    const year = $('#year').val();
+    const name = $('#searchString').val();
+    const calam = $('#calam').val();
+    const chucvu = $('#chucvu').val();
 
-            $('#ds-nhanvien').html(data);
+    $.ajax({
+        url: '/NhanVien/GetNhanVien',
+        type: 'GET',
+        data: {
+            Month: month,
+            Year: year,
+            searchString: name,
+            ShiftId: calam,
+            PositionId: chucvu,
+            page: page,
+            pageSize: 10
+        },
+        success: function (res) {
+            const tbody = $('#nhanvien-body');
+            tbody.empty();
+
+            let index = (res.currentPage - 1) * res.pageSize + 1;
+            let i = 1;
+
+            res.items.forEach(item => {
+                const row = `
+            <tr id="trow_${item.Id}" onclick="loadLichSuChucVu(${item.Id})" style="cursor:pointer;">
+            <td></td>
+            <td>${i}</td>
+            <td>${item.FullName}</td>
+            <td>${item.Gender ? 'Nam' : 'Nữ'}</td>
+            <td>${item.Phone}</td>
+            <td>${item.PositionName}</td>
+            <td>${item.ShiftName}</td>
+            <td>${item.StartDate ? formatDate(item.StartDate, true) : ''}</td>
+            <td>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateNhanVien('${item.Id}'); event.stopPropagation();">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}'); event.stopPropagation();">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        </tr>`;
+                i++;
+                tbody.append(row);
+            });
+            const pageSize = 10;
+            const totalCount = res.totalCount ?? res.items.length;
+            const totalPages = Math.ceil(totalCount / pageSize);
+            renderPagination(totalPages, page);
+
+        },
+        complete: function () {
+            $("#loadingOverlay").hide();
         }
     });
 }
@@ -110,8 +211,8 @@ function loadLichSuChucVu(nhanVienId) {
                     html += `<tr>
                         <td>${i + 1}</td>
                         <td>${item.PositionName}</td>
-                        <td>${formatDate(item.TuNgay)}</td>
-                        <td>${item.DenNgay != null ? formatDate(item.DenNgay) : 'Hiện tại'}</td>
+                        <td>${formatDate(item.TuNgay, false)}</td>
+                        <td>${item.DenNgay != null ? formatDate(item.DenNgay, false) : 'Hiện tại'}</td>
                     </tr>`;
                 });
             } else {
@@ -197,9 +298,23 @@ function loadThongTinChiTiet(nhanVienId) {
     });
 }*/
 
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    var date = new Date(dateStr);
-    return ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
-}
+
+
+$(document).ready(function () {
+
+    loadNhanVien(1);
+    renderPagination();
+
+    $('#filterForm').on('submit', function (e) {
+        e.preventDefault();
+
+        loadNhanVien();
+    });
+
+    $('#searchBtn').on('click', function (e) {
+        e.preventDefault();
+        loadNhanVien(1);
+    });
+    $("#loadingOverlay").hide();
+});
 

@@ -79,12 +79,13 @@ function loadKhachHang(page = 1) {
             tbody.empty();
 
             let index = (res.currentPage - 1) * res.pageSize + 1;
+            let i = 1;
 
             res.items.forEach(item => {
                 const row = `
                     <tr id="trow_${item.Id}" onclick="loadLichSuDonHang(${item.Id})" style="cursor:pointer;">
             <td></td>
-            <td>${index + 1}</td>
+            <td>${i}</td>
             <td>${item.FullName}</td>
             <td>${item.Gender ? 'Nam' : 'Nữ'}</td>
             <td>${item.BirthDate ? formatDate(item.BirthDate) : ''}</td>
@@ -102,6 +103,7 @@ function loadKhachHang(page = 1) {
                 </button>
             </td>
         </tr>`;
+                i++;
                 tbody.append(row);
             });
             const pageSize = 10;
@@ -208,7 +210,7 @@ function toggleStatus(id) {
     });
 }
 function renderPagination(totalPages, currentPage) {
-    if (totalPages <= 1) {
+    if (totalPages === 0) {
         $('#pagination').html('');
         return;
     }

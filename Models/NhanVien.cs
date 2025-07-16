@@ -55,6 +55,10 @@ namespace Models
             public string FullName { get; set; }
             public int? Month { get; set; }
             public int? Year { get; set; }
+            public string PositionName { get; set; }
+            public int? PositionId { get; set; }
+            public int? ShiftId { get; set; }
+            public string ShiftName { get; set; }
         }
     }
 }

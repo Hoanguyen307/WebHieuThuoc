@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Models;
+using static Models.KhachHang;
+using static Models.NhanVien;
 
 namespace DAL
 {
@@ -40,11 +42,16 @@ namespace DAL
             }
 
         }
-        public List<NhanVien> Select_NhanVien_All()
+        public List<NhanVien> Select_NhanVien_All(NhanVienFilter filter)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
+                param.Add("@FullName", filter.FullName);
+                param.Add("@Month", filter.Month);
+                param.Add("@Year", filter.Year);
+                param.Add("@PositionId", filter.PositionId);
+                param.Add("@ShiftId", filter.ShiftId);
                 var result = SqlMapper.Query<NhanVien>(Connection.getConnection(), "sp_Employee_GetAll",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;

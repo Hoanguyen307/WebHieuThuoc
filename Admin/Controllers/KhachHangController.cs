@@ -25,7 +25,6 @@ namespace Admin.Controllers
             var months = Enumerable.Range(1, 12).Select(m => new { Id = m, Name = $"Tháng {m}" }).ToList();
             ViewBag.Months = new SelectList(months, "Id", "Name", Month);
 
-
             return View();
         }
 
