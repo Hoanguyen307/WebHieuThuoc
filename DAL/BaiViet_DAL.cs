@@ -5,16 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Models;
+using static Models.Post;
 
 namespace DAL
 {
     public class BaiViet_DAL
     {
-        public List<Post> Select_BaiViet_All()
+        public List<Post> Select_BaiViet_All(PostFilter filter)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
+                param.Add("@TieuDe", filter.TieuDe);
+                param.Add("@Month", filter.Month);
+                param.Add("@Year", filter.Year);
                 var result = SqlMapper.Query<Post>(Connection.getConnection(), "sp_BaiViet_GetAll",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;

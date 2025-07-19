@@ -4,74 +4,83 @@
     ViewBag.Title = "Danh sách bài viết";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
+<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+    <input type="hidden" id="Id" name="Id" />
+    <div class="d-flex justify-content-between mb-3" style="padding: 70px 10px 0 260px;">
+        <h4>Danh sách nhân viên</h4>
+        <div>
+            <button class="btn btn-outline-success">Excel operations <i class="fa fa-download"></i></button>
+            <button type="button" class="btn btn-primary" onclick="LoadForm()">
+                <i class="fas fa-plus"></i>
+                Thêm mới
+            </button>
+        </div>
+    </div>
 
-<div class="main-content">
-    <div class="page-content">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col">
-                    <h3>Danh sách bài viết</h3>
-                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="LoadForm()">
-                        <i class="fas fa-plus"></i>
-                        Thêm mới
+    <form id="filterForm" class="filter-form">
+
+        <input type="text" class="form-control form-control-sm search-input"
+               id="searchString" name="searchString"
+               placeholder="Tìm kiếm theo tên tiêu đề bài viết..." />
+
+        <!-- Tháng -->
+        <select id="month" name="Month" class="form-select form-select-sm" style=" width: 95px !important;">
+            <option value="">Tháng</option>
+            @foreach (var m in ViewBag.Months as SelectList)
+            {
+                <option value="@m.Value">@m.Text</option>
+            }
+        </select>
+
+        <!-- Năm -->
+        <select id="year" name="Year" class="form-select form-select-sm" style=" width: 75px !important;">
+            <option value="">Năm</option>
+            @foreach (var y in ViewBag.Years as SelectList)
+            {
+                <option value="@y.Value">@y.Text</option>
+            }
+        </select>
+
+        <!-- Nút lọc -->
+        <button class="btn btn-primary" type="submit" id="searchBtn">
+            <i class="fa fa-search"></i> Lọc
+        </button>
+    </form>
+    <div class="main-content">
+
+        <div style=" overflow-x: auto;">
+
+            <table class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;" id="ds-baiviet">
+                <thead class="thead-light">
+                    <tr>
+                        <th><input type="checkbox" id="SelectAll" /></th>
+                        <th>STT</th>
+                        <th>Tiêu đề</th>
+                        <th>Nội dung</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="baiviet-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination" class="d-flex justify-content-end mt-2"></div>
+    </div>
+    <div class="modal" id="modalBaiViet" style="color:black">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalBaiVietLabel">Thông tin bài viết</h5>
+                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
-                    <div class="main_content form-row d-flex justify-content-center">
+                </div>
+                <div class="modal-body" style="color: black">
 
-                        <table class="table table-hover" id="ds-baiviet">
-                            <thead style="background-color: #2e3b57; color: white;">
-                                <tr>
-                                    <th><input type="checkbox" id="SelectAll" /></th>
-                                    <th>STT</th>
-                                    <th>Tiêu đề</th>
-                                    <th>Nội dung</th>
-                                    <th>Trạng thái</th>
-                                    <th>Hành động</th>
-                                </tr>
-                            </thead>
-                            <tbody id="baiviet-body">
-                                @if (Model != null && Model.Any())
-                                {
-                                    var i = 1;
-                                    foreach (var item in Model)
-                                    {
-                                        <tr id="trow_@item.Id">
-                                            <td></td>
-                                            <td>@i</td>
-                                            <td>@item.TieuDe</td>
-                                            <td>@item.NoiDung</td>
-                                            <td id="status_@item.Id" style="color:@(item.TrangThai ? "green" : "red")">
-                                                @(item.TrangThai ? "Hiển thị" : "Ẩn")
-                                            </td>
-                                            <td>
-                                                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateBaiViet('@item.Id')"><i class="fas fa-edit"></i></button>
-                                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('@item.Id')"><i class="fas fa-trash-alt"></i></button>
-                                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleStatus('@item.Id')">
-                                                    @(item.TrangThai ? "Ẩn" : "Hiển thị")
-                                                </button>
-                                            </td>
-
-                                        </tr>
-                                        i++;
-                                    }
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="modal" id="modalBaiViet" style="color:black">
-                        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="modalBaiVietLabel">Thông tin bài viết</h5>
-                                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body" style="color: black">
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

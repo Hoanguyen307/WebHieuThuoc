@@ -18,7 +18,7 @@ namespace Models
 
         public class PostFilter
         {
-            public string FullName { get; set; }
+            public string TieuDe { get; set; }
             public int? Month { get; set; }
             public int? Year { get; set; }
         }

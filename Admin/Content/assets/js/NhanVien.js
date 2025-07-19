@@ -41,10 +41,11 @@ function renderPagination(totalPages, currentPage) {
     });
 }
 function formatDate(dateStr, includeTime = false) {
-    if (!dateStr) return '';
+    console.log(dateStr);
+    const match = /\/Date\((\d+)\)\//.exec(dateStr);
+    const timestamp = match ? parseInt(match[1], 10) : null;
 
-    // Parse chuỗi có định dạng yyyy/MM/dd
-    const d = dayjs(dateStr, 'YYYY/MM/DD', true); // strict mode
+    const d = timestamp ? dayjs(timestamp) : dayjs(dateStr);
 
     if (!d.isValid()) return 'Invalid Date';
 
@@ -124,7 +125,7 @@ function loadNhanVien(page = 1) {
             <td>${item.Phone}</td>
             <td>${item.PositionName}</td>
             <td>${item.ShiftName}</td>
-            <td>${item.StartDate ? formatDate(item.StartDate, true) : ''}</td>
+            <td>${formatDate(item.StartDate, true)}</td>
             <td>
                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateNhanVien('${item.Id}'); event.stopPropagation();">
                     <i class="fas fa-edit"></i>
