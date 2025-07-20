@@ -5,16 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Models;
+using static Models.Order;
 
 namespace DAL
 {
     public class Order_DAL
     {
-        public List<Order> Select_Order_All()
+        public List<Order> Select_Order_All(OrderFilter filter)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
+                param.Add("@Keyword", filter.Keyword);
+                param.Add("@Month", filter.Month);
+                param.Add("@Year", filter.Year);
+                param.Add("@Status", filter.Status);
                 var result = SqlMapper.Query<Order>(Connection.getConnection(), "sp_GetOrders_Admin",
                     param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;

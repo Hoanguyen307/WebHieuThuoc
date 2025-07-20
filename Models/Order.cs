@@ -43,9 +43,10 @@ namespace Models
 
         public class OrderFilter
         {
-            public string FullName { get; set; }
+            public string Keyword { get; set; }
             public int? Month { get; set; }
             public int? Year { get; set; }
+            public string Status { get; set; }
         }
     }
 }

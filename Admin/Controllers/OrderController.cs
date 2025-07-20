@@ -3,10 +3,13 @@ using Models;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using static Models.Order;
+using static Models.Post;
 
 namespace Admin.Controllers
 {
@@ -14,12 +17,43 @@ namespace Admin.Controllers
     {
         private DBConnect db = new DBConnect();
         // GET: Order
-        public ActionResult Index(string searchString, int? page)
+        public ActionResult Index(string searchString, int? Month, int? Year)
         {
-            List<Order> order = new Order_DAL().Select_Order_All();
-            int pageSize = 10;
-            int pageNumber = (page ?? 1);
-            return View(order.OrderBy(p => p.ID).ToPagedList(pageNumber, pageSize));
+            var currentYear = DateTime.Now.Year;
+            var currentMonth = DateTime.Now.Month;
+            var year = Enumerable.Range(currentYear - 5, 11).Select(y => new { Id = y, Name = y.ToString() }).ToList();
+            ViewBag.Years = new SelectList(year, "Id", "Name", Year);
+
+            var months = Enumerable.Range(1, 12).Select(m => new { Id = m, Name = $"Tháng {m}" }).ToList();
+            ViewBag.Months = new SelectList(months, "Id", "Name", Month);
+
+            return View();
+        }
+
+        [HttpGet]
+        public JsonResult GetDonHang(string searchString, int? Month, int? Year, string Keyword, string Status, int page = 1, int pageSize = 10)
+        {
+            if (Month == 0) Month = null;
+            if (Year == 0) Year = null;
+
+            OrderFilter filter = new OrderFilter
+            {
+                Keyword = string.IsNullOrWhiteSpace(searchString) ? null : searchString,
+                Month = Month,
+                Year = Year,
+                Status = Status
+            };
+
+            var processes = new Order_DAL().Select_Order_All(filter);
+            var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+
+            return Json(new
+            {
+                items = pagedList.ToList(),
+                totalCount = pagedList.TotalItemCount,
+                currentPage = pagedList.PageNumber,
+                pageSize = pagedList.PageSize
+            }, JsonRequestBehavior.AllowGet);
         }
 
         /*public JsonResult LichSuDonHang(int id)

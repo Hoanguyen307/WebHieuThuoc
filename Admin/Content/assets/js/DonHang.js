@@ -1,14 +1,113 @@
 ﻿function closeModal() {
     $('#modalNhanVien').modal('hide');
 }
+function formatCurrency(amount) {
+    return amount.toLocaleString('vi-VN') + " đ";
+}
+function formatDate(dateStr, includeTime = false) {
+    if (!dateStr) return '';
 
-function loadDonHang() {
+    const d = dayjs(dateStr, 'YYYY/MM/DD', true);
+
+    if (!d.isValid()) return 'Invalid Date';
+
+    return includeTime ? d.format('DD/MM/YYYY HH:mm:ss') : d.format('DD/MM/YYYY');
+}
+function renderPagination(totalPages, currentPage) {
+    if (totalPages === 0) {
+        $('#pagination').html('');
+        return;
+    }
+
+    let html = '<ul class="pagination pagination-sm justify-content-end">';
+
+    const pageItem = (label, page, disabled = false, active = false) => `
+        <li class="page-item ${disabled ? 'disabled' : ''} ${active ? 'active' : ''}">
+            <a class="page-link" href="#" data-page="${page}">${label}</a>
+        </li>
+    `;
+
+    html += pageItem("&laquo;", 1, currentPage === 1);
+    html += pageItem("&lsaquo;", currentPage - 1, currentPage === 1);
+
+    const range = 2;
+    const start = Math.max(1, currentPage - range);
+    const end = Math.min(totalPages, currentPage + range);
+
+    for (let i = start; i <= end; i++) {
+        html += pageItem(i, i, false, currentPage === i);
+    }
+
+    html += pageItem("&rsaquo;", currentPage + 1, currentPage === totalPages);
+    html += pageItem("&raquo;", totalPages, currentPage === totalPages);
+    html += "</ul>";
+
+    $('#pagination').html(html);
+
+    $('#pagination').off('click').on('click', 'a.page-link', function (e) {
+        e.preventDefault();
+        const page = parseInt($(this).data("page"));
+        if (!isNaN(page) && page !== currentPage) {
+            loadData(page);
+        }
+    });
+}
+function loadDonHang(page = 1) {
+    $("#loadingOverlay").show();
+    const month = $('#month').val();
+    const year = $('#year').val();
+    const keyWord = $('#searchString').val();
+    const status = $('#status').val() ? parseInt($('#status').val()) : null;
+    const start = Date.now();
+    const minDelay = 500;
+
     $.ajax({
-        url: '/Order/Index',
+        url: '/Order/GetDonHang',
         type: 'GET',
-        success: function (data) {
+        data: {
+            Month: month,
+            Year: year,
+            searchString: keyWord,
+            Status: status,
+            page: page,
+            pageSize: 10
+        },
+        success: function (res) {
+            const elapsed = Date.now() - start;
+            const remaining = Math.max(0, minDelay - elapsed);
+            setTimeout(() => {
+            const tbody = $('#donhang-body');
+            tbody.empty();
+            let index = (res.currentPage - 1) * res.pageSize + 1;
+            let i = 1;
 
-            $('#ds-donhang').html(data);
+            res.items.forEach(item => {
+                const row = `
+                <tr id="trow_${item.Id}" onclick="loadChiTietDonHang(${item.Id})" style="cursor:pointer;">
+            <td></td>
+            <td>${index + 1}</td>
+            <td>${item.orderCode}</td>
+            <td>${item.customerName}</td>
+            <td>${formatCurrency(item.totalAmount)}</td>
+            <td>${item.status}</td>
+            <td>${item.note ?? ''}</td>
+            <td>${formatDate(item.createdDate)}</td>
+            <td>
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateDonHang('${item.id}'); event.stopPropagation();"><i class="fas fa-edit"></i></button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.id}'); event.stopPropagation();"><i class="fas fa-trash-alt"></i></button>
+            </td>
+        </tr>`;
+                i++;
+                tbody.append(row);
+            });
+            const pageSize = 10;
+            const totalCount = res.totalCount ?? res.items.length;
+            const totalPages = Math.ceil(totalCount / pageSize);
+            renderPagination(totalPages, page);
+            }, remaining);
+        },
+        complete: function () {
+            $("#loadingOverlay").hide();
         }
     });
 }
@@ -138,9 +237,21 @@ function loadThongTinChiTiet(nhanVienId) {
     });
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    var date = new Date(dateStr);
-    return ('0' + date.getDate()).slice(-2) + '/' + ('0' + (date.getMonth() + 1)).slice(-2) + '/' + date.getFullYear();
-}
+$(document).ready(function () {
+
+    loadDonHang(1);
+    renderPagination();
+
+    $('#filterForm').on('submit', function (e) {
+        e.preventDefault();
+
+        loadDonHang();
+    });
+
+    $('#searchBtn').on('click', function (e) {
+        e.preventDefault();
+        loadDonHang(1);
+    });
+    $("#loadingOverlay").hide();
+});
 
