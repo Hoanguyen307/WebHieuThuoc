@@ -139,11 +139,11 @@ function SaveKhachHang() {
         data: $('#form-addKhachHang').serialize(),
         success: function (res) {
             if (res.code === 200) {
-                alert(res.msg);
+                toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalKhachHang').modal('hide');
                 location.reload();
             } else {
-                alert(res.msg);
+                toastr.error(res.msg || "Cập nhật thất bại");
             }
         },
         error: function (xhr) {
@@ -167,11 +167,11 @@ function handleDelete(id) {
             data: { Id: id },
             success: function (res) {
                 if (res.code === 200) {
-                    alert(res.msg);
+                    toastr.success(res.msg || "Xoá thành công");
                     location.reload();
                     //loadKhachHang();
                 } else {
-                    alert(res.msg);
+                    toastr.error(res.msg || "Xoá thất bại");
                 }
             },
             complete: function () {
@@ -195,14 +195,14 @@ function toggleStatus(id) {
         data: { Id: id, lyDo: lyDo },  
         success: function (res) {
             if (res.code === 200) {
-                alert(res.msg);
+                toastr.success(res.msg || "Cập nhật thành công");
                 location.reload(); 
             } else {
-                alert(res.msg);
+                toastr.error(res.msg || "Cập nhật thành công");
             }
         },
         error: function () {
-            alert("Có lỗi xảy ra khi gọi API.");
+            toastr.warning(res.msg || "Lỗi gọi tới API");
         },
         complete: function () {
             $("#loadingOverlay").hide();

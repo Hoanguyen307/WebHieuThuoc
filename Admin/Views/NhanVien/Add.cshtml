@@ -6,8 +6,8 @@
 }
 
 <form id="form-addNhanVien" autocomplete="off" enctype="multipart/form-data">
-    @Html.HiddenFor(m => m.Id)
-    @*<input type="hidden" id="Id" value=" @Model.Id" />*@
+    @*@Html.HiddenFor(m => m.Id)*@
+    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
     <div class="modal-body" style="color:black">
         <div class="form-group row">
             <label>Họ và tên</label>

@@ -81,18 +81,18 @@ function SaveNguoiDung() {
         success: function (res) {
             console.log("Kết quả từ server:", res);
             if (res.code === 200) {
-                alert(res.msg);
+                toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalnguoidung').modal('hide');
                 location.reload();
                 //loadNguoiDung();
             } else if (typeof res === 'string') {
                 $('#modalnguoidung .modal-body').html(res);
             } else {
-                alert(res.msg);
+                toastr.error(res.msg || "Cập nhật thất bại");
             }
         }
     });
-}
+} 
 
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
@@ -102,11 +102,11 @@ function handleDelete(id) {
             data: { Id: id },
             success: function (res) {
                 if (res.code === 200) {
-                    alert(res.msg);
+                    toastr.success(res.msg || "Xoá thành công");
                     location.reload();
                     //loadNguoiDung();
                 } else {
-                    alert(res.msg);
+                    toastr.success(res.msg || "Xoá thất bại");
                 }
             }
         });

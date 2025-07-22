@@ -163,6 +163,7 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Content Include="Content\assets\css\lichlamviec.css" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaiVietController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
@@ -182,6 +183,7 @@
     <Content Include="Content\assets\css\common.css" />
     <Content Include="Content\assets\css\custom.min.css" />
     <Content Include="Content\assets\css\icons.min.css" />
+    <Content Include="Content\assets\css\XepLich.css" />
     <Content Include="Content\assets\dist\css\adminlte.css" />
     <Content Include="Content\assets\dist\css\adminlte.min.css" />
     <Content Include="Content\assets\dist\css\alt\adminlte.components.css" />
@@ -403,6 +405,7 @@
     <Content Include="Content\assets\js\pages\landing.init.js" />
     <Content Include="Content\assets\js\pages\leaflet-map.init.js" />
     <Content Include="Content\assets\js\pages\leaflet-us-states.js" />
+    <Content Include="Content\assets\js\LichLamViec.js" />
     <Content Include="Content\assets\js\pages\listjs.init.js" />
     <Content Include="Content\assets\js\pages\mailbox.init.js" />
     <Content Include="Content\assets\js\pages\materialdesign.list.js" />
@@ -3725,6 +3728,8 @@
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Account\Add.cshtml" />
     <Content Include="Views\Order\Index.cshtml" />
+    <Content Include="Views\NhanVien\Index1.cshtml" />
+    <Content Include="Views\NhanVien\XepLich.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

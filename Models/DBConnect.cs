@@ -25,5 +25,6 @@ namespace Models
         public virtual DbSet<KhachHang> KhachHangs { get; set; }
         public virtual DbSet<Post> BaiViets { get; set; }
         public virtual DbSet<Process> Processes { get; set; }
+        public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
     }
 }

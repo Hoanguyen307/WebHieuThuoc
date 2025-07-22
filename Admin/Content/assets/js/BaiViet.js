@@ -174,7 +174,7 @@ function SaveBaiViet() {
         contentType: false,
         success: function (res) {
             if (res.code === 200) {
-                alert(res.msg);
+                toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalBaiViet').modal('hide');
                 location.reload();
                 //loadDanhMuc(); 

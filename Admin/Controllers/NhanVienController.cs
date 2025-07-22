@@ -1,12 +1,15 @@
 ﻿using DAL;
 using Models;
+using Models.LichLamViecViewModel;
 using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using static Models.KhachHang;
+using static Models.LichLamViec;
 using static Models.NhanVien;
 
 namespace Admin.Controllers
@@ -61,7 +64,96 @@ namespace Admin.Controllers
                 pageSize = pagedList.PageSize
             }, JsonRequestBehavior.AllowGet);
         }
+        public ActionResult Index1(string searchString, DateTime? FromDate, DateTime? ToDate, int? PositionId, int? ShiftId)
+        {
+            var listPosition = new NhanVien_DAL().Select_Position_All();
+            ViewBag.Positions = new SelectList(listPosition, "Id", "Name", PositionId);
 
+            var listCaLam = new NhanVien_DAL().Select_CaLam_All();
+            ViewBag.Calams = new SelectList(listCaLam, "Id", "Name", ShiftId);
+
+            return View();
+        }
+        [HttpGet]
+        public JsonResult LichLamViec(string searchString, DateTime? FromDate, DateTime? ToDate, int? PositionId, int? ShiftId, int page = 1, int pageSize = 10)
+        {
+
+            LichLamViecFilter filter = new LichLamViecFilter
+            {
+                FromDate = FromDate,
+                ToDate = ToDate,
+                PositionId = PositionId,
+                ShiftId = ShiftId,
+            };
+            try
+            {
+                var processes = new NhanVien_DAL().LichLamViec(filter);
+                var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+                return Json(new
+                {
+                    result = "success",
+                    data = pagedList.ToList(),
+                    totalCount = pagedList.TotalItemCount,
+                    currentPage = pagedList.PageNumber,
+                    pageSize = pagedList.PageSize
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new
+                {
+                    result = "error",
+                    message = ex.Message
+                }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult UpdateTime(LichLamViec model)
+        {
+            try
+            {
+                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "admin";
+                model.UpdatedDate = DateTime.Now;
+                model.IsDeleted = false;
+
+                var result = new NhanVien_DAL().UpdateTime(model);
+                if (result > 0)
+                {
+                    return Json(new { code = 200, msg = "Cập nhật thành công", icon = "success" }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Cập nhật thất bại", icon = "warning" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message, icon = "error" }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public JsonResult UpdateCalam(LichLamViec model)
+        {
+            try
+            {
+                var listCaLam = new NhanVien_DAL().Select_CaLam_All();
+                ViewBag.Calams = new SelectList(listCaLam, "Id", "Name", model.ShiftId);
+
+                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "admin";
+                model.UpdatedDate = DateTime.Now;
+                model.IsDeleted = false;
+
+                var result = new NhanVien_DAL().UpdateCaLam(model);
+                if (result > 0)
+                {
+                    return Json(new { code = 200, msg = "Cập nhật thành công", icon = "success" }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Cập nhật thất bại", icon = "warning" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message, icon = "error" }, JsonRequestBehavior.AllowGet);
+            }
+        }
         public JsonResult LichSuChucVu(int id)
         {
             try
@@ -197,6 +289,49 @@ namespace Admin.Controllers
                 return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public ActionResult XepLich(int? id)
+        {
+            var nhanvien = new NhanVien();
+
+            var listCaLam = new NhanVien_DAL().Select_CaLam_All();
+            ViewBag.Calams = listCaLam;
+
+            if (id != null)
+            {
+                var nv = db.LichLamViecs.Find(id);
+                return PartialView("XepLich", nv);
+            }
+            return PartialView("XepLich", nhanvien);
+        }
+
+        [HttpPost]
+        public JsonResult XepLich(int nhanVienId, List<LichTrongTuanModel> lichTrongTuan)
+        {
+            try
+            {
+                if (lichTrongTuan == null || !lichTrongTuan.Any())
+                {
+                    return Json(new { code = 400, msg = "Chưa chọn lịch làm việc." });
+                }
+
+                string createdBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+
+                var result = new NhanVien_DAL().XepLich(nhanVienId, createdBy, lichTrongTuan);
+                if (result > 0)
+                {
+                    return Json(new { code = 200, msg = "Xếp lịch thành công." });
+                }
+
+                return Json(new { code = 500, msg = "Xếp lịch thất bại." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message });
+            }
+        }
+
+
         [HttpPost]
         public JsonResult DeleteAccount(int Id, string TenNguoiXoa)
         {

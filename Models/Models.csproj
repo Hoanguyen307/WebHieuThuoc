@@ -64,6 +64,9 @@
     <Compile Include="DBConnect.cs" />
     <Compile Include="IdentityModels.cs" />
     <Compile Include="KhachHang.cs" />
+    <Compile Include="LichLamViec.cs" />
+    <Compile Include="LichLamViecViewModel\LichTrongTuanModel.cs" />
+    <Compile Include="LichLamViecViewModel\XepLichNhanVienModel.cs" />
     <Compile Include="LichSu_ChucVu.cs" />
     <Compile Include="myConnection.cs" />
     <Compile Include="NhanVien.cs" />

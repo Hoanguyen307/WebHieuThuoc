@@ -60,5 +60,7 @@ namespace Models
             public int? ShiftId { get; set; }
             public string ShiftName { get; set; }
         }
+
+        
     }
 }

@@ -5,8 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Models;
-using static Models.KhachHang;
 using static Models.NhanVien;
+using static Models.LichLamViec;
+using System.Security.Cryptography;
+using System.Data;
+using Models.LichLamViecViewModel;
 
 namespace DAL
 {
@@ -53,6 +56,25 @@ namespace DAL
                 param.Add("@PositionId", filter.PositionId);
                 param.Add("@ShiftId", filter.ShiftId);
                 var result = SqlMapper.Query<NhanVien>(Connection.getConnection(), "sp_Employee_GetAll",
+               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        public List<LichLamViec> LichLamViec(LichLamViecFilter filter)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@FromDate", filter.FromDate);
+                param.Add("@ToDate", filter.ToDate);
+                param.Add("@PositionId", filter.PositionId);
+                param.Add("@ShiftId", filter.ShiftId);
+                var result = SqlMapper.Query<LichLamViec>(Connection.getConnection(), "sp_LichLamViec",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;
             }
@@ -129,6 +151,32 @@ namespace DAL
                 throw;
             }
         }
+        public int XepLich(int nhanVienId, string createdBy, List<LichTrongTuanModel> lichTrongTuanList)
+        {
+            try
+            {
+                var table = new DataTable();
+                table.Columns.Add("NgayLam", typeof(DateTime));
+                table.Columns.Add("ShiftId", typeof(int));
+
+                foreach (var item in lichTrongTuanList)
+                {
+                    table.Rows.Add(item.NgayLam, item.ShiftId);
+                }
+
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@NhanVienId", nhanVienId);
+                param.Add("@CreatedBy", createdBy);
+                param.Add("@LichTrongTuan", table.AsTableValuedParameter("LichTrongTuanType"));
+
+                return Connection.getConnection().Execute("sp_XepLichTheoTuan", param, commandType: CommandType.StoredProcedure);
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
+
         public int Update(NhanVien obj)
         {
             try
@@ -147,6 +195,38 @@ namespace DAL
                 param.Add("@UsersId", obj.UsersId);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
                 return Connection.getConnection().Execute("sp_Employee_Update", param, commandType: System.Data.CommandType.StoredProcedure);
+            }
+            catch (Exception)
+            {
+                return 0;
+                throw;
+            }
+        }
+        public int UpdateTime(LichLamViec obj)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@Id", obj.Id);
+                param.Add("@UpdatedBy", obj.UpdatedBy);
+                param.Add("@NewThoiGian", obj.NewThoiGian);
+                return Connection.getConnection().Execute("sp_LichLamViec_Update", param, commandType: System.Data.CommandType.StoredProcedure);
+            }
+            catch (Exception)
+            {
+                return 0;
+                throw;
+            }
+        }
+        public int UpdateCaLam(LichLamViec obj)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@Id", obj.Id);
+                param.Add("@ShiftId", obj.ShiftId);
+                param.Add("@UpdatedBy", obj.UpdatedBy);
+                return Connection.getConnection().Execute("sp_LichLamViec_CaLam", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
             {

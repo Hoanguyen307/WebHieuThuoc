@@ -1,5 +1,6 @@
 ﻿function closeModal() {
     $('#modalNhanVien').modal('hide');
+    $('#modalXepLich').modal('hide');
 }
 function renderPagination(totalPages, currentPage) {
     if (totalPages === 0) {
@@ -127,6 +128,9 @@ function loadNhanVien(page = 1) {
             <td>${item.ShiftName}</td>
             <td>${formatDate(item.StartDate, true)}</td>
             <td>
+                <button type="button" class="btn btn-outline-success btn-sm" onclick="handleSchedule('${item.Id}'); event.stopPropagation();">
+                    <i class="fas fa-calendar-alt"></i>
+                </button>
                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateNhanVien('${item.Id}'); event.stopPropagation();">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -152,7 +156,9 @@ function loadNhanVien(page = 1) {
 
 function SaveNhanVien() {
     debugger
-    var id = $('#Id').val();
+    //var id = $('#Id').val();
+    var id = $('#form-addNhanVien #Id').val();
+
     var fullName = $('#FullName').val().trim();
     if (fullName === '') {
         alert('Vui lòng nhập họ tên!');
@@ -166,17 +172,81 @@ function SaveNhanVien() {
         data: $('#form-addNhanVien').serialize(),
         success: function (res) {
             if (res.code === 200) {
-                alert(res.msg);
+                toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalNhanVien').modal('hide');
                 location.reload();
                 //loadNhanVien();
             } else {
-                alert(res.msg);
+                toastr.error(res.msg || "Cập nhật thất bại");
             }
         },
         error: function (xhr) {
-            console.error(xhr.responseText);
             alert('Lỗi: ' + xhr.responseText);
+        }
+    });
+}
+function handleSchedule(id) {
+    debugger
+    if (!id || id <= 0) {
+        alert('ID không hợp lệ!');
+        return;
+    }
+
+    $.ajax({
+        url: '/NhanVien/XepLich',
+        type: 'GET',
+        data: { Id: id },
+        success: function (res) {
+            $('#modalXepLich .modal-body').html(res);
+            $('#modalXepLich').modal('show');
+        },
+        error: function (xhr, status, error) {
+            console.error('Lỗi khi load form:', error);
+            alert('Có lỗi xảy ra khi tải form. Vui lòng thử lại!');
+        }
+    });
+}
+
+function SaveLichLamViec() {
+    const id = $('#form-XepLich #Id').val();
+    const lichList = [];
+
+    $('input[name="lichTrongTuan"]:checked').each(function () {
+        const value = $(this).val(); 
+        const parts = value.split('|');
+
+        if (parts.length === 2) {
+            lichList.push({
+                NgayLam: parts[0],
+                ShiftId: parseInt(parts[1])
+            });
+        }
+    });
+
+    if (lichList.length === 0) {
+        toastr.warning("Vui lòng chọn ít nhất một ca làm!");
+        return;
+    }
+
+    $.ajax({
+        url: '/NhanVien/XepLich',
+        method: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({
+            nhanVienId: id,
+            lichTrongTuan: lichList
+        }),
+        success: function (res) {
+            if (res.code === 200) {
+                toastr.success(res.msg);
+                $('#modalXepLich').modal('hide');
+                location.reload();
+            } else {
+                toastr.error(res.msg || "Xếp lịch thất bại");
+            }
+        },
+        error: function () {
+            toastr.error("Lỗi khi lưu lịch");
         }
     });
 }
@@ -189,11 +259,11 @@ function handleDelete(id) {
             data: { Id: id },
             success: function (res) {
                 if (res.code === 200) {
-                    alert(res.msg);
+                    toastr.success(res.msg || "Xoá thành công");
                     location.reload();
                     //loadNhanVien();
                 } else {
-                    alert(res.msg);
+                    toastr.success(res.msg || "Xoá thất bại");
                 }
             }
         });
@@ -263,43 +333,6 @@ function loadThongTinChiTiet(nhanVienId) {
         }
     });
 }
-/*function loadThongTinChiTiet(nhanVienId) {
-    debugger
-    window.selectedNhanVienId = nhanVienId;
-
-    $('#chiTietBody').html('<tr><td colspan="10" class="text-center">Vui lòng chọn nhân viên</td></tr>');
-    $('#chiTietContainer').hide();
-    $.ajax({
-        url: '/Admin/NhanVien/ChiTietNhanVien',
-        type: 'GET',
-        data: { id: nhanVienId },
-        success: function (res) {
-            var html = '';
-            if (res.data.length > 0) {
-                $.each(res.data, function (i, item) {
-                    html += `<tr>
-                        <td>${i + 1}</td>
-                        <td>${item.FullName}</td>
-                        <td>${item.Gender ? 'Nam' : 'Nữ'}</td>
-                        <td>${formatDate(item.BirthDate)}</td>
-                        <td>${item.Email}</td>
-                        <td>${item.Phone}</td>
-                        <td>${item.PositionName}</td>
-                        <td>${formatDate(item.StartDate)}</td>
-                        <td>${item.ShiftName}</td>
-                        <td>${item.Salary.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
-                    </tr>`;
-                });
-            } else {
-                html = '<tr><td colspan="9" class="text-center">Không có thông tin chi tiết</td></tr>';
-            }
-            $('#ThongTinBody').html(html);
-
-        }
-    });
-}*/
-
-
 
 $(document).ready(function () {
 

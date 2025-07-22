@@ -55,24 +55,9 @@ function SaveDanhMuc() {
     var id = $('#ID').val();
     formData.delete("IsActive");
     formData.append("IsActive", $('#IsActive').is(':checked'));
-    /*var name = ($('#Name').val() || '').trim();
-    var slug = ($('#Slug').val() || '').trim();
-    var description = ($('#Description').val() || '').trim();
-    var image = ($('#Image').val() || '').trim();
-    var displayOrder = parseInt($('#DisplayOrder').val()) || 0;
-    var isActive = $('#IsActive').is(':checked');*/
 
     var url = (id != null && parseInt(id) > 0) ? '/Category/Update' : '/Category/Add';
     console.log([...formData.entries()]);
-    /*var data = {
-        ID: id,
-        Name: name,
-        Slug: slug,
-        Description: description,
-        Image: image,
-        DisplayOrder: displayOrder,
-        IsActive: isActive
-    };*/
 
     $.ajax({
         url: url,
@@ -82,14 +67,14 @@ function SaveDanhMuc() {
         contentType: false,
         success: function (res) {
             if (res.code === 200) {
-                alert(res.msg);
+                toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalDanhMuc').modal('hide');
                 location.reload();
                 //loadDanhMuc(); 
             } else if (typeof res === 'string') {
                 $('#modalDanhMuc .modal-body').html(res);
             } else {
-                alert(res.msg);
+                toastr.error(res.msg || "Cập nhật thất bại");
             }
         }
     });
