@@ -8,10 +8,15 @@
 }
 <div class="container-wrapper" style=" display: flex; flex-direction: column;">
     <input type="hidden" id="Id" name="Id" />
-    <div class="d-flex justify-content-between mb-3" style="padding: 70px 10px 0 260px;">
+    <div class="d-flex justify-content-between mb-3" style="padding: 81px 10px 0 260px;">
         <h4>Danh sách nhân viên</h4>
         <div>
-            <button class="btn btn-outline-success">Excel operations <i class="fa fa-download"></i></button>
+            <a href="~/Files/Template_ImportNhanVien.xlsx" class="btn btn-outline-secondary ms-2">
+                <i class="fas fa-download"></i> Tải file mẫu
+            </a>
+            <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalImportExcel">
+                <i class="fa fa-upload"></i> Import Excel
+            </button>
             <button type="button" class="btn btn-primary" onclick="LoadForm()">
                 <i class="fas fa-plus"></i>
                 Thêm mới
@@ -167,6 +172,31 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Import Excel -->
+    <div class="modal fade" id="modalImportExcel" tabindex="-1" role="dialog" aria-labelledby="modalImportExcelLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <form action="@Url.Action("ImportExcel", "NhanVien")" method="post" enctype="multipart/form-data">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import Nhân viên từ Excel</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Đóng">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Chọn file Excel theo mẫu để import nhân viên.</p>
+                        <input type="file" name="excelFile" class="form-control" accept=".xlsx" required />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Import</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>
 
 @section Scripts {

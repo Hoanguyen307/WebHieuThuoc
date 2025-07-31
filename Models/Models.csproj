@@ -62,6 +62,7 @@
     <Compile Include="Buidings.cs" />
     <Compile Include="CaLam.cs" />
     <Compile Include="DBConnect.cs" />
+    <Compile Include="DoanhThu.cs" />
     <Compile Include="IdentityModels.cs" />
     <Compile Include="KhachHang.cs" />
     <Compile Include="LichLamViec.cs" />

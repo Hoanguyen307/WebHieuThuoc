@@ -34,9 +34,11 @@ namespace Models
         public DateTime? StartDate { get; set; }
 
         public int? ShiftId { get; set; }
+        [NotMapped]
         public string ShiftName { get; set; }
         [ForeignKey("ShiftId")]
         public virtual CaLam Shift { get; set; }
+        [NotMapped]
         public string PositionName { get; set; }
         public int? PositionId { get; set; }
 

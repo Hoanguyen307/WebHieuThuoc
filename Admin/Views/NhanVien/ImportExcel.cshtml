@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Import Nhân Viên";
+}
+
+<div class="container mt-4">
+    <div class="card shadow rounded">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="fas fa-file-import"></i> Import Nhân Viên từ Excel</h5>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("ImportExcel", "NhanVien", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <div class="form-group mb-3">
+                    <label class="form-label"><strong>Chọn file Excel (.xlsx)</strong></label>
+                    <input type="file" name="excelFile" class="form-control" accept=".xlsx" required />
+                    <small class="form-text text-muted">File nên có cột: Họ tên, Giới tính, Ngày sinh, SĐT, Email, Chức vụ, Lương</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <button type="submit" class="btn btn-success me-2">
+                        <i class="fas fa-upload"></i> Thực hiện Import
+                    </button>
+                    <a href="~/Files/Template_ImportNhanVien.xlsx" class="btn btn-outline-secondary">
+                        <i class="fas fa-download"></i> Tải file mẫu
+                    </a>
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success mt-3">
+                    <i class="fas fa-check-circle"></i> @TempData["Success"]
+                </div>
+            }
+        </div>
+    </div>
+</div>

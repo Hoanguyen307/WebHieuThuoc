@@ -1,0 +1,33 @@
+﻿
+@{
+    ViewBag.Title = "Doanh thu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
+<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+    <input type="hidden" id="Id" name="Id" />
+
+    <form id="filterForm" class="filter-form" style=" margin-top: 83px;">
+        <div class="form-group d-flex align-items-center me-2">
+            <input type="date" id="FromDate" name="FromDate" class="form-control form-control-sm" style="width: 140px !important;">
+        </div>
+
+        <div class="form-group d-flex align-items-center me-2">
+            <input type="date" id="ToDate" name="ToDate" class="form-control form-control-sm" style="width: 140px !important;">
+        </div>
+
+        <!-- Nút lọc -->
+        <button class="btn btn-primary" type="submit" id="searchBtn">
+            <i class="fa fa-search"></i> Lọc
+        </button>
+    </form>
+    <canvas id="doanhThuChart" width="800" height="400"
+            style="border: 1px solid #ccc; margin-left: 260px;"></canvas>
+</div>
+@section Scripts {
+
+    <script src="~/Content/assets/js/DoanhThu.js?v=(@DateTime.Now.Ticks)"></script>
+}
+

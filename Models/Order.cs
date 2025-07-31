@@ -15,7 +15,7 @@ namespace Models
         {
             this.OrderDetails = new HashSet<OrderDetail>();
             //this.ThongKes = new HashSet<ThongKe>();
-            this.Products = new HashSet<Product>();
+            //this.Products = new HashSet<Product>();
         }
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
@@ -39,7 +39,7 @@ namespace Models
         public int Status { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<ThongKe> ThongKes { get; set; }
-        public virtual ICollection<Product> Products { get; set; }
+        //public virtual ICollection<Product> Products { get; set; }
 
         public class OrderFilter
         {

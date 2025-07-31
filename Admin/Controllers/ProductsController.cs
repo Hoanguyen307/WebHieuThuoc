@@ -1,10 +1,13 @@
 ﻿using DAL;
 using Models;
+using OfficeOpenXml;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using static Models.Process;
@@ -226,7 +229,105 @@ namespace Admin.Controllers
             }
             return Json(new { success = false });
         }*/
+        [HttpPost]
+        public ActionResult ImportExcel(HttpPostedFileBase excelFile)
+        {
+            if (excelFile == null || excelFile.ContentLength == 0)
+                return RedirectToAction("Index");
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            var imageFolder = Server.MapPath("~/Uploads/Product/");
+            if (!Directory.Exists(imageFolder))
+            {
+                Directory.CreateDirectory(imageFolder);
+            }
+            using (var package = new ExcelPackage(excelFile.InputStream))
+            {
+                var worksheet = package.Workbook.Worksheets[0];
+                int rowCount = worksheet.Dimension.Rows;
 
+                for (int row = 2; row <= rowCount; row++)
+                {
+                    var CategoryName = worksheet.Cells[row, 1].Text?.Trim();
+                    var Name = worksheet.Cells[row, 2].Text?.Trim();
+                    var Slug = worksheet.Cells[row, 3].Text?.Trim();
+                    var Description = worksheet.Cells[row, 4].Text?.Trim();
+                    var Price = worksheet.Cells[row, 5].Text?.Trim();
+                    var SalePrice = worksheet.Cells[row, 6].Text?.Trim();
+                    var Image = worksheet.Cells[row, 7].Text?.Trim();
+                    var Quantity = worksheet.Cells[row, 8].Text?.Trim();
+                    var IsActive = worksheet.Cells[row, 9].Text?.Trim();
+                    var IsFeatured = worksheet.Cells[row, 10].Text?.Trim();
+                    var Tags = worksheet.Cells[row, 11].Text?.Trim();
+                    if (string.IsNullOrEmpty(Name))
+                        continue;
+                    var category = new Category_DAL().Select_Category_All()
+               .FirstOrDefault(c => c.Name.Equals(CategoryName, StringComparison.OrdinalIgnoreCase));
+                    var existing = db.Products.FirstOrDefault(p => p.Name == Name);
+                    var username = Session["UserName"]?.ToString() ?? "Import";
+
+                    string savedImageName = null;
+                    if (!string.IsNullOrEmpty(Image))
+                    {
+                        if (Uri.IsWellFormedUriString(Image, UriKind.Absolute))
+                        {
+                            var fileName = Path.GetFileName(new Uri(Image).LocalPath);
+                            savedImageName = $"{Guid.NewGuid().ToString().Substring(0, 8)}_{fileName}";
+
+                            var savePath = Server.MapPath("~/Uploads/Product/");
+                            if (!Directory.Exists(savePath))
+                                Directory.CreateDirectory(savePath);
+
+                            var fullPath = Path.Combine(savePath, savedImageName);
+
+                            using (WebClient client = new WebClient())
+                            {
+                                client.DownloadFile(Image, fullPath);
+
+                            }
+                            savedImageName = $"/Uploads/Product/{savedImageName}";
+                        }
+                        else
+                        {
+                            savedImageName = Image;
+                        }
+                    }
+
+                    var product = new Product
+                    {
+                        CategoryId = category?.ID ?? 0,
+                        Name = Name,
+                        Slug = Slug,
+                        Description = Description,
+                        Price = decimal.TryParse(Price, out var price) ? price : 0,
+                        SalePrice = string.IsNullOrEmpty(SalePrice) ? (decimal?)null : decimal.Parse(SalePrice),
+                        Image = savedImageName,
+                        Quantity = int.TryParse(Quantity, out var quantity) ? quantity : 0,
+                        IsActive = bool.TryParse(IsActive, out var isActive) && isActive,
+                        IsFeatured = bool.TryParse(IsFeatured, out var isFeatured) && isFeatured,
+                        Tags = Tags
+                    };
+                    if (existing != null)
+                    {
+                        product.Id = existing.Id;
+                        product.UpdatedDate = DateTime.Now;
+                        product.UpdatedBy = username;
+                        new Product_DAL().Update(product);
+                    }
+                    else
+                    {
+                        // Thêm mới
+                        product.CreatedDate = DateTime.Now;
+                        product.CreatedBy = username;
+                        product.IsDeleted = false;
+                        new Product_DAL().Insert(product);
+                    }
+
+                }
+            }
+
+            TempData["Success"] = "Đã nhập nhân viên thành công!";
+            return RedirectToAction("Index");
+        }
 
 
     }

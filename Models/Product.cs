@@ -17,10 +17,11 @@ namespace Models
         public string Slug { get; set; }
 
         public string Description { get; set; }
-
+        [NotMapped]
         public string Detail { get; set; }
 
         public int CategoryId { get; set; }
+        [NotMapped]
         public string CategoryName { get; set; }
 
         public string Image { get; set; }
@@ -34,12 +35,14 @@ namespace Models
         public bool IsFeatured { get; set; }
 
         public bool IsActive { get; set; }
-
-        public string Tags { get; set; } // Dạng: "kem,duongda,banngay"
+        [NotMapped]
+        public string Tags { get; set; }
+        [ForeignKey("CategoryId")]
         public virtual Category ProductCategory { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<Wishlist> Wishlists { get; set; }
-        public virtual Order Order { get; set; }
+        /*[ForeignKey("OrderId")]
+        public virtual Order Order { get; set; }*/
 
         public class ProductFilter
         {

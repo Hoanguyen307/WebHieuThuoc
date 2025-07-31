@@ -31,3 +31,28 @@
         });
     });
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.getElementById("toggleUserMenu");
+    const target = document.getElementById("menuUser");
+
+    if (toggle && target) {
+        const collapse = new bootstrap.Collapse(target, {
+            toggle: false // không tự động bật khi khởi tạo
+        });
+
+        toggle.addEventListener("click", function () {
+            if (target.classList.contains("show")) {
+                collapse.hide();
+                toggle.classList.add("collapsed");
+                toggle.setAttribute("aria-expanded", "false");
+            } else {
+                collapse.show();
+                toggle.classList.remove("collapsed");
+                toggle.setAttribute("aria-expanded", "true");
+            }
+        });
+    }
+});
+
+
+
