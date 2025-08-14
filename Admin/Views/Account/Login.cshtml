@@ -107,7 +107,7 @@
             <h2>Đăng nhập</h2>
             <p>Quý khách đăng nhập tài khoản để xem Điểm & hạng thành viên</p>
 
-            <form method="post" action="@Url.Action("Login", "Account")">
+            <form id="loginForm" method="post" action="@Url.Action("Login", "Account")">
                 @Html.AntiForgeryToken()
                 <div class="form-group">
                     <div class="input-group">
@@ -116,7 +116,7 @@
                                 <i class="fas fa-user"></i>
                             </span>
                         </div>
-                        <input type="text" class="form-control" name="PhoneNumber" placeholder="Tài khoản" required />
+                        <input type="text" id="tendangnhap" class="form-control" name="UserName" placeholder="Tài khoản" required />
                     </div>
                 </div>
 
@@ -128,7 +128,7 @@
                                 <i class="fas fa-lock"></i>
                             </span>
                         </div>
-                        <input type="password" class="form-control" name="Password" placeholder="Mật khẩu" required />
+                        <input type="password" id="matkhau" class="form-control" name="Password" placeholder="Mật khẩu" required />
                     </div>
                 </div>
 
@@ -136,7 +136,10 @@
                     <a href="#">Quên mật khẩu?</a>
                 </div>
 
-                <button type="submit" class="btn btn-login">ĐĂNG NHẬP</button>
+                <button type="submit" class="btn btn-primary" id="btnLogin">
+                    <span id="btnText">Đăng nhập</span>
+                    <i id="loadingIcon" class="fa fa-spinner fa-spin ms-2" style="display:none;"></i>
+                </button>
             </form>
 
             <div class="text-center mt-4">

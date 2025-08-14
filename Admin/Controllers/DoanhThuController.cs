@@ -9,6 +9,7 @@ using static Models.Post;
 
 namespace Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class DoanhThuController : Controller
     {
         private DBConnect db = new DBConnect();

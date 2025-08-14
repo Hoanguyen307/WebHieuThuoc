@@ -9,6 +9,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
+    [Authorize(Roles = "Admin, Employee")]
     public class CategoryController : Controller
     {
         private DBConnect db = new DBConnect();
@@ -49,7 +50,7 @@ namespace Admin.Controllers
                 }
 
                 model.CreatedDate = DateTime.Now;
-                model.CreatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.CreatedBy = User?.Identity?.Name ?? "Unknown";
                 model.IsDeleted = false;
 
                 var result = new Category_DAL().Insert(model);
@@ -84,7 +85,7 @@ namespace Admin.Controllers
         {
             try
             {
-                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
                 model.IsDeleted = false;
 

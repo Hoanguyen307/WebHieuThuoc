@@ -71,7 +71,6 @@ function LoadForm() {
     })
 }
 function handleFormUpdateProduct(id) {
-    debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
         return;
@@ -132,12 +131,12 @@ function loadData(page = 1) {
             <td>${formatCurrency(item.Price)}</td>
             <td>${formatCurrency(item.SalePrice)}</td>
             <td>
-                <span class="badge badge-${item.IsActive ? 'success' : 'secondary'}">
+                <span class="badge ${item.IsActive ? 'bg-success' : 'bg-danger'}">
                     ${item.IsActive ? 'Hiện' : 'Ẩn'}
                 </span>
             </td>
             <td>
-                <span class="badge badge-${item.IsFeatured ? 'warning' : 'light'}">
+                <span class="badge ${item.IsFeatured ? 'bg-warning text-dark' : 'bg-secondary'}">
                     ${item.IsFeatured ? 'Nổi bật' : '-'}
                 </span>
             </td>
@@ -178,7 +177,6 @@ function SaveProduct() {
     formData.append("IsFeatured", $('#IsFeatured').is(':checked'));
 
     var url = (id != null && parseInt(id) > 0) ? '/Products/Update' : '/Products/Add';
-    console.log([...formData.entries()]);
     $.ajax({
         url: url,
         type: 'POST',

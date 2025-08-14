@@ -13,6 +13,7 @@ using static Models.Post;
 
 namespace Admin.Controllers
 {
+    [Authorize(Roles = "Admin, Employee")]
     public class OrderController : Controller
     {
         private DBConnect db = new DBConnect();

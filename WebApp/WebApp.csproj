@@ -158,8 +158,11 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\CaseController.cs" />
+    <Compile Include="Controllers\Home1Controller.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -168,10 +171,15 @@
   <ItemGroup>
     <Content Include="Content\assets\css\app.min.css" />
     <Content Include="Content\assets\css\bootstrap.min.css" />
+    <Content Include="Content\assets\css\cart.css" />
     <Content Include="Content\assets\css\Case.css" />
     <Content Include="Content\assets\css\common.css" />
     <Content Include="Content\assets\css\custom.min.css" />
+    <Content Include="Content\assets\css\GiaoDien.css" />
     <Content Include="Content\assets\css\icons.min.css" />
+    <Content Include="Content\assets\css\ProductDetail.css" />
+    <Content Include="Content\assets\css\Products.css" />
+    <Content Include="Content\assets\css\TrangChu.css" />
     <Content Include="Content\assets\dist\css\adminlte.css" />
     <Content Include="Content\assets\dist\css\adminlte.min.css" />
     <Content Include="Content\assets\dist\css\alt\adminlte.components.css" />
@@ -319,8 +327,10 @@
     <Content Include="Content\assets\images\tinh-chat-tri-nam-dongsung-4.jpg" />
     <Content Include="Content\assets\images\tinh-chat-tri-nam-dongsung-5.jpg" />
     <Content Include="Content\assets\images\tintuc.1.jpg" />
+    <Content Include="Content\assets\js\AddToCart.js" />
     <Content Include="Content\assets\js\app.js" />
     <Content Include="Content\assets\js\BaiViet.js" />
+    <Content Include="Content\assets\js\Cart.js" />
     <Content Include="Content\assets\js\Case.js" />
     <Content Include="Content\assets\js\categories_custom.js" />
     <Content Include="Content\assets\js\Category.js" />
@@ -3669,6 +3679,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Uploads\Product\1_44022494ed4d41429ec9096353b24240.jpg" />
+    <Content Include="Uploads\Product\637709368401022961_637709368439075065.jpg" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -3686,6 +3698,10 @@
     <Content Include="Views\Case\Index.cshtml" />
     <Content Include="Views\Case\Add.cshtml" />
     <Content Include="Views\Home\Add.cshtml" />
+    <Content Include="Views\Home1\Index.cshtml" />
+    <Content Include="Views\Products\Index.cshtml" />
+    <Content Include="Views\Products\Details.cshtml" />
+    <Content Include="Views\Cart\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

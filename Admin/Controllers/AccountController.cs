@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,7 +13,7 @@ using Models;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin")]*/
+    [Authorize(Roles = "Admin")]
     public class AccountController : Controller
     {
         private ApplicationSignInManager _signInManager;
@@ -79,9 +80,20 @@ namespace Admin.Controllers
                 return View(model);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, shouldLockout: false);
+            var user = await UserManager.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
+            if (user == null)
+            {
+                ModelState.AddModelError("", "Tài khoản không tồn tại.");
+                return View(model);
+            }
+
+            var result = await SignInManager.PasswordSignInAsync(
+                user.UserName, 
+                model.Password,
+                model.RememberMe,
+                shouldLockout: false
+            );
+
             switch (result)
             {
                 case SignInStatus.Success:
@@ -90,12 +102,12 @@ namespace Admin.Controllers
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Thông tin đăng nhập không chính xác.");
                     return View(model);
             }
         }
+
 
         //
         // POST: /Account/LogOff
@@ -111,16 +123,16 @@ namespace Admin.Controllers
         /*[Authorize(Roles = "Admin")]*/
         public ActionResult Add(int? id)
         {
-            //var model = new ApplicationUser();
-            ViewBag.Role = new SelectList(db.Roles.ToList(), "Id", "Name");
-            return View(new CreateAccountViewModel());
+            var model = new CreateAccountViewModel();
+
+            return PartialView("Add", model);
         }
+
 
         //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(CreateAccountViewModel model)
         {
             if (ModelState.IsValid)
@@ -134,93 +146,109 @@ namespace Admin.Controllers
                     CreatedDate = DateTime.Now,
                     CreatedBy = User.Identity.Name
                 };
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    if (model.Role != null)
-                    {
-                        foreach (var r in model.Role)
-                        {
-                            UserManager.AddToRole(user.Id, r);
-                        }
-                    }
-                    return RedirectToAction("Index", "Account");
+                    return Json(new { code = 200, msg = "Thêm người dùng thành công" });
                 }
                 AddErrors(result);
             }
-            ViewBag.Role = new SelectList(db.Roles.ToList(), "Id", "Name");
-            return View(model);
+
+            return PartialView("Add", model);
         }
 
-        [Authorize(Roles = "Admin")]
+
+        //[Authorize(Roles = "Admin")]
         public ActionResult Edit(string id)
         {
             var item = UserManager.FindById(id);
             var newUser = new CreateAccountViewModel();
+
             if (item != null)
             {
-                var rolesForUser = UserManager.GetRoles(id);
-                var roles = new List<string>();
-                if (rolesForUser != null)
-                {
-                    foreach (var role in rolesForUser)
-                    {
-                        roles.Add(role);
-
-                    }
-
-                }
                 newUser.FullName = item.FullName;
                 newUser.Email = item.Email;
                 newUser.Phone = item.Phone;
                 newUser.UserName = item.UserName;
                 newUser.UpdatedBy = User.Identity.Name;
                 newUser.UpdatedDate = DateTime.Now;
-                newUser.Role = UserManager.GetRoles(item.Id).ToList();
             }
-            ViewBag.Role = new SelectList(db.Roles.ToList(), "Id", "Name");
-            return View(newUser);
+
+            return PartialView("Add", newUser);
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(CreateAccountViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var user = UserManager.FindByName(model.UserName);
-                user.FullName = model.FullName;
-                user.Phone = model.Phone;
-                user.Email = model.Email;
-                user.UpdatedBy = User.Identity.Name;
-                user.UpdatedDate = DateTime.Now;
-
-                var result = await UserManager.UpdateAsync(user);
-                if (result.Succeeded)
+                return Json(new
                 {
-                    var currentRoles = await UserManager.GetRolesAsync(user.Id);
-                    var rolesToRemove = currentRoles.Except(model.Role).ToList();
-                    var rolesToAdd = model.Role.Except(currentRoles).ToList();
-
-                    if (model.Role != null)
-                    {
-
-                        foreach (var role in rolesToRemove)
-                        {
-                            await UserManager.RemoveFromRoleAsync(user.Id, role);
-                        }
-                        foreach (var role in rolesToAdd)
-                        {
-                            await UserManager.AddToRoleAsync(user.Id, role);
-                        }
-                    }
-                    return RedirectToAction("Index", "Account");
-                }
-                AddErrors(result);
+                    success = false,
+                    errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                }, JsonRequestBehavior.AllowGet);
             }
-            ViewBag.Role = new SelectList(db.Roles.ToList(), "Id", "Name");
+
+            //var user = await UserManager.FindByNameAsync(model.Id);
+            var user = await UserManager.FindByIdAsync(model.Id);
+
+            if (user == null)
+            {
+                return Json(new { code = 500, msg = "Không tìm thấy người dùng." });
+            }
+            user.UserName = model.UserName;
+            user.FullName = model.FullName;
+            user.Phone = model.Phone;
+            user.Email = model.Email;
+            user.UpdatedBy = User.Identity.Name;
+            user.UpdatedDate = DateTime.Now;
+
+            var result = await UserManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                return Json(new { code = 200, msg = "Cập nhật thành công" });
+
+            }
+            return Json(new { code = 500, msg = "Cập nhật thất bại" });
+        }
+
+
+        //[Authorize(Roles = "Admin")]
+        public ActionResult AssignRole()
+        {
+            var users = db.Users.ToList();
+            var model = users.Select(u => new AssignRoleViewModel
+            {
+                UserId = u.Id,
+                UserName = u.UserName,
+                FullName = u.FullName,
+                Role = UserManager.GetRoles(u.Id).FirstOrDefault()
+            }).ToList();
+
+            ViewBag.AllRoles = new SelectList(db.Roles.ToList(), "Name", "Name");
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        //[Authorize(Roles = "Admin")]
+        public async Task<JsonResult> AssignRole(AssignRoleViewModel model)
+        {
+            var user = await UserManager.FindByIdAsync(model.UserId);
+            if (user == null) 
+                return Json(new { code = 500, msg = "Phân quyền thất bại" });
+
+            var currentRoles = await UserManager.GetRolesAsync(user.Id);
+            if (currentRoles.Any())
+                await UserManager.RemoveFromRolesAsync(user.Id, currentRoles.ToArray());
+
+            if (!string.IsNullOrEmpty(model.Role))
+                await UserManager.AddToRoleAsync(user.Id, model.Role);
+
+            return Json(new { code = 200, msg = "Phân quyền thành công" });
         }
 
         [HttpPost]

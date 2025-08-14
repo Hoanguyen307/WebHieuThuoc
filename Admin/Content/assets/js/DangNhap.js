@@ -2,6 +2,7 @@
     function handleLogin() {
         $("#message").html("");
         $(".btn-login").prop("disabled", true);
+        $("#loadingIcon").show();
 
         var tendangnhap = $("#tendangnhap").val().trim();
         var matkhau = $("#matkhau").val().trim();
@@ -9,13 +10,18 @@
         if (!tendangnhap || !matkhau) {
             $("#message").html('<div class="alert alert-warning">Vui lòng nhập đầy đủ thông tin!</div>');
             $(".btn-login").prop("disabled", false);
+            $("#loadingIcon").hide();
             return;
         }
 
         $.ajax({
-            url: "/DangNhap/DangNhap",
+            url: "/Account/Login", 
             type: "POST",
-            data: { tendangnhap: tendangnhap, matkhau: matkhau },
+            data: {
+                UserName: tendangnhap,
+                Password: matkhau,
+                __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+            },
             dataType: "json",
             success: function (data) {
                 if (data.code === 200) {
@@ -26,12 +32,14 @@
                 } else {
                     $("#message").html('<div class="alert alert-danger">' + data.msg + '</div>');
                     $(".btn-login").prop("disabled", false);
+                    $("#loadingIcon").hide();
                 }
             },
-            error: function (xhr, status, error) {
+            error: function (xhr) {
                 var errorMessage = xhr.responseText ? xhr.responseText : "Lỗi kết nối đến máy chủ!";
                 $("#message").html('<div class="alert alert-danger">Lỗi: ' + errorMessage + '</div>');
                 $(".btn-login").prop("disabled", false);
+                $("#loadingIcon").hide();
             }
         });
     }

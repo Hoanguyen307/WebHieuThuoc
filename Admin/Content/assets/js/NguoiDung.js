@@ -53,33 +53,30 @@ function loadNguoiDung() {
 
 function SaveNguoiDung() {
     var id = $('#Id').val();
-    //var name = ($('#UserName').val() || '').trim();
 
     var tendangnhap = ($('#UserName').val() || '').trim();;
     var hovaten = $('#FullName').val().trim();
     var matkhau = $('#Password').val().trim();
     var email = $('#Email').val().trim();
     var phone = $('#Phone').val().trim();
-    var roleId = parseInt($('#Role').val()) || null;
     
     debugger
-    var url = (id != null && parseInt(id) > 0) ? '/Account/Update' : '/Account/Add';
+    var url = (id != null && parseInt(id) > 0) ? '/Account/Edit' : '/Account/Add';
     var data = {
         Id: id,
         UserName: tendangnhap,
         FullName: hovaten,
         Password: matkhau,
         Email: email,
-        Phone: phone,
-        RoleId: roleId
+        Phone: phone
     };
 
     $.ajax({
         url: url,
         type: 'POST',
-        data: data,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
         success: function (res) {
-            console.log("Kết quả từ server:", res);
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalnguoidung').modal('hide');

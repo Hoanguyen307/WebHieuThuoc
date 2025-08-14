@@ -26,9 +26,9 @@ namespace Models
 
         public string Image { get; set; }
 
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
-        public decimal? SalePrice { get; set; } // Giá khuyến mãi (có thể null)
+        public decimal? SalePrice { get; set; } 
         public int Quantity { get; set; }
         public int Sold { get; set; }
 
@@ -39,6 +39,9 @@ namespace Models
         public string Tags { get; set; }
         [ForeignKey("CategoryId")]
         public virtual Category ProductCategory { get; set; }
+        public int BrandId { get; set; }
+        [ForeignKey("BrandId")]
+        public virtual ThuongHieu Brand { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<Wishlist> Wishlists { get; set; }
         /*[ForeignKey("OrderId")]
@@ -50,6 +53,7 @@ namespace Models
             public int? Month { get; set; }
             public int? Year { get; set; }
             public int? CategoryId { get; set; }
+            public int? BrandId { get; set; }
             public string CategoryName { get; set; }
             public decimal? MinPrice { get; set; }
             public decimal? MaxPrice { get; set; }

@@ -2,7 +2,6 @@
 @model Models.CreateAccountViewModel
 @{
     ViewBag.Title = "Add";
-    Layout = "~/Views/Shared/_Layout.cshtml";
     var roles = ViewBag.Role as SelectList;
     //bool isEdit = Model.Id > 0;
     //string actionUrl = isEdit ? Url.Action("Update", "Account") : Url.Action("Add", "Account");
@@ -31,18 +30,33 @@
         <div class="form-group row">
             <label>Số điện thoại</label>
             <input type="text" class="form-control" id="Phone" name="Phone" value="@Model.Phone" placeholder="Phone" />
-        </div>
+        </div>@*
         <div class="form-group row">
-                <label>Quyền</label>
-                <select class="form-control" id="Role" name="RoleId">
-                    <option value="">-- Chọn quyền --</option>
-                    @foreach (var item in ViewBag.Role as SelectList)
+            <label>Quyền</label>
+            <select class="form-control" id="Role" name="Role">
+                <option value="">-- Chọn quyền --</option>
+                @if (ViewBag.Role != null)
+                {
+                    foreach (var item in ViewBag.Role as SelectList)
                     {
-                        <option value="@item.Value" @(item.Value.ToString() == ViewBag.RoleId.ToString() ? "selected" : "")>@item.Text</option>
+                        var selectedRole = ViewBag.RoleId != null ? ViewBag.RoleId.ToString() : "";
+                        <option value="@item.Value" @(item.Value.ToString() == selectedRole ? "selected" : "")>@item.Text</option>
                     }
-                </select>
-            </div>
+                }
+            </select>
+        </div>*@
 
+        @*<div class="form-group row">
+            <label>Quyền</label>
+            <select class="form-control" id="Role" name="RoleId">
+                <option value="">-- Chọn quyền --</option>
+                @foreach (var item in ViewBag.Role as SelectList)
+                {
+                    <option value="@item.Value" @(item.Value.ToString() == ViewBag.Role.ToString() ? "selected" : "")>@item.Text</option>
+                }
+            </select>
+        </div>
+        *@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modalnguoidung"><i class="fas fa-times"></i> Đóng</button>

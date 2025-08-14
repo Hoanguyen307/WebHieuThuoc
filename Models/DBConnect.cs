@@ -26,5 +26,6 @@ namespace Models
         public virtual DbSet<Post> BaiViets { get; set; }
         public virtual DbSet<Process> Processes { get; set; }
         public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
+        public virtual DbSet<ThuongHieu> Brands { get; set; }
     }
 }

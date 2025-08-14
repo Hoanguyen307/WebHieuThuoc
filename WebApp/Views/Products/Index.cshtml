@@ -1,0 +1,154 @@
+﻿@model IEnumerable<Models.Product>
+
+@{
+    ViewBag.Title = "Tất cả sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string currentSortOrder = ViewBag.SortOrder ?? "newest";
+}
+<link href="~/Content/assets/css/Products.css" rel="stylesheet" />
+
+<div class="container product-list-page">
+    <div class="row">
+        <div class="col-md-3 sidebar-filters">
+            <h3 class="filter-title">Danh mục</h3>
+            <div class="filter-section">
+                <ul>
+                    @foreach (var category in ViewBag.Categories as List<Models.Category>)
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "Products", new { CategoryId = category.ID, sortOrder = ViewBag.SortOrder })"
+                               class="@(ViewBag.SelectedCategoryId == category.ID ? "active" : "")">
+                                @category.Name
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <h3 class="filter-title mt-4">Thương hiệu</h3>
+            <div class="filter-section">
+                <ul>
+                    @foreach (var brand in ViewBag.Brands as List<Models.ThuongHieu>)
+                    {
+                        <li>
+                            <a href="@Url.Action("Index", "Products", new { BrandId = brand.Id, sortOrder = ViewBag.SortOrder })"
+                               class="@(ViewBag.SelectedBrandId == brand.Id ? "active" : "")">
+                                @brand.TenThuongHieu
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <h3 class="filter-title mt-4">Khoảng giá</h3>
+            <div class="filter-section">
+                <div class="price-range">
+                    <input type="text" placeholder="Từ">
+                    <span>-</span>
+                    <input type="text" placeholder="Đến">
+                    <button class="btn btn-sm btn-outline-secondary mt-2">Áp dụng</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="filter-sort-section">
+                <h2 class="product-page-title mb-0">Tất cả sản phẩm</h2>
+                <div class="sort-options">
+                    <span class="me-2">Sắp xếp theo:</span>
+                    <div class="dropdown d-inline-block">
+                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            @if (currentSortOrder == "newest")
+                            {
+                                <span>Mới nhất</span>
+                            }
+                            else if (currentSortOrder == "price_asc")
+                            {
+                                <span>Giá tăng dần</span>
+                            }
+                            else if (currentSortOrder == "price_desc")
+                            {
+                                <span>Giá giảm dần</span>
+                            }
+                            else
+                            {
+                                <span>Mới nhất</span>
+                            }
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                            <li>
+                                <a class="dropdown-item @(currentSortOrder == "newest" ? "active" : "")"
+                                   href="@Url.Action("Index", "Products", new { sortOrder = "newest", BrandId = ViewBag.SelectedBrandId, CategoryId = ViewBag.SelectedCategoryId })">
+                                    Mới nhất
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item @(currentSortOrder == "price_asc" ? "active" : "")"
+                                   href="@Url.Action("Index", "Products", new { sortOrder = "price_asc", BrandId = ViewBag.SelectedBrandId, CategoryId = ViewBag.SelectedCategoryId })">
+                                    Giá tăng dần
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item @(currentSortOrder == "price_desc" ? "active" : "")"
+                                   href="@Url.Action("Index", "Products", new { sortOrder = "price_desc", BrandId = ViewBag.SelectedBrandId, CategoryId = ViewBag.SelectedCategoryId })">
+                                    Giá giảm dần
+                                </a>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="products-grid-list">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var product in Model)
+                    {
+                        <div class="product-card-vertical">
+                            @{
+                                decimal? discount = 0;
+                                if (product.Price.HasValue && product.Price > 0 && product.SalePrice.HasValue)
+                                {
+                                    discount = ((product.Price - product.SalePrice) / product.Price) * 100;
+                                }
+                            }
+                            @if (product.SalePrice.HasValue && product.SalePrice < product.Price)
+                            {
+                                <div class="discount-badge-vertical">@Math.Round(discount.Value, 0)%</div>
+                            }
+
+                            <a href="@Url.Action("Details", "Products", new { id = product.Id })">
+                                <div class="product-image-vertical">
+                                    <img src="@product.Image" alt="@product.Name" class="img-fluid">
+                                </div>
+                            </a>
+
+                            <a href="@Url.Action("Details", "Products", new { id = product.Id })" class="product-name-vertical">
+                                @product.Name
+                            </a>
+                            <a href="@Url.Action("Details", "Products", new { id = product.Id })" class="product-name-vertical">
+                                @product.Description
+                            </a>
+                            <div class="product-price-vertical">
+                                @if (product.SalePrice.HasValue)
+                                {
+                                    <span class="flash-price-vertical">@product.SalePrice.Value.ToString("N0") đ</span>
+                                    <span class="original-price-vertical">@product.Price.Value.ToString("N0") đ</span>
+                                }
+                                else
+                                {
+                                    <span class="flash-price-vertical">@product.Price.Value.ToString("N0") đ</span>
+                                }
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Không có sản phẩm nào để hiển thị.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

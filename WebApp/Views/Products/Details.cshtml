@@ -1,0 +1,167 @@
+﻿@model Models.ProductViewModel
+
+@{
+    ViewBag.Title = Model.Product.Name;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/assets/css/ProductDetail.css" rel="stylesheet" />
+
+<div class="container product-detail-main-wrapper mt-4 mb-5">
+    <div class="row">
+        <div class="col-md-9">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home1")">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="#">@Model.Product.CategoryName</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
+                </ol>
+            </nav>
+
+            <div class="row main-product-section">
+                <div class="col-md-5 product-image-wrapper">
+                    <img src="@Model.Product.Image" alt="@Model.Product.Name" class="img-fluid main-product-image">
+                </div>
+
+                <div class="col-md-7 product-info-wrapper">
+                    <h1 class="product-name">@Model.Product.Name</h1>
+                    @*<div class="product-ratings d-flex align-items-center mb-3">
+                            <span>23 đánh giá | 60 Hỏi đáp | Mã sản phẩm: 422208871</span>
+                        </div>*@
+                    <div class="product-price-info mt-3">
+                        @*<div class="flash-deal-section mb-3">
+                                <div class="flash-deal-badge">FLASH DEAL</div>
+                                <div class="flash-deal-timer">KẾT THÚC TRONG <span>01</span>:<span>14</span>:<span>47</span></div>
+                            </div>*@
+
+                        @if (Model.Product.SalePrice.HasValue && Model.Product.Price.HasValue)
+                        {
+                            <span class="current-price">@Model.Product.SalePrice.Value.ToString("N0") đ</span>
+                            <span class="original-price">@Model.Product.Price.Value.ToString("N0") đ</span>
+                            decimal discountPercentage = ((Model.Product.Price.Value - Model.Product.SalePrice.Value) / Model.Product.Price.Value) * 100;
+                            <span class="discount-percentage">(-@Math.Round(discountPercentage, 0)%)</span>
+                        }
+                        else
+                        {
+                            <span class="current-price">@Model.Product.Price.Value.ToString("N0") đ</span>
+                        }
+                    </div>
+
+                    <div class="product-variants mt-4">
+                        <p class="mb-2 fw-bold">Dung tích</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary variant-btn active">2 x 440ml</button>
+                            <button class="btn btn-outline-secondary variant-btn">100ml</button>
+                        </div>
+                    </div>
+
+                    <div class="product-quantity mt-3 d-flex align-items-center">
+                        <p class="mb-0 fw-bold me-3">Số lượng:</p>
+                        <div class="input-group quantity-selector">
+                            <input type="number" class="form-control text-center" value="1">
+                        </div>
+                    </div>
+
+                    <div class="product-actions-minimal mt-4 d-flex gap-4">
+                        <button class="btn btn-action-minimal btn-add-to-cart">
+                            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng
+                        </button>
+                        <button class="btn btn-action-minimal btn-buy-now">
+                            Mua ngay
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-description-section mt-5 p-4 rounded bg-white shadow-sm">
+                <h4 class="section-title">Mô tả sản phẩm</h4>
+                <p>
+                    @Html.Raw(Model.Product.Description)
+                </p>
+
+                <ul class="nav nav-tabs mt-4" id="productTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Thông số</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="usage-tab" data-bs-toggle="tab" data-bs-target="#usage" type="button" role="tab" aria-controls="usage" aria-selected="false">Cách dùng</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab" aria-controls="reviews" aria-selected="false">Đánh giá</button>
+                    </li>
+                </ul>
+                <div class="tab-content pt-3" id="productTabsContent">
+                    <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                    </div>
+                    <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
+                    </div>
+                    <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <h4 class="sidebar-title">Sản phẩm tương tự</h4>
+            <div class="related-products-list">
+                @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+                {
+                    foreach (var relatedProduct in Model.RelatedProducts)
+                    {
+                        <a href="@Url.Action("Details", new { id = relatedProduct.Id })" class="related-product-card d-block mb-3">
+                            <div class="row g-0">
+                                <div class="col-4">
+                                    <img src="@relatedProduct.Image" class="img-fluid rounded-start" alt="@relatedProduct.Name">
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body">
+                                        <h6 class="card-title">@relatedProduct.Name</h6>
+                                        @if (relatedProduct.SalePrice.HasValue)
+                                        {
+                                            <p class="card-price mb-0">@relatedProduct.SalePrice.Value.ToString("N0") đ</p>
+                                        }
+                                        else
+                                        {
+                                            <p class="card-price mb-0">@relatedProduct.Price.Value.ToString("N0") đ</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted text-center mt-3">Không có sản phẩm tương tự.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+    $('.btn-add-to-cart').on('click', function () {
+        var productId = '@Model.Product.Id';
+        var quantity = $('.quantity-selector input').val();
+
+        $.ajax({
+            url: '/Cart/AddToCart',
+            type: 'POST',
+            data: {
+                productId: productId,
+                quantity: quantity
+            },
+            success: function (res) {
+                if (res.success) {
+                    alert('Sản phẩm đã được thêm vào giỏ hàng');
+                    // Có thể cập nhật số lượng hiển thị giỏ hàng ở header
+                } else {
+                    alert(res.message || 'Thêm giỏ hàng thất bại');
+                }
+            },
+            error: function () {
+                alert('Có lỗi xảy ra');
+            }
+        });
+    });
+});
+</script>

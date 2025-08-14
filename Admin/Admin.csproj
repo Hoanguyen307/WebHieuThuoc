@@ -3764,6 +3764,7 @@
     <Content Include="Views\NhanVien\Index1.cshtml" />
     <Content Include="Views\NhanVien\XepLich.cshtml" />
     <Content Include="Views\DoanhThu\Index.cshtml" />
+    <Content Include="Views\Account\AssignRole.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -11,6 +11,7 @@ using static Models.Product;
 
 namespace Admin.Controllers
 {
+    [Authorize(Roles = "Admin, Employee")]
     public class KhachHangController : Controller
     {
         // GET: KhachHang
@@ -76,7 +77,7 @@ namespace Admin.Controllers
                 }
 
                 model.CreatedDate = DateTime.Now;
-                model.CreatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.CreatedBy = User?.Identity?.Name ?? "Unknown";
                 model.IsDeleted = false;
 
                 var result = new KhachHang_DAL().Insert(model);
@@ -112,7 +113,7 @@ namespace Admin.Controllers
         {
             try
             {
-                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
                 model.IsDeleted = false;
 
@@ -133,7 +134,7 @@ namespace Admin.Controllers
         {
             try
             {
-                TenNguoiXoa = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                TenNguoiXoa = User?.Identity?.Name ?? "Unknown";
                 var result = new KhachHang_DAL().Delete(Id, TenNguoiXoa);
                 if (result)
                 {
@@ -170,7 +171,7 @@ namespace Admin.Controllers
         {
             try
             {
-                nguoiThucHien = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                nguoiThucHien = User?.Identity?.Name ?? "Unknown";
                 var result = new KhachHang_DAL().ToggleStatus(Id, nguoiThucHien, lyDo);
                 if (result)
                 {

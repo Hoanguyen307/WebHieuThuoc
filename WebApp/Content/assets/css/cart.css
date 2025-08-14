@@ -1,0 +1,23 @@
+﻿.cart-item {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: 0.3s;
+}
+
+    .cart-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+.quantity {
+    border: 1px solid #ddd;
+}
+
+.btn-minus, .btn-plus {
+    width: 35px;
+    height: 35px;
+}
+
+.cart-summary {
+    font-size: 1.2rem;
+}

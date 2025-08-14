@@ -17,6 +17,7 @@ using static Models.NhanVien;
 
 namespace Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class NhanVienController : Controller
     {
         // GET: Admin/NhanVien
@@ -116,7 +117,7 @@ namespace Admin.Controllers
         {
             try
             {
-                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "admin";
+                model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
                 model.IsDeleted = false;
 
@@ -141,7 +142,7 @@ namespace Admin.Controllers
                 var listCaLam = new NhanVien_DAL().Select_CaLam_All();
                 ViewBag.Calams = new SelectList(listCaLam, "Id", "Name", model.ShiftId);
 
-                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "admin";
+                model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
                 model.IsDeleted = false;
 
@@ -233,7 +234,7 @@ namespace Admin.Controllers
                 }
 
                 model.CreatedDate = DateTime.Now;
-                model.CreatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.CreatedBy = User?.Identity?.Name ?? "Unknown";
                 model.IsDeleted = false;
 
                 var result = new NhanVien_DAL().Insert(model);
@@ -276,7 +277,7 @@ namespace Admin.Controllers
         {
             try
             {
-                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
                 model.IsDeleted = false;
 
@@ -318,7 +319,7 @@ namespace Admin.Controllers
                     return Json(new { code = 400, msg = "Chưa chọn lịch làm việc." });
                 }
 
-                string createdBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                string createdBy = User?.Identity?.Name ?? "Unknown";
 
                 var result = new NhanVien_DAL().XepLich(nhanVienId, createdBy, lichTrongTuan);
                 if (result > 0)

@@ -1,0 +1,234 @@
+﻿/* =======================================================
+   * ProductDetail.css
+   * (Phiên bản hoàn chỉnh với màu sắc đẹp mắt)
+   * ======================================================= */
+
+body {
+	background-color: #f7f8f9;
+	font-family: Arial, sans-serif;
+	color: #333;
+}
+
+/* Container chính của toàn bộ trang */
+.product-detail-main-wrapper {
+	max-width: 1400px;
+	margin: 40px auto;
+}
+
+/* Phần trên: Chi tiết sản phẩm */
+.main-product-section {
+	background-color: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+	padding: 30px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+	padding-left: 0;
+	font-size: 0.9em;
+}
+
+.breadcrumb-item a {
+	color: #007bff;
+	text-decoration: none;
+}
+
+/* Phần hình ảnh */
+.product-image-wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: #f8f9fa;
+	border-radius: 8px;
+	padding: 20px;
+}
+
+.main-product-image {
+	max-width: 100%;
+	max-height: 450px;
+	object-fit: contain;
+}
+
+/* Phần thông tin giữa */
+.product-info-wrapper {
+	padding-left: 40px;
+}
+
+.product-name {
+	font-size: 1.8rem;
+	font-weight: 600;
+	color: #333;
+	line-height: 1.2;
+}
+
+.product-ratings {
+	font-size: 0.85rem;
+	color: #6c757d;
+}
+
+/* Flash Deal Section */
+.flash-deal-section {
+	display: flex;
+	align-items: center;
+	background-color: #ff66b2;
+	padding: 8px 15px;
+	border-radius: 4px;
+	color: white;
+	font-weight: bold;
+	width: fit-content;
+}
+
+.flash-deal-badge {
+	background-color: #e74c3c;
+	padding: 4px 8px;
+	border-radius: 4px;
+	margin-right: 10px;
+}
+
+.flash-deal-timer span {
+	font-size: 1.2rem;
+	padding: 0 5px;
+}
+
+/* Price Section */
+.product-price-info {
+	font-size: 1.2rem;
+	color: #333;
+	margin-top: 15px;
+}
+
+.current-price {
+	font-size: 2rem;
+	font-weight: 700;
+	color: #e74c3c; /* Màu đỏ nổi bật cho giá hiện tại */
+	margin-right: 10px;
+}
+
+.original-price {
+	color: #999;
+	text-decoration: line-through;
+	font-size: 1rem;
+}
+
+.discount-info {
+	font-size: 1rem;
+	color: #e74c3c;
+	font-weight: 500;
+}
+
+/* Variant & Quantity */
+.product-variants p, .product-quantity p {
+	font-size: 0.9rem;
+	color: #555;
+}
+
+.variant-btn {
+	border: 1px solid #ddd;
+	color: #555;
+	background-color: white;
+	font-size: 0.9rem;
+	padding: 6px 12px;
+	border-radius: 4px;
+}
+
+	.variant-btn.active {
+		border-color: #ff66b2; 
+		color: #ff66b2;
+		background-color: #fff1f8;
+	}
+
+.quantity-selector {
+	width: 65px;
+}
+
+	.quantity-selector .btn {
+		border-color: #ddd;
+		color: #555;
+		width: 30px;
+		font-weight: bold;
+	}
+
+	.quantity-selector .form-control {
+		border-color: #ddd;
+		text-align: center;
+	}
+
+.btn-action-minimal.btn-add-to-cart {
+	background-color: #fff1f8;
+	border: 1px solid #ff66b2;
+	color: #ff66b2;
+	font-weight: bold;
+	padding: 10px 20px;
+}
+
+	.btn-action-minimal.btn-add-to-cart:hover {
+		background-color: #ff66b2;
+		color: white;
+	}
+
+.btn-action-minimal.btn-buy-now {
+	background-color: #ff66b2;
+	border: 1px solid #ff66b2;
+	color: white;
+	font-weight: bold;
+	padding: 10px 20px;
+}
+
+	.btn-action-minimal.btn-buy-now:hover {
+		background-color: #e652a6;
+	}
+
+.sidebar-title {
+	font-size: 1.2rem;
+	font-weight: 600;
+	color: #333;
+	margin-bottom: 20px;
+	border-bottom: 2px solid #e9ecef;
+	padding-bottom: 10px;
+}
+
+.related-product-card {
+	display: block;
+	text-decoration: none;
+	color: inherit;
+	border: 1px solid #e9ecef;
+	border-radius: 8px;
+	overflow: hidden;
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
+	background-color: white;
+}
+
+	.related-product-card:hover {
+		box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+		transform: translateY(-2px);
+	}
+
+	.related-product-card img {
+		width: 100%;
+		height: 100px;
+		object-fit: contain;
+		background-color: #f8f9fa;
+		border-right: 1px solid #e9ecef;
+	}
+
+	.related-product-card .card-body {
+		padding: 10px;
+	}
+
+	.related-product-card .card-title {
+		font-size: 0.9rem;
+		font-weight: 500;
+		line-height: 1.3;
+		height: 3em;
+		overflow: hidden;
+		color: #333;
+		margin-bottom: 5px;
+	}
+
+	.related-product-card .card-price {
+		font-size: 1rem;
+		font-weight: 600;
+		color: #e74c3c;
+	}

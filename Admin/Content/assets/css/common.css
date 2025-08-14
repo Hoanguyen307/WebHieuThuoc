@@ -125,7 +125,7 @@ textarea.form-control {
 
 
 .main-content {
-	max-height: 505px;
+	/*max-height: 505px;*/
 	overflow-x: auto;
 	overflow-y: hidden;
 	margin-left: 260px;

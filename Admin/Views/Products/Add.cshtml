@@ -34,6 +34,10 @@
             @Html.DropDownListFor(m => m.CategoryId, (SelectList)ViewBag.Categories, "-- Chọn danh mục --", new { @class = "form-control" })
         </div>
         <div class="form-group row">
+            <label>Thương hiệu</label>
+            @Html.DropDownListFor(m => m.BrandId, (SelectList)ViewBag.Brands, "-- Chọn thương hiệu --", new { @class = "form-control" })
+        </div>
+        <div class="form-group row">
             <label>Ảnh</label>
             <input type="file" class="form-control" id="ImageFile" name="ImageFile" accept="image/*" />
             @if (!string.IsNullOrEmpty(Model.Image))

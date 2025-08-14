@@ -15,6 +15,7 @@ using static Models.Product;
 
 namespace Admin.Controllers
 {
+    [Authorize(Roles = "Admin, Employee")]
     public class ProductsController : Controller
     {
         private DBConnect db = new DBConnect();
@@ -31,6 +32,7 @@ namespace Admin.Controllers
 
             var listCategory = new Category_DAL().Select_Category_All();
             ViewBag.Categories = new SelectList(listCategory, "Id", "Name", CategoryId);
+
 
             ViewBag.MinPrice = MinPrice;
             ViewBag.MaxPrice = MaxPrice;
@@ -69,6 +71,10 @@ namespace Admin.Controllers
             var product = new Product();
             var listCategory = new Category_DAL().Select_Category_All();
             ViewBag.Categories = new SelectList(listCategory, "Id", "Name");
+
+            var listBrands = new Product_DAL().Select_Brands_All();
+            ViewBag.Brands = new SelectList(listBrands, "Id", "TenThuongHieu");
+
             if (id != null)
             {
                 var sanpham = db.Products.Find();
@@ -91,7 +97,7 @@ namespace Admin.Controllers
                 }
 
                 model.CreatedDate = DateTime.Now;
-                model.CreatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.CreatedBy = User?.Identity?.Name ?? "Unknown";
                 model.IsDeleted = false;
 
                 var result = new Product_DAL().Insert(model);
@@ -121,6 +127,9 @@ namespace Admin.Controllers
             var listCategory = new Category_DAL().Select_Category_All();
             ViewBag.Categories = new SelectList(listCategory, "Id", "Name");
 
+            var listBrands = new Product_DAL().Select_Brands_All();
+            ViewBag.Brands = new SelectList(listBrands, "Id", "TenThuongHieu");
+
             return PartialView("Add", lstmodel);
         }
         [HttpPost]
@@ -128,7 +137,7 @@ namespace Admin.Controllers
         {
             try
             {
-                model.UpdatedBy = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
                 model.IsDeleted = false;
 

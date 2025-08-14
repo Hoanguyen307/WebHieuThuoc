@@ -64,6 +64,7 @@ namespace DAL
                 param.Add("@IsActive", obj.IsActive);
                 param.Add("@IsFeatured", obj.IsFeatured);
                 param.Add("@Tag", obj.Tags);
+                param.Add("@BrandId", obj.BrandId);
                 param.Add("@CreatedBy", obj.CreatedBy);
                 return Connection.getConnection().Execute("sp_Product_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
             }
@@ -90,6 +91,7 @@ namespace DAL
                 param.Add("@IsActive", obj.IsActive);
                 param.Add("@IsFeatured", obj.IsFeatured);
                 param.Add("@Tag", obj.Tags);
+                param.Add("@BrandId", obj.BrandId);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
                 return Connection.getConnection().Execute("sp_Product_Update", param, commandType: System.Data.CommandType.StoredProcedure);
             }
@@ -113,6 +115,88 @@ namespace DAL
             {
                 return false;
                 throw;
+            }
+        }
+
+        public List<Product> Select_Published(ProductFilter filter, string SortOrder)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CategoryId", filter.CategoryId);
+                param.Add("@BrandId", filter.BrandId);
+                param.Add("@SortOrder", SortOrder);
+
+                var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_GetPublished",
+                               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
+            }
+        }
+
+        public List<Product> Select_TopSelling(int limit = 8)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@Limit", limit);
+                var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_GetTopSelling",
+                               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                // Xử lý lỗi
+                return new List<Product>();
+            }
+        }
+        public List<Product> Select_GetLatest(int limit = 8)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@Limit", limit);
+                var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_GetLatest",
+                               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                // Xử lý lỗi
+                return new List<Product>();
+            }
+        }
+        public List<ThuongHieu> Select_Brands_All()
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                var result = SqlMapper.Query<ThuongHieu>(Connection.getConnection(), "sp_GetBrands",
+               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+        public List<Product> Select_Product_ByBrand(int brandId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@BrandId", brandId);
+                var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_GetProducts_ByBrand",
+                               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
             }
         }
     }
