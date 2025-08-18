@@ -101,6 +101,22 @@ namespace DAL
                 throw;
             }
         }
+        public bool Update_IsActive(int Id, bool isActive)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@Id", Id);
+                param.Add("@IsActive", isActive);
+                Connection.getConnection().Execute("sp_Product_Update_IsActive", param, commandType: System.Data.CommandType.StoredProcedure);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool Delete(int ID, string TenNguoiXoa)
         {
             try

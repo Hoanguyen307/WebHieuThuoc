@@ -116,13 +116,13 @@ function loadData(page = 1) {
             const tbody = $('#sanpham-body');
             tbody.empty();
 
-            let index = (res.currentPage - 1) * res.pageSize + 1;
+            let index = (res.currentPage - 1) * res.pageSize;
 
             res.items.forEach(item => {
+                index++;
                 const row = `
                     <tr id="trow_${item.Id}">
-            <td></td>
-            <td>${index + 1}</td>
+            <td>${index}</td>
             <td><img src="${item.Image}" alt="Ảnh" style="height:50px" /></td>
             <td>${item.Name}</td>
             <td>${item.CategoryName || ''}</td>
@@ -131,10 +131,13 @@ function loadData(page = 1) {
             <td>${formatCurrency(item.Price)}</td>
             <td>${formatCurrency(item.SalePrice)}</td>
             <td>
-                <span class="badge ${item.IsActive ? 'bg-success' : 'bg-danger'}">
-                    ${item.IsActive ? 'Hiện' : 'Ẩn'}
-                </span>
+                <label class="switch">
+                    <input type="checkbox" class="toggle-status" data-id="${item.Id}" ${item.IsActive ? "checked" : ""}>
+                    <span class="slider round"></span>
+                </label>
+
             </td>
+            
             <td>
                 <span class="badge ${item.IsFeatured ? 'bg-warning text-dark' : 'bg-secondary'}">
                     ${item.IsFeatured ? 'Nổi bật' : '-'}
@@ -150,6 +153,27 @@ function loadData(page = 1) {
             </td>
         </tr>`;
                 tbody.append(row);
+
+            });
+            $('.toggle-status').off('change').on('change', function () {
+                const id = $(this).data('id');
+                const trangThai = $(this).is(':checked');
+
+                $.ajax({
+                    url: '/Products/ToggleHienThi',
+                    type: 'POST',
+                    data: { Id: id, isActive: trangThai },
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success(res.msg || "Đã cập nhật trạng thái hiển thị.");
+                        } else if (res.code === 500){
+                            toastr.error(res.msg || "Cập nhật thất bại.");
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Lỗi khi cập nhật.");
+                    }
+                });
             });
             const pageSize = 10;
             const totalCount = res.totalCount ?? res.items.length;
@@ -187,7 +211,9 @@ function SaveProduct() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalProduct').modal('hide');
-                location.reload();
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
                 //loadDanhMuc();
             } else if (typeof res === 'string') {
                 $('#modalProduct .modal-body').html(res);

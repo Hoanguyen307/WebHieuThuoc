@@ -155,8 +155,6 @@ function loadNhanVien(page = 1) {
 }
 
 function SaveNhanVien() {
-    debugger
-    //var id = $('#Id').val();
     var id = $('#form-addNhanVien #Id').val();
 
     var fullName = $('#FullName').val().trim();
@@ -174,7 +172,9 @@ function SaveNhanVien() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalNhanVien').modal('hide');
-                location.reload();
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
                 //loadNhanVien();
             } else {
                 toastr.error(res.msg || "Cập nhật thất bại");

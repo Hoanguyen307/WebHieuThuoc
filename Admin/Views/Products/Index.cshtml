@@ -7,9 +7,64 @@
 @section Styles {
     <link href="~/Content/assets/css/common.css" rel="stylesheet" />
 }
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 24px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+    input:checked + .slider {
+        background-color: #4CAF50;
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+</style>
 
 <div class="container-wrapper" style=" display: flex; flex-direction: column;">
-    
+
     <div class="d-flex justify-content-between mb-3" style="padding: 81px 10px 0 260px;">
         <h4>Danh sách sản phẩm</h4>
         <div>
@@ -89,7 +144,7 @@
             <table id="ds-sanpham" class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;">
                 <thead class="thead-light">
                     <tr>
-                        <th><input type="checkbox" id="SelectAll" /></th>
+                        @*<th><input type="checkbox" id="SelectAll" /></th>*@
                         <th>STT</th>
                         <th>Hình ảnh</th>
                         <th>Tên sản phẩm</th>

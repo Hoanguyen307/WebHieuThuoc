@@ -27,5 +27,8 @@ namespace Models
         public virtual DbSet<Process> Processes { get; set; }
         public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
         public virtual DbSet<ThuongHieu> Brands { get; set; }
+        public virtual DbSet<ProductCategory> ProductCategories { get; set; }
+        public virtual DbSet<Voucher> Vouchers { get; set; }
+        public virtual DbSet<VoucherCustomer> VoucherCustomers { get; set; }
     }
 }

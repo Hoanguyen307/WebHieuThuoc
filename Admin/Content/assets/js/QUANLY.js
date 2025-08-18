@@ -30,6 +30,25 @@
             title.style.display = hasVisibleItem ? "" : "none";
         });
     });
+
+    const hamburger = document.getElementById("topnav-hamburger-icon");
+    const body = document.body;
+
+    hamburger.addEventListener("click", function () {
+        // Toggle class "menu-collapsed" để đóng/mở sidebar
+        body.classList.toggle("vertical-collapsed");
+
+        // Nếu có localStorage thì lưu trạng thái
+        const isCollapsed = body.classList.contains("vertical-collapsed");
+        localStorage.setItem("sidebarCollapsed", isCollapsed);
+    });
+
+    // Khôi phục trạng thái từ localStorage (nếu muốn)
+    const savedState = localStorage.getItem("sidebarCollapsed");
+    if (savedState === "true") {
+        document.body.classList.add("vertical-collapsed");
+    }
+});
 });
 document.addEventListener("DOMContentLoaded", function () {
     const toggle = document.getElementById("toggleUserMenu");

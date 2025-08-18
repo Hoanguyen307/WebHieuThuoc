@@ -1,0 +1,61 @@
+﻿@model PagedList.IPagedList<Models.Voucher>
+@{
+    ViewBag.Title = "Danh mục voucher";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
+<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+    <div class="d-flex justify-content-between mb-3" style="padding: 81px 10px 0 260px;">
+        <h4>Danh sách voucher</h4>
+        <div>
+
+            <button type="button" class="btn btn-primary" onclick="LoadForm()">
+                <i class="fas fa-plus"></i>
+                Thêm mới
+            </button>
+        </div>
+    </div>
+    <div class="main-content" style="flex:1; overflow: auto;">
+        <div style=" overflow-x: auto;">
+            <table class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;" id="ds-nhanvien">
+                <thead class="thead-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã</th>
+                        <th>Loại</th>
+                        <th>Giá trị giảm</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Số lượng</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="voucher-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination" class="d-flex justify-content-end mt-2"></div>
+    </div>
+    <div class="modal" id="modalVoucher" style="color:black">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modaldanhmucLabel">Thông tin voucher</h5>
+                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="color: black">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/assets/js/Voucher.js?v=(@DateTime.Now.Ticks)"></script>
+}
+

@@ -1,0 +1,71 @@
+﻿@model Models.Voucher
+@{
+    ViewBag.Title = Model.Id > 0 ? "Cập nhật Voucher" : "Thêm mới Voucher";
+    bool isEdit = Model.Id > 0;
+    string actionUrl = isEdit ? Url.Action("Update", "Voucher") : Url.Action("Add", "Voucher");
+
+    string autoCode = !isEdit && string.IsNullOrEmpty(Model.Code)
+        ? $"VC-{DateTime.Now:yyyyMMddHHmmss}"
+        : Model.Code;
+}
+
+<form id="form-addVoucher" autocomplete="off" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.Id)
+
+    <div class="modal-body" style="color:black">
+        <div class="form-group row">
+            <label>Mã Voucher</label>
+            <input type="text" class="form-control" id="Code" name="Code" value="@autoCode" readonly />
+        </div>
+
+        <div class="form-group row">
+            <label>Kiểu Giảm Giá</label>
+            @Html.DropDownListFor(m => m.Percentage,
+                new SelectList(new[] {
+                    new { Value = "Percentage", Text = "Giảm theo %" },
+                    new { Value = "FixedAmount", Text = "Giảm cố định (VNĐ)" }
+                }, "Value", "Text", Model.Percentage),
+                "-- Chọn kiểu giảm --", new { @class = "form-control", id = "Percentage" })
+        </div>
+
+        <div class="form-group row">
+            <label>Giá trị giảm</label>
+            <input type="number" class="form-control" id="DiscountValue" name="DiscountValue" value="@Model.DiscountValue" placeholder="Nhập giá trị giảm" step="0.01" />
+        </div>
+
+        <div class="form-group row">
+            <label>Số lượng</label>
+            <input type="number" class="form-control" id="Quantity" name="Quantity" value="@Model.Quantity" placeholder="Số lượng voucher" />
+        </div>
+
+        <div class="form-group row">
+            <label>Ngày bắt đầu</label>
+            <input type="datetime-local" class="form-control" id="StartDate" name="StartDate"
+                   value="@(Model.StartDate != null ? Model.StartDate?.ToString("yyyy-MM-ddTHH:mm") : "")" />
+        </div>
+
+        <div class="form-group row">
+            <label>Ngày kết thúc</label>
+            <input type="datetime-local" class="form-control" id="EndDate" name="EndDate"
+                   value="@(Model.EndDate != null ? Model.EndDate?.ToString("yyyy-MM-ddTHH:mm") : "")" />
+        </div>
+
+        <div class="form-group row">
+            <label>Mô tả</label>
+            <textarea class="form-control" id="Description" name="Description" placeholder="Mô tả">@Model.Description</textarea>
+        </div>
+
+        <div class="form-group row">
+            <div class="form-check">
+                <input type="hidden" name="IsActive" value="false" />
+                <input type="checkbox" class="form-check-input" id="IsActive" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
+                <label class="form-check-label" for="IsActive">Kích hoạt voucher</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" onclick="SaveVoucher()" class="btn btn-primary"><i class="fas fa-save"></i> Lưu</button>
+    </div>
+</form>

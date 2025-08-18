@@ -69,7 +69,9 @@ function SaveDanhMuc() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalDanhMuc').modal('hide');
-                location.reload();
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
                 //loadDanhMuc(); 
             } else if (typeof res === 'string') {
                 $('#modalDanhMuc .modal-body').html(res);

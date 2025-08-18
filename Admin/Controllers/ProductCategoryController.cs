@@ -1,8 +1,9 @@
 ﻿using DAL;
 using Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -10,50 +11,53 @@ using System.Web.Mvc;
 namespace Admin.Controllers
 {
     [Authorize(Roles = "Admin, Employee")]
-    public class CategoryController : Controller
+    public class ProductCategoryController : Controller
     {
         private DBConnect db = new DBConnect();
+        // GET: ProductCategory
         public ActionResult Index()
         {
-            List<Category> category = new Category_DAL().Select_Category_All();
-            return View(category);
+            return View();
         }
-        public ActionResult GetDanhSachDanhMuc()
+        public ActionResult GetDanhSachDanhMuc(int page = 1, int pageSize = 10)
         {
-            var categories = new Category_DAL().Select_Category_All();
-            return PartialView("Index", categories);
+            var categories = new ProductCategory_DAL().Select_Category_All();
+            var pagedList = categories.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+            return Json(new
+            {
+                items = pagedList.ToList(),
+                totalCount = pagedList.TotalItemCount,
+                currentPage = pagedList.PageNumber,
+                pageSize = pagedList.PageSize
+            }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Add(int? id)
         {
-            var category = new Category();
+            var category = new ProductCategory();
+
+            var listDanhMuc = new Category_DAL().Select_Category_All();
+            ViewBag.ProductCategories = new SelectList(listDanhMuc, "Id", "Name");
+
             if (id != null)
             {
-                var danhmuc = db.Categories.Find();
-                return PartialView(danhmuc);
+                var danhmuc = db.Categories.Find(id);
+                return PartialView("Add", danhmuc);
             }
             return PartialView("Add", category);
         }
 
         [HttpPost]
-        public JsonResult Add(Category model/*, HttpPostedFileBase ImageFile*/)
+        public JsonResult Add(ProductCategory model)
         {
             try
             {
-                /*if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    string fileName = Path.GetFileName(ImageFile.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Uploads/Category/"), fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    ImageFile.SaveAs(path);
-                    model.Image = "/Uploads/Category/" + fileName;
-                }*/
 
                 model.CreatedDate = DateTime.Now;
                 model.CreatedBy = User?.Identity?.Name ?? "Unknown";
                 model.IsDeleted = false;
 
-                var result = new Category_DAL().Insert(model);
+                var result = new ProductCategory_DAL().Insert(model);
                 if (result > 0)
                 {
                     return Json(new { id = result, code = 200, msg = "Thêm mới thành công" }, JsonRequestBehavior.AllowGet);
@@ -71,17 +75,18 @@ namespace Admin.Controllers
             {
                 return HttpNotFound();
             }
-            Category lstmodel = new Category_DAL().SelectById(id);
+            ProductCategory lstmodel = new ProductCategory_DAL().SelectById(id);
             if (lstmodel == null)
             {
                 return HttpNotFound();
             }
-
-
+            
+            var listDanhMuc = new Category_DAL().Select_Category_All();
+            ViewBag.ProductCategories = new SelectList(listDanhMuc, "Id", "Name");
             return PartialView("Add", lstmodel);
         }
         [HttpPost]
-        public JsonResult Update(Category model/*, HttpPostedFileBase ImageFile*/)
+        public JsonResult Update(ProductCategory model/*, HttpPostedFileBase ImageFile*/)
         {
             try
             {
@@ -89,17 +94,7 @@ namespace Admin.Controllers
                 model.UpdatedDate = DateTime.Now;
                 model.IsDeleted = false;
 
-                /*if (ImageFile != null && ImageFile.ContentLength > 0)
-                {
-                    string fileName = Path.GetFileName(ImageFile.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Uploads/Category/"), fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    ImageFile.SaveAs(path);
-
-                    model.Image = "/Uploads/Category/" + fileName;
-                }*/
-
-                var result = new Category_DAL().Update(model);
+                var result = new ProductCategory_DAL().Update(model);
                 if (result > 0)
                 {
                     return Json(new { code = 200, msg = "Cập nhật thành công" }, JsonRequestBehavior.AllowGet);
@@ -116,7 +111,7 @@ namespace Admin.Controllers
         {
             try
             {
-                var result = new Category_DAL().Delete(Id, TenNguoiXoa);
+                var result = new ProductCategory_DAL().Delete(Id, TenNguoiXoa);
                 if (result)
                 {
                     return Json(new { code = 200, msg = "Xóa thành công" }, JsonRequestBehavior.AllowGet);

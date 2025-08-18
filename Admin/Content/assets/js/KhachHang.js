@@ -141,7 +141,9 @@ function SaveKhachHang() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalKhachHang').modal('hide');
-                location.reload();
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
             } else {
                 toastr.error(res.msg || "Cập nhật thất bại");
             }

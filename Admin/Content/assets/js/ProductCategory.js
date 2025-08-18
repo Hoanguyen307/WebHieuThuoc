@@ -1,21 +1,25 @@
-﻿function closeModal() {
-    $('#modalBaiViet').modal('hide');
+﻿$(document).ready(function () {
+    loadDanhMuc(1);
+});
+
+function closeModal() {
+    $('#modalDanhMuc').modal('hide');
 }
 function LoadForm() {
     $.ajax({
-        url: '/BaiViet/Add',
+        url: '/ProductCategory/Add',
         type: 'Get',
         success: function (res) {
             if ($('#formAdd').length > 0) {
                 $('#formAdd')[0].reset();
             }
             $('#Id').val('');
-            $('#modalBaiViet .modal-body').html(res);
-            $('#modalBaiViet').modal('show');
+            $('#modalDanhMuc .modal-body').html(res);
+            $('#modalDanhMuc').modal('show');
         }
     })
 }
-function handleFormUpdateBaiViet(id) {
+function handleFormUpdateDanhMuc(id) {
     debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
@@ -23,12 +27,12 @@ function handleFormUpdateBaiViet(id) {
     }
 
     $.ajax({
-        url: '/BaiViet/Edit',
+        url: '/ProductCategory/Edit',
         type: 'GET',
-        data: { Id: id },
+        data: { ID: id },
         success: function (res) {
-            $('#modalBaiViet .modal-body').html(res);
-            $('#modalBaiViet').modal('show');
+            $('#modalDanhMuc .modal-body').html(res);
+            $('#modalDanhMuc').modal('show');
         },
         error: function (xhr, status, error) {
             console.error('Lỗi khi load form:', error);
@@ -71,100 +75,70 @@ function renderPagination(totalPages, currentPage) {
         e.preventDefault();
         const page = parseInt($(this).data("page"));
         if (!isNaN(page) && page !== currentPage) {
-            loadData(page);
+            loadDanhMuc(page);
         }
     });
 }
-function formatDate(dateStr, includeTime = false) {
-    if (!dateStr) return '';
-
-    // Parse chuỗi có định dạng yyyy/MM/dd
-    const d = dayjs(dateStr, 'YYYY/MM/DD', true); // strict mode
-
-    if (!d.isValid()) return 'Invalid Date';
-
-    return includeTime ? d.format('DD/MM/YYYY HH:mm:ss') : d.format('DD/MM/YYYY');
-}
-function loadBaiViet(page = 1) {
+function loadDanhMuc(page = 1) {
     $("#loadingOverlay").show();
-    const month = $('#month').val();
-    const year = $('#year').val();
-    const tieude = $('#searchString').val();
+
     $.ajax({
-        url: '/BaiViet/GetBaiViet',
+        url: '/ProductCategory/GetDanhSachDanhMuc',
         type: 'GET',
         data: {
-            Month: month,
-            Year: year,
-            searchString: tieude,
             page: page,
             pageSize: 10
         },
         success: function (res) {
-            const tbody = $('#baiviet-body');
-            tbody.empty(); 
+            const tbody = $('#danhmuc-body');
+            tbody.empty();
             let index = (res.currentPage - 1) * res.pageSize + 1;
             let i = 1;
+            //let index = (res.currentPage - 1) * res.pageSize + 1;
 
             res.items.forEach(item => {
                 const row = `
-                <tr id="trow_${item.Id}" onclick="loadLichSuChucVu(${item.Id})" style="cursor:pointer;">
-            <td></td>
-            <td>${i}</td>
-            <td>${item.TieuDe}</td>
-            <td>${item.NoiDung}</td>
-            <td id="status_${item.Id}" style="color: ${item.TrangThai ? 'green' : 'red'};">${item.TrangThai ? 'Hiển thị' : 'Ẩn'}</td>
-            <td>
-                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateBaiViet('${item.Id}'); event.stopPropagation();">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}'); event.stopPropagation();">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-                <button type="button" class="btn btn-outline-warning btn-sm" onclick="toggleStatus('${item.Id}')">${item.TrangThai ? 'Ẩn' : 'Hiển thị'}
-                </button>
-            </td>
-        </tr>`;
+                    <tr>
+                        <td>${i}</td>
+                        <td>${item.Name}</td>
+                        <td>${item.Description ?? ''}</td>
+                        <td>${item.CategoryName ?? ''}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateDanhMuc('${item.Id}')">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}')">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
                 i++;
                 tbody.append(row);
             });
+
             const pageSize = 10;
             const totalCount = res.totalCount ?? res.items.length;
             const totalPages = Math.ceil(totalCount / pageSize);
             renderPagination(totalPages, page);
-
+        },
+        error: function () {
+            toastr.error("Không thể tải danh mục.");
         },
         complete: function () {
             $("#loadingOverlay").hide();
         }
     });
 }
-$(document).ready(function () {
-
-    loadBaiViet(1);
-    renderPagination();
-
-    $('#filterForm').on('submit', function (e) {
-        e.preventDefault();
-
-        loadBaiViet();
-    });
-
-    $('#searchBtn').on('click', function (e) {
-        e.preventDefault();
-        loadBaiViet(1);
-    });
-    $("#loadingOverlay").hide();
-});
-
-function SaveBaiViet() {
+function SaveDanhMuc() {
     debugger
-    var form = $('#form-addBaiViet')[0];
+    var form = $('#form-addDanhmuc')[0];
     var formData = new FormData(form);
     var id = $('#Id').val();
+    formData.delete("IsActive");
+    formData.append("IsActive", $('#IsActive').is(':checked'));
 
-    var url = (id != null && parseInt(id) > 0) ? '/BaiViet/Update' : '/BaiViet/Add';
-    console.log([...formData.entries()]);
+    var url = (id != null && parseInt(id) > 0) ? '/ProductCategory/Update' : '/ProductCategory/Add';
 
     $.ajax({
         url: url,
@@ -175,30 +149,31 @@ function SaveBaiViet() {
         success: function (res) {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
-                $('#modalBaiViet').modal('hide');
+                $('#modalDanhMuc').modal('hide');
                 setTimeout(function () {
-                    location.reload(); 
+                    location.reload();
                 }, 1500);
                 //loadDanhMuc(); 
             } else if (typeof res === 'string') {
-                $('#modalBaiViet .modal-body').html(res);
+                $('#modalDanhMuc .modal-body').html(res);
             } else {
-                alert(res.msg);
+                toastr.error(res.msg || "Cập nhật thất bại");
             }
         }
     });
 }
+
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/BaiViet/DeleteAccount',
+            url: '/ProductCategory/DeleteAccount',
             type: 'POST',
-            data: { Id: id },
+            data: { ID: id },
             success: function (res) {
                 if (res.code === 200) {
                     alert(res.msg);
                     location.reload();
-                    //loadKhachHang();
+                    //loadDanhmuc();
                 } else {
                     alert(res.msg);
                 }
@@ -206,24 +181,3 @@ function handleDelete(id) {
         });
     }
 }
-function toggleStatus(id) {
-    debugger
-
-    $.ajax({
-        url: '/BaiViet/ToggleStatus',
-        type: 'POST',
-        data: { Id: id },
-        success: function (res) {
-            if (res.code === 200) {
-                alert(res.msg);
-                location.reload();
-            } else {
-                alert(res.msg);
-            }
-        },
-        error: function () {
-            alert("Có lỗi xảy ra khi gọi API.");
-        }
-    });
-}
-

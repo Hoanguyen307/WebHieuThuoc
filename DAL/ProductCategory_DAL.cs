@@ -1,21 +1,22 @@
 ﻿using Common;
 using Dapper;
+using Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using Models;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace DAL
 {
-    public class Category_DAL
+    public class ProductCategory_DAL
     {
-        public List<Category> Select_Category_All()
+        public List<ProductCategory> Select_Category_All()
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                var result = SqlMapper.Query<Category>(Connection.getConnection(), "Categories_GetAll",
+                var result = SqlMapper.Query<ProductCategory>(Connection.getConnection(), "sp_ProductCategories_GetAll",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;
             }
@@ -25,13 +26,13 @@ namespace DAL
             }
 
         }
-        public Category SelectById(int ID)
+        public ProductCategory SelectById(int ID)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Id", ID);
-                var model = SqlMapper.Query<Category>(Connection.getConnection(), "Categories_GetById", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+                var model = SqlMapper.Query<ProductCategory>(Connection.getConnection(), "SP_ProductCategories_GetById", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
                 return model;
             }
             catch (Exception)
@@ -40,7 +41,7 @@ namespace DAL
             }
         }
 
-        public int Insert(Category obj)
+        public int Insert(ProductCategory obj)
         {
             try
             {
@@ -48,29 +49,29 @@ namespace DAL
                 param.Add("@Name", obj.Name);
                 param.Add("@Slug", obj.Slug);
                 param.Add("@Description", obj.Description);
-                param.Add("@DisplayOrder", obj.DisplayOrder);
                 param.Add("@IsActive", obj.IsActive);
+                param.Add("@CategoryId", obj.CategoryId);
                 param.Add("@CreatedBy", obj.CreatedBy);
-                return Connection.getConnection().Execute("Categories_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
+                return Connection.getConnection().Execute("sp_ProductCategories_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
             {
                 return 0;
             }
         }
-        public int Update(Category obj)
+        public int Update(ProductCategory obj)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@Id", obj.ID);
+                param.Add("@Id", obj.Id);
                 param.Add("@Name", obj.Name);
                 param.Add("@Slug", obj.Slug);
                 param.Add("@Description", obj.Description);
-                param.Add("@DisplayOrder", obj.DisplayOrder);
                 param.Add("@IsActive", obj.IsActive);
+                param.Add("@CategoryId", obj.CategoryId);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
-                return Connection.getConnection().Execute("Categories_Update", param, commandType: System.Data.CommandType.StoredProcedure);
+                return Connection.getConnection().Execute("sp_ProductCategories_Update", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
             {
@@ -84,7 +85,7 @@ namespace DAL
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Id", ID);
                 param.Add("@DeletedBy", TenNguoiXoa);
-                Connection.getConnection().Execute("Categories_Delete", param, commandType: System.Data.CommandType.StoredProcedure);
+                Connection.getConnection().Execute("sp_ProductCategories_Delete", param, commandType: System.Data.CommandType.StoredProcedure);
                 return true;
             }
             catch (Exception)

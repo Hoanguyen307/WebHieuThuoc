@@ -80,7 +80,9 @@ function SaveNguoiDung() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalnguoidung').modal('hide');
-                location.reload();
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
                 //loadNguoiDung();
             } else if (typeof res === 'string') {
                 $('#modalnguoidung .modal-body').html(res);

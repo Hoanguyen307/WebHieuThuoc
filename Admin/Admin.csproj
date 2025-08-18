@@ -199,7 +199,9 @@
     <Compile Include="Controllers\KhachHangController.cs" />
     <Compile Include="Controllers\NhanVienController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
+    <Compile Include="Controllers\ProductCategoryController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\VoucherController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -471,8 +473,10 @@
     <Content Include="Content\assets\js\pages\widgets.init.js" />
     <Content Include="Content\assets\js\plugins.js" />
     <Content Include="Content\assets\js\Product.js" />
+    <Content Include="Content\assets\js\ProductCategory.js" />
     <Content Include="Content\assets\js\QUANLY.js" />
     <Content Include="Content\assets\js\single_custom.js" />
+    <Content Include="Content\assets\js\Voucher.js" />
     <Content Include="Content\assets\libs\%40ckeditor\ckeditor5-build-classic\build\ckeditor.js" />
     <Content Include="Content\assets\libs\%40simonwep\pickr\pickr.min.js" />
     <Content Include="Content\assets\libs\%40simonwep\pickr\themes\classic.min.css" />
@@ -3765,6 +3769,10 @@
     <Content Include="Views\NhanVien\XepLich.cshtml" />
     <Content Include="Views\DoanhThu\Index.cshtml" />
     <Content Include="Views\Account\AssignRole.cshtml" />
+    <Content Include="Views\ProductCategory\Add.cshtml" />
+    <Content Include="Views\ProductCategory\Index.cshtml" />
+    <Content Include="Views\Voucher\Index.cshtml" />
+    <Content Include="Views\Voucher\Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

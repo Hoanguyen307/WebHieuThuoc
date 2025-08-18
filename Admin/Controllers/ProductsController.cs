@@ -212,19 +212,19 @@ namespace Admin.Controllers
             }
             return Json(new { success = false });
         }*/
-        [HttpPost]
-        public ActionResult IsActive(int ID)
-        {
-            var item = db.Products.Find(ID);
-            if (item != null)
-            {
-                item.IsActive = !item.IsActive;
-                db.Entry(item).State = System.Data.Entity.EntityState.Modified;
-                db.SaveChanges();
-                return Json(new { success = true, isActive = item.IsActive });
-            }
-            return Json(new { success = false });
-        }
+        //[HttpPost]
+        //public ActionResult IsActive(int ID)
+        //{
+        //    var item = db.Products.Find(ID);
+        //    if (item != null)
+        //    {
+        //        item.IsActive = !item.IsActive;
+        //        db.Entry(item).State = System.Data.Entity.EntityState.Modified;
+        //        db.SaveChanges();
+        //        return Json(new { success = true, isActive = item.IsActive });
+        //    }
+        //    return Json(new { success = false });
+        //}
         /*[HttpPost]
         public ActionResult IsSale(int ID)
         {
@@ -338,6 +338,23 @@ namespace Admin.Controllers
             return RedirectToAction("Index");
         }
 
+        [HttpPost]
+        public JsonResult ToggleHienThi(int Id, bool isActive)
+        {
+            try
+            {
+                var result = new Product_DAL().Update_IsActive(Id, isActive);
+                if (result)
+                {
+                    return Json(new { code = 200, msg = "Cập nhật thành công" }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Cập nhật thất bại" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 550, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
     }
 }
