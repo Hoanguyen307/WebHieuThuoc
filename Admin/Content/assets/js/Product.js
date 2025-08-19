@@ -124,8 +124,8 @@ function loadData(page = 1) {
                     <tr id="trow_${item.Id}">
             <td>${index}</td>
             <td><img src="${item.Image}" alt="Ảnh" style="height:50px" /></td>
-            <td>${item.Name}</td>
-            <td>${item.CategoryName || ''}</td>
+            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.Name}</td>
+            <td>${item.ProductCategoryName || ''}</td>
             <td>${item.Quantity}</td>
             <td>${item.Sold}</td>
             <td>${formatCurrency(item.Price)}</td>

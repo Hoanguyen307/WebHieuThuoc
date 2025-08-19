@@ -21,5 +21,6 @@ namespace Models
         public bool IsActive { get; set; }
         public int DisplayOrder { get; set; }
         public ICollection<Post> Posts { get; set; }
+        public List<ProductCategory> ProductCategories { get; set; }
     }
 }

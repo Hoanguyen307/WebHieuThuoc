@@ -40,7 +40,7 @@ namespace Admin.Controllers
             return View();
         }
         [HttpGet]
-        public JsonResult GetProduct(string searchString, decimal? MinPrice, decimal? MaxPrice, int? CategoryId, int? Month, int? Year, int page = 1, int pageSize = 10)
+        public JsonResult GetProduct(string searchString, decimal? MinPrice, decimal? MaxPrice, int? ProductCategoryId, int? Month, int? Year, int page = 1, int pageSize = 10)
         {
             if (Month == 0) Month = null;
             if (Year == 0) Year = null;
@@ -48,7 +48,7 @@ namespace Admin.Controllers
             ProductFilter filter = new ProductFilter
             {
                 Name = string.IsNullOrWhiteSpace(searchString) ? null : searchString,
-                CategoryId = CategoryId,
+                ProductCategoryId = ProductCategoryId,
                 Month = Month,
                 Year = Year,
                 MinPrice = MinPrice,
@@ -69,7 +69,7 @@ namespace Admin.Controllers
         public ActionResult Add(int? id)
         {
             var product = new Product();
-            var listCategory = new Category_DAL().Select_Category_All();
+            var listCategory = new ProductCategory_DAL().Select_Category_All();
             ViewBag.Categories = new SelectList(listCategory, "Id", "Name");
 
             var listBrands = new Product_DAL().Select_Brands_All();
@@ -256,7 +256,7 @@ namespace Admin.Controllers
 
                 for (int row = 2; row <= rowCount; row++)
                 {
-                    var CategoryName = worksheet.Cells[row, 1].Text?.Trim();
+                    var ProductCategoryName = worksheet.Cells[row, 1].Text?.Trim();
                     var Name = worksheet.Cells[row, 2].Text?.Trim();
                     var Slug = worksheet.Cells[row, 3].Text?.Trim();
                     var Description = worksheet.Cells[row, 4].Text?.Trim();
@@ -269,11 +269,10 @@ namespace Admin.Controllers
                     var Tags = worksheet.Cells[row, 11].Text?.Trim();
                     if (string.IsNullOrEmpty(Name))
                         continue;
-                    var category = new Category_DAL().Select_Category_All()
-               .FirstOrDefault(c => c.Name.Equals(CategoryName, StringComparison.OrdinalIgnoreCase));
+                    var category = new ProductCategory_DAL().Select_Category_All()
+               .FirstOrDefault(c => c.Name.Equals(ProductCategoryName, StringComparison.OrdinalIgnoreCase));
                     var existing = db.Products.FirstOrDefault(p => p.Name == Name);
-                    var username = Session["UserName"]?.ToString() ?? "Import";
-
+                    var username = User?.Identity?.Name ?? "Unknown";
                     string savedImageName = null;
                     if (!string.IsNullOrEmpty(Image))
                     {
@@ -303,7 +302,7 @@ namespace Admin.Controllers
 
                     var product = new Product
                     {
-                        CategoryId = category?.ID ?? 0,
+                        ProductCategoryId = category?.Id ?? 0,
                         Name = Name,
                         Slug = Slug,
                         Description = Description,

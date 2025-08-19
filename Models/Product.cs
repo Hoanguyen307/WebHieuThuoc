@@ -20,9 +20,9 @@ namespace Models
         [NotMapped]
         public string Detail { get; set; }
 
-        public int CategoryId { get; set; }
+        public int ProductCategoryId { get; set; }
         [NotMapped]
-        public string CategoryName { get; set; }
+        public string ProductCategoryName { get; set; }
 
         public string Image { get; set; }
 
@@ -37,9 +37,10 @@ namespace Models
         public bool IsActive { get; set; }
         [NotMapped]
         public string Tags { get; set; }
-        [ForeignKey("CategoryId")]
-        public virtual Category ProductCategory { get; set; }
-        public int BrandId { get; set; }
+        [ForeignKey("ProductCategoryId")]
+        public virtual ProductCategory ProductCategory { get; set; }
+        public int? BrandId { get; set; }
+        public string BrandName { get; set; }
         [ForeignKey("BrandId")]
         public virtual ThuongHieu Brand { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
@@ -52,7 +53,7 @@ namespace Models
             public string Name { get; set; }
             public int? Month { get; set; }
             public int? Year { get; set; }
-            public int? CategoryId { get; set; }
+            public int? ProductCategoryId { get; set; }
             public int? BrandId { get; set; }
             public string CategoryName { get; set; }
             public decimal? MinPrice { get; set; }

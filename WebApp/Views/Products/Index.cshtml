@@ -4,6 +4,7 @@
     ViewBag.Title = "Tất cả sản phẩm";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string currentSortOrder = ViewBag.SortOrder ?? "newest";
+
 }
 <link href="~/Content/assets/css/Products.css" rel="stylesheet" />
 
@@ -15,11 +16,23 @@
                 <ul>
                     @foreach (var category in ViewBag.Categories as List<Models.Category>)
                     {
-                        <li>
-                            <a href="@Url.Action("Index", "Products", new { CategoryId = category.ID, sortOrder = ViewBag.SortOrder })"
-                               class="@(ViewBag.SelectedCategoryId == category.ID ? "active" : "")">
-                                @category.Name
-                            </a>
+                        <li class="category-item">
+                            <strong>@category.Name</strong>
+
+                            @if (category.ProductCategories != null && category.ProductCategories.Any())
+                            {
+                                <ul class="product-category-sublist">
+                                    @foreach (var sub in category.ProductCategories)
+                                    {
+                                        <li>
+                                            <a href="@Url.Action("Index", "Products", new { ProductCategoryId = sub.Id, sortOrder = ViewBag.SortOrder })"
+                                               class="@(ViewBag.SelectedProductCategoryId == sub.Id ? "active" : "")">
+                                                @sub.Name
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            }
                         </li>
                     }
                 </ul>
@@ -95,9 +108,20 @@
                                 </a>
                             </li>
                         </ul>
-
                     </div>
                 </div>
+                <form method="get" id="pageSizeForm" class="d-inline-block ms-3">
+                    <select id="pageSize" name="pageSize" class="form-select form-select-sm" onchange="document.getElementById('pageSizeForm').submit();">
+                        <option value="40" @(Request.QueryString["pageSize"] == "40" ? "selected" : "")>Hiển thị 40</option>
+                        <option value="60" @(Request.QueryString["pageSize"] == "60" ? "selected" : "")>Hiển thị 60</option>
+                    </select>
+
+                    <!-- Giữ lại các tham số filter khi gửi form -->
+                    <input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedProductCategoryId" />
+                    <input type="hidden" name="BrandId" value="@ViewBag.SelectedBrandId" />
+                    <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
+                </form>
+
             </div>
 
             <div class="products-grid-list">
@@ -105,7 +129,7 @@
                 {
                     foreach (var product in Model)
                     {
-                        <div class="product-card-vertical">
+                        <div class="product-card-has-image">
                             @{
                                 decimal? discount = 0;
                                 if (product.Price.HasValue && product.Price > 0 && product.SalePrice.HasValue)
@@ -113,35 +137,42 @@
                                     discount = ((product.Price - product.SalePrice) / product.Price) * 100;
                                 }
                             }
-                            @if (product.SalePrice.HasValue && product.SalePrice < product.Price)
-                            {
-                                <div class="discount-badge-vertical">@Math.Round(discount.Value, 0)%</div>
-                            }
 
-                            <a href="@Url.Action("Details", "Products", new { id = product.Id })">
-                                <div class="product-image-vertical">
-                                    <img src="@product.Image" alt="@product.Name" class="img-fluid">
-                                </div>
-                            </a>
-
-                            <a href="@Url.Action("Details", "Products", new { id = product.Id })" class="product-name-vertical">
-                                @product.Name
-                            </a>
-                            <a href="@Url.Action("Details", "Products", new { id = product.Id })" class="product-name-vertical">
-                                @product.Description
-                            </a>
-                            <div class="product-price-vertical">
-                                @if (product.SalePrice.HasValue)
+                            <div class="product-image-box">
+                                <a href="@Url.Action("Details", "Products", new { id = product.Id })">
+                                    <img src="https://localhost:44310/@product.Image" alt="@product.Name" class="product-img" />
+                                </a>
+                                @if (discount > 0)
                                 {
-                                    <span class="flash-price-vertical">@product.SalePrice.Value.ToString("N0") đ</span>
-                                    <span class="original-price-vertical">@product.Price.Value.ToString("N0") đ</span>
-                                }
-                                else
-                                {
-                                    <span class="flash-price-vertical">@product.Price.Value.ToString("N0") đ</span>
+                                    <div class="product-discount-label">@Math.Round(discount.Value, 0)%</div>
                                 }
                             </div>
+
+                            <div class="product-info">
+                                <div class="product-brand">@product.BrandName</div>
+                                <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.Id })">
+                                    @product.Name
+                                </a>
+                                <div class="product-prices">
+                                    @if (product.SalePrice.HasValue && product.SalePrice < product.Price)
+                                    {
+                                        <span class="product-price-sale">@product.SalePrice.Value.ToString("N0") đ</span>
+                                        <span class="product-price-original">@product.Price.Value.ToString("N0") đ</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="product-price-sale">@product.Price.Value.ToString("N0") đ</span>
+                                    }
+                                </div>
+
+                                <div class="product-rating">
+                                    <span class="stars">★★★★★</span>
+                                    <span class="review-count">(10)</span>
+                                    <span class="sold-count">| 54</span>
+                                </div>
+                            </div>
                         </div>
+
                     }
                 }
                 else

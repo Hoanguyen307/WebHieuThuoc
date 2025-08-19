@@ -12,22 +12,25 @@ namespace WebApp.Controllers
     public class ProductsController : Controller
     {
         // GET: Products
-        public ActionResult Index(int? CategoryId, int? BrandId, string sortOrder = "newest")
+        public ActionResult Index(int? ProductCategoryId, int? BrandId, string sortOrder = "newest", int pageSize = 40)
         {
             var filter = new ProductFilter
             {
-                CategoryId = CategoryId,
+                ProductCategoryId = ProductCategoryId,
                 BrandId = BrandId
             };
 
-            var product = new Product_DAL().Select_Published(filter, sortOrder);
+            var product = new Product_DAL().Select_Published(filter, sortOrder).Take(pageSize).ToList(); ;
             var category = new Category_DAL().Select_Category_All();
             ViewBag.Categories = category;
             var listBrands = new Product_DAL().Select_Brands_All();
             ViewBag.Brands = listBrands; 
+            var listproductCategory = new ProductCategory_DAL().Select_Category_All();
+            ViewBag.ProductCategory = listproductCategory; 
+
             ViewBag.SelectedBrandId = BrandId;
             ViewBag.SortOrder = sortOrder;
-            ViewBag.SelectedCategoryId = CategoryId;
+            ViewBag.SelectedCategoryId = ProductCategoryId;
             return View(product);
         }
         public ActionResult Details(int id)
@@ -37,7 +40,7 @@ namespace WebApp.Controllers
             {
                 return HttpNotFound();
             }
-            var relatedProducts = new Product_DAL().Select_Published(new ProductFilter { CategoryId = product.CategoryId }, null)
+            var relatedProducts = new Product_DAL().Select_Published(new ProductFilter { ProductCategoryId = product.ProductCategoryId }, null)
                                      .Where(p => p.Id != product.Id)
                                      .Take(4)
                                      .ToList();

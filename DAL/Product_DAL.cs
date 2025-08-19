@@ -19,7 +19,7 @@ namespace DAL
                 param.Add("@Name", filter.Name);
                 param.Add("@Month", filter.Month);
                 param.Add("@Year", filter.Year);
-                param.Add("@CategoryId", filter.CategoryId);
+                param.Add("@ProductCategoryId", filter.ProductCategoryId);
                 param.Add("@MinPrice", filter.MinPrice);
                 param.Add("@MaxPrice", filter.MaxPrice);
                 var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_GetAll",
@@ -53,7 +53,7 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@CategoryId", obj.CategoryId);
+                param.Add("@ProductCategoryId", obj.ProductCategoryId);
                 param.Add("@Name", obj.Name);
                 param.Add("@Slug", obj.Slug);
                 param.Add("@Description", obj.Description);
@@ -80,7 +80,7 @@ namespace DAL
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Id", obj.Id);
-                param.Add("@CategoryId", obj.CategoryId);
+                param.Add("@ProductCategoryId", obj.ProductCategoryId);
                 param.Add("@Name", obj.Name);
                 param.Add("@Slug", obj.Slug);
                 param.Add("@Description", obj.Description);
@@ -139,7 +139,7 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@CategoryId", filter.CategoryId);
+                param.Add("@ProductCategoryId", filter.ProductCategoryId);
                 param.Add("@BrandId", filter.BrandId);
                 param.Add("@SortOrder", SortOrder);
 
