@@ -155,7 +155,7 @@ function loadData(page = 1) {
         data: {
             Month: month,
             Year: year,
-            CategoryId: categoryId,
+            ProductCategoryId: categoryId,
             searchString: name,
             MinPrice: minPrice,
             MaxPrice: maxPrice,

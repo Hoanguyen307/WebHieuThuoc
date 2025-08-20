@@ -60,7 +60,6 @@ namespace DAL
                 param.Add("@Price", obj.Price);
                 param.Add("@SalePrice", obj.SalePrice);
                 param.Add("@Image", obj.Image);
-                param.Add("@Quantity", obj.Quantity);
                 param.Add("@IsActive", obj.IsActive);
                 param.Add("@IsFeatured", obj.IsFeatured);
                 param.Add("@Tag", obj.Tags);
@@ -87,7 +86,6 @@ namespace DAL
                 param.Add("@Price", obj.Price);
                 param.Add("@SalePrice", obj.SalePrice);
                 param.Add("@Image", obj.Image);
-                param.Add("@Quantity", obj.Quantity);
                 param.Add("@IsActive", obj.IsActive);
                 param.Add("@IsFeatured", obj.IsFeatured);
                 param.Add("@Tag", obj.Tags);

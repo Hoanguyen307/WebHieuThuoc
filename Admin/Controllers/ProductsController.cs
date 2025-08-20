@@ -19,7 +19,7 @@ namespace Admin.Controllers
     {
         private DBConnect db = new DBConnect();
 
-        public ActionResult Index(string searchString, decimal? MinPrice, decimal? MaxPrice, int? CategoryId, int? Month, int? Year)
+        public ActionResult Index(string searchString, decimal? MinPrice, decimal? MaxPrice, int? ProductCategoryId, int? Month, int? Year)
         {
             var currentYear = DateTime.Now.Year;
             var currentMonth = DateTime.Now.Month;
@@ -29,8 +29,8 @@ namespace Admin.Controllers
             var months = Enumerable.Range(1, 12).Select(m => new { Id = m, Name = $"Tháng {m}" }).ToList();
             ViewBag.Months = new SelectList(months, "Id", "Name", Month);
 
-            var listCategory = new Category_DAL().Select_Category_All();
-            ViewBag.Categories = new SelectList(listCategory, "Id", "Name", CategoryId);
+            var listCategory = new ProductCategory_DAL().Select_Category_All();
+            ViewBag.ProductCategories = new SelectList(listCategory, "Id", "Name", ProductCategoryId);
 
 
             ViewBag.MinPrice = MinPrice;

@@ -105,9 +105,9 @@
         </select>
 
         <!-- Danh mục -->
-        <select id="selectCategory" name="CategoryId" class="form-select form-select-sm" style=" width: 160px !important;">
+        <select id="selectCategory" name="ProductCategoryId" class="form-select form-select-sm" style=" width: 160px !important;">
             <option value="">-- Danh mục --</option>
-            @foreach (var b in ViewBag.Categories as SelectList)
+            @foreach (var b in ViewBag.ProductCategories as SelectList)
             {
                 <option value="@b.Value">@b.Text</option>
             }
