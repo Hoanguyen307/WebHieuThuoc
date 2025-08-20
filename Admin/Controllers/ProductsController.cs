@@ -10,7 +10,6 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
-using static Models.Process;
 using static Models.Product;
 
 namespace Admin.Controllers
@@ -124,7 +123,7 @@ namespace Admin.Controllers
             {
                 return HttpNotFound();
             }
-            var listCategory = new Category_DAL().Select_Category_All();
+            var listCategory = new ProductCategory_DAL().Select_Category_All();
             ViewBag.Categories = new SelectList(listCategory, "Id", "Name");
 
             var listBrands = new Product_DAL().Select_Brands_All();
@@ -352,6 +351,44 @@ namespace Admin.Controllers
             catch (Exception ex)
             {
                 return Json(new { code = 550, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        public ActionResult DungTich(int? id)
+        {
+            var product = new DungTichSanPham();
+            var listDungTich = new DungTich_DAL().Select_DungTich_All();
+            ViewBag.DungTiches = new SelectList(listDungTich, "Id", "Value");
+
+            if (id != null)
+            {
+                var sanpham = db.Products.Find(id);
+                if (sanpham != null)
+                {
+                    product.ProductId = sanpham.Id;
+                    product.ProductName = sanpham.Name; 
+                }
+            }
+            return PartialView("DungTich", product);
+        }
+        [HttpPost]
+        public JsonResult AddDungTich(DungTichSanPham model)
+        {
+            try
+            {
+
+                model.CreatedDate = DateTime.Now;
+                model.IsDeleted = false;
+
+                var result = new DungTich_DAL().Insert(model);
+                if (result > 0)
+                {
+                    return Json(new { id = result, code = 200, msg = "Thêm mới thành công" }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Thêm mới thất bại" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi:" + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 

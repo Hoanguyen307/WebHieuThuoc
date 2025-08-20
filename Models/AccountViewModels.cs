@@ -47,6 +47,7 @@ namespace Models
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
+    [NotMapped]
     public class LoginViewModel
     {
         [Required]

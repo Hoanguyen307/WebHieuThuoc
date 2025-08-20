@@ -109,18 +109,19 @@
                             </li>
                         </ul>
                     </div>
-                </div>
-                <form method="get" id="pageSizeForm" class="d-inline-block ms-3">
-                    <select id="pageSize" name="pageSize" class="form-select form-select-sm" onchange="document.getElementById('pageSizeForm').submit();">
-                        <option value="40" @(Request.QueryString["pageSize"] == "40" ? "selected" : "")>Hiển thị 40</option>
-                        <option value="60" @(Request.QueryString["pageSize"] == "60" ? "selected" : "")>Hiển thị 60</option>
-                    </select>
+                    <form method="get" id="pageSizeForm" class="d-inline-block ms-3">
+                        <select id="pageSize" name="pageSize" class="form-select form-select-sm" onchange="document.getElementById('pageSizeForm').submit();">
+                            <option value="40" @(Request.QueryString["pageSize"] == "40" ? "selected" : "")>Hiển thị 40</option>
+                            <option value="60" @(Request.QueryString["pageSize"] == "60" ? "selected" : "")>Hiển thị 60</option>
+                        </select>
 
-                    <!-- Giữ lại các tham số filter khi gửi form -->
-                    <input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedProductCategoryId" />
-                    <input type="hidden" name="BrandId" value="@ViewBag.SelectedBrandId" />
-                    <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
-                </form>
+                        <!-- Giữ lại các tham số filter khi gửi form -->
+                        <input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedProductCategoryId" />
+                        <input type="hidden" name="BrandId" value="@ViewBag.SelectedBrandId" />
+                        <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
+                    </form>
+                </div>
+                
 
             </div>
 

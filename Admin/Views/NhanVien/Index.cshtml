@@ -6,7 +6,7 @@
 @section Styles {
     <link href="~/Content/assets/css/common.css" rel="stylesheet" />
 }
-<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+<div class="container-wrapper" style=" display: flex; flex-direction: column; overflow: auto;">
     <input type="hidden" id="Id" name="Id" />
     <div class="d-flex justify-content-between mb-3" style="padding: 81px 10px 0 260px;">
         <h4>Danh sách nhân viên</h4>
@@ -69,11 +69,10 @@
         </button>
     </form>
     <div class="main-content" style="flex:1; overflow: auto;">
-        <div style=" overflow-x: auto;">
+        <div>
             <table class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;" id="ds-nhanvien">
                 <thead class="thead-light">
                     <tr>
-                        <th><input type="checkbox" id="SelectAll" /></th>
                         <th>STT</th>
                         <th>Họ và tên</th>
                         <th>Giới tính</th>

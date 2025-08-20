@@ -141,7 +141,6 @@ namespace DAL
                 param.Add("@Salary", obj.Salary);
                 param.Add("@StartDate", obj.StartDate);
                 param.Add("@ShiftId", obj.ShiftId);
-                param.Add("@UsersId", obj.UsersId);
                 param.Add("@CreatedBy", obj.CreatedBy);
                 return Connection.getConnection().Execute("sp_Employee_Add", param, commandType: System.Data.CommandType.StoredProcedure);
             }
@@ -192,7 +191,6 @@ namespace DAL
                 param.Add("@Salary", obj.Salary);
                 param.Add("@StartDate", obj.StartDate);
                 param.Add("@ShiftId", obj.ShiftId);
-                param.Add("@UsersId", obj.UsersId);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
                 return Connection.getConnection().Execute("sp_Employee_Update", param, commandType: System.Data.CommandType.StoredProcedure);
             }

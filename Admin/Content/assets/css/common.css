@@ -120,7 +120,7 @@ textarea.form-control {
 	flex-direction: column;
 	width: 100%;
 	height: auto;
-	overflow-y: auto;
+	overflow: auto;
 }
 
 
@@ -133,7 +133,7 @@ textarea.form-control {
 }
 
 .history-fixed {
-	position: fixed;
+	
 	margin-left: 260px;
 	top: 660px;
 	left: 0;

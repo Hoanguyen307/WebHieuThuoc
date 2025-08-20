@@ -1,5 +1,7 @@
 ﻿function closeModal() {
     $('#modalProduct').modal('hide');
+    $('#modalDungTich').modal('hide');
+
 }
 function renderPagination(totalPages, currentPage) {
     if (totalPages === 0) {
@@ -91,6 +93,54 @@ function handleFormUpdateProduct(id) {
     });
 }
 
+function openDungTichModal(id) {
+    if (!id || id <= 0) {
+        alert('ID không hợp lệ!');
+        return;
+    }
+
+    $.ajax({
+        url: '/Products/DungTich',
+        type: 'GET',
+        data: { Id: id },
+        success: function (res) {
+            $('#modalDungTich .modal-body').html(res);
+            $('#modalDungTich').modal('show');
+        },
+        error: function (xhr, status, error) {
+            console.error('Lỗi khi load form:', error);
+            alert('Có lỗi xảy ra khi tải form. Vui lòng thử lại!');
+        }
+    });
+}
+function SaveDungTich() {
+    debugger
+    var form = $('#form-addDungTich')[0];
+    var formData = new FormData(form);
+    var id = $('#Id').val();
+
+    $.ajax({
+        url: '/Products/AddDungTich',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+            if (res.code === 200) {
+                toastr.success(res.msg || "Cập nhật thành công");
+                $('#modalDungTich').modal('hide');
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
+                //loadDanhMuc();
+            } else if (typeof res === 'string') {
+                $('#modalDungTich .modal-body').html(res);
+            } else {
+                toastr.error(res.msg || "Cập nhật thất bại");
+            }
+        }
+    });
+}
 function loadData(page = 1) {
     $("#loadingOverlay").show();
     const month = $('#month').val();
@@ -150,6 +200,10 @@ function loadData(page = 1) {
                 <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}')">
                     <i class="fas fa-trash-alt"></i>
                 </button>
+                <button type="button" class="btn btn-outline-warning btn-sm" onclick="openDungTichModal(${item.Id})">
+                    <i class="fas fa-flask"></i> Dung tích
+                </button>
+
             </td>
         </tr>`;
                 tbody.append(row);

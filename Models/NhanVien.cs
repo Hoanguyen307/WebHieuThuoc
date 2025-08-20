@@ -45,10 +45,10 @@ namespace Models
         [ForeignKey("PositionId")]
         public virtual Position position { get; set; }
 
-        public int? UsersId { get; set; }
+        //public int? UsersId { get; set; }
 
-        [ForeignKey("UsersId")]
-        public virtual LoginViewModel User { get; set; }
+        //[ForeignKey("UsersId")]
+        //public virtual LoginViewModel User { get; set; }
 
         public virtual ICollection<LichSu_ChucVu> LichSuChucVu { get; set; }
 

@@ -60,16 +60,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Account_DAL.cs" />
     <Compile Include="BaiViet_DAL.cs" />
     <Compile Include="Cart_DAL.cs" />
     <Compile Include="Category_DAL.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="DoanhThu_DAL.cs" />
+    <Compile Include="DungTich_DAL.cs" />
     <Compile Include="KhachHang_DAL.cs" />
     <Compile Include="NhanVien_DAL.cs" />
     <Compile Include="Order_DAL.cs" />
-    <Compile Include="Process_DAL.cs" />
     <Compile Include="ProductCategory_DAL.cs" />
     <Compile Include="Product_DAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

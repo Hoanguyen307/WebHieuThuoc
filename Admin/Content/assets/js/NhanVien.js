@@ -119,7 +119,6 @@ function loadNhanVien(page = 1) {
             res.items.forEach(item => {
                 const row = `
             <tr id="trow_${item.Id}" onclick="loadLichSuChucVu(${item.Id})" style="cursor:pointer;">
-            <td></td>
             <td>${i}</td>
             <td>${item.FullName}</td>
             <td>${item.Gender ? 'Nam' : 'Nữ'}</td>
@@ -240,7 +239,9 @@ function SaveLichLamViec() {
             if (res.code === 200) {
                 toastr.success(res.msg);
                 $('#modalXepLich').modal('hide');
-                location.reload();
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
             } else {
                 toastr.error(res.msg || "Xếp lịch thất bại");
             }
@@ -260,7 +261,9 @@ function handleDelete(id) {
             success: function (res) {
                 if (res.code === 200) {
                     toastr.success(res.msg || "Xoá thành công");
-                    location.reload();
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
                     //loadNhanVien();
                 } else {
                     toastr.success(res.msg || "Xoá thất bại");

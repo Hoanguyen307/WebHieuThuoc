@@ -212,9 +212,6 @@ namespace Admin.Controllers
             var listPosition = new NhanVien_DAL().Select_Position_All();
             ViewBag.Positions = new SelectList(listPosition, "Id", "Name");
 
-            var listUser = new Account_DAL().Select_NguoiDung_All();
-            ViewBag.Users = new SelectList(listUser, "Id", "UserName");
-
             if (id != null)
             {
                 var nv = db.NhanViens.Find(id);
@@ -266,9 +263,6 @@ namespace Admin.Controllers
 
             var listPosition = new NhanVien_DAL().Select_Position_All();
             ViewBag.Positions = new SelectList(listPosition, "Id", "Name");
-
-            var listUser = new Account_DAL().Select_NguoiDung_All();
-            ViewBag.Users = new SelectList(listUser, "Id", "UserName");
 
             return PartialView("Add", lstmodel);
         }
@@ -385,89 +379,89 @@ namespace Admin.Controllers
             }
             return Json(new { success = false });
         }
-        [HttpPost]
-        public ActionResult ImportExcel(HttpPostedFileBase excelFile)
-        {
-            if (excelFile == null || excelFile.ContentLength == 0)
-                return RedirectToAction("Index");
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        //[HttpPost]
+        //public ActionResult ImportExcel(HttpPostedFileBase excelFile)
+        //{
+        //    if (excelFile == null || excelFile.ContentLength == 0)
+        //        return RedirectToAction("Index");
+        //    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
-            using (var package = new ExcelPackage(excelFile.InputStream))
-            {
-                var worksheet = package.Workbook.Worksheets[0];
-                int rowCount = worksheet.Dimension.Rows;
+        //    using (var package = new ExcelPackage(excelFile.InputStream))
+        //    {
+        //        var worksheet = package.Workbook.Worksheets[0];
+        //        int rowCount = worksheet.Dimension.Rows;
 
-                for (int row = 2; row <= rowCount; row++)
-                {
-                    var fullName = worksheet.Cells[row, 1].Text?.Trim();
-                    string genderText = worksheet.Cells[row, 2].Text?.Trim().ToLower();
-                    bool gender = genderText == "nam";
-                    var birthDateText = worksheet.Cells[row, 3].Text;
-                    var phone = worksheet.Cells[row, 4].Text?.Trim();
-                    var email = worksheet.Cells[row, 5].Text?.Trim();
-                    var positionName = worksheet.Cells[row, 6].Text?.Trim();
-                    var salaryText = worksheet.Cells[row, 7].Text?.Trim();
-                    var startDateText = worksheet.Cells[row, 8].Text?.Trim();
-                    var shiftName = worksheet.Cells[row, 9].Text?.Trim();
-                    var userName = worksheet.Cells[row, 10].Text?.Trim();
-                    DateTime.TryParseExact(startDateText, new[] { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd" },
-                        CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime startDate);
+        //        for (int row = 2; row <= rowCount; row++)
+        //        {
+        //            var fullName = worksheet.Cells[row, 1].Text?.Trim();
+        //            string genderText = worksheet.Cells[row, 2].Text?.Trim().ToLower();
+        //            bool gender = genderText == "nam";
+        //            var birthDateText = worksheet.Cells[row, 3].Text;
+        //            var phone = worksheet.Cells[row, 4].Text?.Trim();
+        //            var email = worksheet.Cells[row, 5].Text?.Trim();
+        //            var positionName = worksheet.Cells[row, 6].Text?.Trim();
+        //            var salaryText = worksheet.Cells[row, 7].Text?.Trim();
+        //            var startDateText = worksheet.Cells[row, 8].Text?.Trim();
+        //            var shiftName = worksheet.Cells[row, 9].Text?.Trim();
+        //            var userName = worksheet.Cells[row, 10].Text?.Trim();
+        //            DateTime.TryParseExact(startDateText, new[] { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd" },
+        //                CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime startDate);
                     
-                    if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(positionName))
-                        continue;
+        //            if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(positionName))
+        //                continue;
 
-                    if (!DateTime.TryParseExact(birthDateText, new[] { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd" },
-                            CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime birthDate))
-                        continue;
+        //            if (!DateTime.TryParseExact(birthDateText, new[] { "dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd" },
+        //                    CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime birthDate))
+        //                continue;
 
-                    decimal salary = decimal.TryParse(salaryText, out var s) ? s : 0;
+        //            decimal salary = decimal.TryParse(salaryText, out var s) ? s : 0;
 
-                    var position = new NhanVien_DAL().Select_Position_All()
-                                    .FirstOrDefault(p => p.Name.Equals(positionName, StringComparison.OrdinalIgnoreCase));
-                    var shift = new NhanVien_DAL().Select_CaLam_All()
-               .FirstOrDefault(c => c.Name.Equals(shiftName, StringComparison.OrdinalIgnoreCase));
+        //            var position = new NhanVien_DAL().Select_Position_All()
+        //                            .FirstOrDefault(p => p.Name.Equals(positionName, StringComparison.OrdinalIgnoreCase));
+        //            var shift = new NhanVien_DAL().Select_CaLam_All()
+        //       .FirstOrDefault(c => c.Name.Equals(shiftName, StringComparison.OrdinalIgnoreCase));
 
-                    var user = new Account_DAL().Select_NguoiDung_All()
-                                   .FirstOrDefault(u => u.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
+        //            var user = new Account_DAL().Select_NguoiDung_All()
+        //                           .FirstOrDefault(u => u.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
 
-                    var existing = db.NhanViens.FirstOrDefault(nv => nv.Phone == phone);
-                    var username = Session["UserName"]?.ToString() ?? "Import";
-                    var nhanVien = new NhanVien
-                    {
-                        FullName = fullName,
-                        Gender = gender,
-                        BirthDate = birthDate,
-                        Phone = phone,
-                        Email = email,
-                        PositionId = position?.Id ?? 0,
-                        Salary = salary,
-                        StartDate = startDate,
-                        ShiftId = shift?.Id ?? 0,
-                        UsersId = user?.Id ?? 0
-                    };
-                    if (existing != null)
-                    {
-                        // Cập nhật
-                        nhanVien.Id = existing.Id;
-                        nhanVien.UpdatedDate = DateTime.Now;
-                        nhanVien.UpdatedBy = username;
-                        new NhanVien_DAL().Update(nhanVien);
-                    }
-                    else
-                    {
-                        // Thêm mới
-                        nhanVien.CreatedDate = DateTime.Now;
-                        nhanVien.CreatedBy = username;
-                        nhanVien.IsDeleted = false;
-                        new NhanVien_DAL().Insert(nhanVien);
-                    }
+        //            var existing = db.NhanViens.FirstOrDefault(nv => nv.Phone == phone);
+        //            var username = Session["UserName"]?.ToString() ?? "Import";
+        //            var nhanVien = new NhanVien
+        //            {
+        //                FullName = fullName,
+        //                Gender = gender,
+        //                BirthDate = birthDate,
+        //                Phone = phone,
+        //                Email = email,
+        //                PositionId = position?.Id ?? 0,
+        //                Salary = salary,
+        //                StartDate = startDate,
+        //                ShiftId = shift?.Id ?? 0,
+        //                UsersId = user?.Id ?? 0
+        //            };
+        //            if (existing != null)
+        //            {
+        //                // Cập nhật
+        //                nhanVien.Id = existing.Id;
+        //                nhanVien.UpdatedDate = DateTime.Now;
+        //                nhanVien.UpdatedBy = username;
+        //                new NhanVien_DAL().Update(nhanVien);
+        //            }
+        //            else
+        //            {
+        //                // Thêm mới
+        //                nhanVien.CreatedDate = DateTime.Now;
+        //                nhanVien.CreatedBy = username;
+        //                nhanVien.IsDeleted = false;
+        //                new NhanVien_DAL().Insert(nhanVien);
+        //            }
                     
-                }
-            }
+        //        }
+        //    }
 
-            TempData["Success"] = "Đã nhập nhân viên thành công!";
-            return RedirectToAction("Index");
-        }
+        //    TempData["Success"] = "Đã nhập nhân viên thành công!";
+        //    return RedirectToAction("Index");
+        //}
         [HttpGet]
         public ActionResult ExportExcel(NhanVienFilter filter)
         {
@@ -506,7 +500,7 @@ namespace Admin.Controllers
                     worksheet.Cells[row, 7].Value = nv.Salary;
                     worksheet.Cells[row, 8].Value = nv.StartDate?.ToString("dd/MM/yyyy");
                     worksheet.Cells[row, 9].Value = nv.Shift?.Name;
-                    worksheet.Cells[row, 10].Value = nv.User?.UserName;
+                    //worksheet.Cells[row, 10].Value = nv.User?.UserName;
                     row++;
                 }
 

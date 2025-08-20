@@ -33,12 +33,12 @@ namespace Models
 
         [ForeignKey("PositionId")]
         public virtual Position position { get; set; }
-        [NotMapped]
-        public int? UsersId { get; set; }
+        //[NotMapped]
+        //public int? UsersId { get; set; }
         public string GhiChu { get; set; }
 
-        [ForeignKey("UsersId")]
-        public virtual LoginViewModel User { get; set; }
+        //[ForeignKey("UsersId")]
+        //public virtual LoginViewModel User { get; set; }
         public class LichLamViecFilter
         {
             public DateTime? FromDate { get; set; }

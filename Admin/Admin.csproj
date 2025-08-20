@@ -195,6 +195,7 @@
     <Compile Include="Controllers\BaiVietController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\DoanhThuController.cs" />
+    <Compile Include="Controllers\DungTichController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KhachHangController.cs" />
     <Compile Include="Controllers\NhanVienController.cs" />
@@ -370,6 +371,7 @@
     <Content Include="Content\assets\js\DangNhap.js" />
     <Content Include="Content\assets\js\DoanhThu.js" />
     <Content Include="Content\assets\js\DonHang.js" />
+    <Content Include="Content\assets\js\DungTich.js" />
     <Content Include="Content\assets\js\jquery-3.2.1.min.js" />
     <Content Include="Content\assets\js\KhachHang.js" />
     <Content Include="Content\assets\js\layout.js" />
@@ -3773,6 +3775,10 @@
     <Content Include="Views\ProductCategory\Index.cshtml" />
     <Content Include="Views\Voucher\Index.cshtml" />
     <Content Include="Views\Voucher\Add.cshtml" />
+    <Content Include="Views\Products\DungTich.cshtml" />
+    <Content Include="Views\DungTich\Index.cshtml" />
+    <Content Include="Views\DungTich\Add.cshtml" />
+    <Content Include="Views\DungTich\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

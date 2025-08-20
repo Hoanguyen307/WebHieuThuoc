@@ -44,7 +44,7 @@
 
                         <a href="#">
                             <div class="product-image">
-                                <img src="@product.Image" alt="@product.Name">
+                                <img src="https://localhost:44310/@product.Image" alt="@product.Name">
                             </div>
                         </a>
 
@@ -76,36 +76,47 @@
         {
             foreach (var product in Model.LatestProducts)
             {
-                <div class="product-card-vertical">
+                <div class="product-card-has-image">
                     @{
                         decimal? discount = 0;
-                        if (product.Price > 0)
+                        if (product.Price.HasValue && product.Price > 0 && product.SalePrice.HasValue)
                         {
                             discount = ((product.Price - product.SalePrice) / product.Price) * 100;
                         }
                     }
-                    <div class="discount-badge">@((int)discount)%</div>
 
-                    <a href="@Url.Action("Details", "Products", new { id = product.Id })">
-                        <div class="product-image-vertical">
-                            <img src="@product.Image" alt="@product.Name">
+                    <div class="product-image-box">
+                        <a href="@Url.Action("Details", "Products", new { id = product.Id })">
+                            <img src="https://localhost:44310/@product.Image" alt="@product.Name" class="product-img" />
+                        </a>
+                        @if (discount > 0)
+                        {
+                            <div class="product-discount-label">@Math.Round(discount.Value, 0)%</div>
+                        }
+                    </div>
+
+                    <div class="product-info">
+                        <div class="product-brand">@product.BrandName</div>
+                        <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.Id })">
+                            @product.Name
+                        </a>
+                        <div class="product-prices">
+                            @if (product.SalePrice.HasValue && product.SalePrice < product.Price)
+                            {
+                                <span class="product-price-sale">@product.SalePrice.Value.ToString("N0") đ</span>
+                                <span class="product-price-original">@product.Price.Value.ToString("N0") đ</span>
+                            }
+                            else
+                            {
+                                <span class="product-price-sale">@product.Price.Value.ToString("N0") đ</span>
+                            }
                         </div>
-                    </a>
 
-                    <a href="@Url.Action("Details", "Products", new { id = product.Id })" class="product-name-vertical">
-                        @product.Name
-                    </a>
-                    <a href="#" class="product-name">@product.Description</a>
-                    <div class="product-price-vertical">
-                        @if (product.SalePrice.HasValue)
-                        {
-                            <span class="flash-price-vertical">@product.SalePrice.Value.ToString("N0") đ</span>
-                            <span class="original-price-vertical">@product.Price.Value.ToString("N0") đ</span>
-                        }
-                        else
-                        {
-                            <span class="flash-price-vertical">@product.Price.Value.ToString("N0") đ</span>
-                        }
+                        <div class="product-rating">
+                            <span class="stars">★★★★★</span>
+                            <span class="review-count">(10)</span>
+                            <span class="sold-count">| 54</span>
+                        </div>
                     </div>
                 </div>
             }

@@ -117,6 +117,12 @@ body {
 	color: #e74c3c;
 	font-weight: 500;
 }
+.discount-percentage {
+	font-size: 1rem;
+	color: #ff66b2;
+	font-weight: bold;
+	margin-left: 10px;
+}
 
 /* Variant & Quantity */
 .product-variants p, .product-quantity p {
@@ -198,6 +204,9 @@ body {
 	overflow: hidden;
 	transition: box-shadow 0.2s ease, transform 0.2s ease;
 	background-color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 
 	.related-product-card:hover {
@@ -215,16 +224,23 @@ body {
 
 	.related-product-card .card-body {
 		padding: 10px;
+		
 	}
 
 	.related-product-card .card-title {
-		font-size: 0.9rem;
-		font-weight: 500;
-		line-height: 1.3;
-		height: 3em;
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
 		overflow: hidden;
+		text-overflow: ellipsis;
+		height: 3em;
+		line-height: 1.5em;
+		text-decoration: none; /* Bỏ gạch chân */
 		color: #333;
 		margin-bottom: 5px;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 	}
 
 	.related-product-card .card-price {

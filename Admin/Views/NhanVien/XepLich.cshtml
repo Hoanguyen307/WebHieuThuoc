@@ -3,6 +3,7 @@
     ViewBag.Title = "Xếp lịch làm việc";
     var caLams = ViewBag.CaLams as List<Models.CaLam>;
     var startDate = DateTime.Today;
+
 }
 <link href="~/Content/assets/css/XepLich.css" rel="stylesheet" />
 
@@ -30,6 +31,7 @@
                                     @foreach (var ca in caLams)
                                     {
                                         var checkboxId = $"lich_{ngay:yyyyMMdd}_{ca.Id}";
+
                                         <div class="form-check form-check-inline">
                                             <input class="form-check-input" type="checkbox"
                                                    name="lichTrongTuan"

@@ -1,0 +1,40 @@
+﻿@model Models.DungTichSanPham
+@{
+    ViewBag.Title = "Cập nhật dung tích sản phẩm";
+}
+
+<form id="form-addDanhmuc" autocomplete="off" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.Id)
+    @*<input type="hidden" id="Id" value=" @Model.Id" />*@
+    <div class="modal-body" style="color:black">
+        <div class="form-group row">
+            <label>Tên Danh Mục</label>
+            <input type="text" class="form-control" id="Name" name="Name" placeholder="Tên danh mục" value="@Model.Name" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Url</label>
+            <input type="text" class="form-control" id="Slug" name="Slug" value="@Model.Slug" placeholder="Đường dẫn" />
+        </div>
+        <div class="form-group row">
+            <label>Mô tả</label>
+            <input type="text" class="form-control" id="Description" name="Description" value="@Model.Description" placeholder="Mô tả" autocomplete="off" />
+        </div>
+        <div class="form-group row">
+            <label>Danh mục</label>
+            @Html.DropDownListFor(m => m.CategoryId, (SelectList)ViewBag.ProductCategories, "-- Chọn danh mục --", new { @class = "form-control" })
+        </div>
+        <div class="form-group row">
+            <div class="form-check">
+                <input type="hidden" name="IsActive" value="false" />
+                <input type="checkbox" class="form-check-input" id="IsActive" name="IsActive" value="true" @(Model.IsActive ? "checked" : "") />
+                <label class="form-check-label" for="IsActive">Hiển thị danh mục</label>
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modaldanhmuc"><i class="fas fa-times"></i> Đóng</button>
+        <button type="button" onclick="SaveDanhMuc()" class="btn btn-primary"> <i class="fas fa-save"></i> Lưu</button>
+    </div>
+</form>
+

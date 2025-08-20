@@ -12,21 +12,21 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home1")">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a href="#">@Model.Product.CategoryName</a></li>
+                    <li class="breadcrumb-item"><a href="#">@Model.Product.ProductCategoryName</a></li>
                     <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
                 </ol>
             </nav>
 
             <div class="row main-product-section">
                 <div class="col-md-5 product-image-wrapper">
-                    <img src="@Model.Product.Image" alt="@Model.Product.Name" class="img-fluid main-product-image">
+                    <img src="https://localhost:44310/@Model.Product.Image" alt="@Model.Product.Name" class="img-fluid main-product-image">
                 </div>
 
                 <div class="col-md-7 product-info-wrapper">
                     <h1 class="product-name">@Model.Product.Name</h1>
-                    @*<div class="product-ratings d-flex align-items-center mb-3">
-                            <span>23 đánh giá | 60 Hỏi đáp | Mã sản phẩm: 422208871</span>
-                        </div>*@
+                    <div class="product-ratings d-flex align-items-center mb-3">
+                        <span>23 đánh giá | 60 Hỏi đáp | Mã sản phẩm: 422208871</span>
+                    </div>
                     <div class="product-price-info mt-3">
                         @*<div class="flash-deal-section mb-3">
                                 <div class="flash-deal-badge">FLASH DEAL</div>
@@ -47,7 +47,21 @@
                     </div>
 
                     <div class="product-variants mt-4">
+                        @*<label>Chọn dung tích:</label>
+                        <select id="volumeSelect" class="form-control">
+                            @foreach (var item in Model.ProductVolumes)
+                            {
+                                <option value="@item.Id" data-price="@item.Price" data-sale="@item.SalePrice">
+                                    @item.Volume
+                                </option>
+                            }
+                        </select>*@
                         <p class="mb-2 fw-bold">Dung tích</p>
+                        @*@foreach (var variant in Model.Variants)
+        {
+            <button class="btn btn-outline-secondary variant-btn">@variant</button>
+        }*@
+
                         <div class="d-flex gap-2">
                             <button class="btn btn-outline-secondary variant-btn active">2 x 440ml</button>
                             <button class="btn btn-outline-secondary variant-btn">100ml</button>
@@ -110,7 +124,7 @@
                         <a href="@Url.Action("Details", new { id = relatedProduct.Id })" class="related-product-card d-block mb-3">
                             <div class="row g-0">
                                 <div class="col-4">
-                                    <img src="@relatedProduct.Image" class="img-fluid rounded-start" alt="@relatedProduct.Name">
+                                    <img src="https://localhost:44310/@relatedProduct.Image" class="img-fluid rounded-start" alt="@relatedProduct.Name">
                                 </div>
                                 <div class="col-8">
                                     <div class="card-body">
@@ -165,3 +179,17 @@
     });
 });
 </script>
+<script>
+    $('#volumeSelect').on('change', function () {
+        var price = $(this).find(':selected').data('price');
+        var sale = $(this).find(':selected').data('sale');
+
+        $('#productPrice').text(price + 'đ');
+        if (sale > 0 && sale < price) {
+            $('#productSalePrice').text(sale + 'đ').show();
+        } else {
+            $('#productSalePrice').hide();
+        }
+    });
+</script>
+

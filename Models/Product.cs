@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,7 @@ namespace Models
     [Table("Products")]
     public class Product : BaseModel
     {
+        [Key]
         public int Id { get; set; }
 
         public string Name { get; set; }
@@ -40,6 +42,7 @@ namespace Models
         [ForeignKey("ProductCategoryId")]
         public virtual ProductCategory ProductCategory { get; set; }
         public int? BrandId { get; set; }
+        [NotMapped]
         public string BrandName { get; set; }
         [ForeignKey("BrandId")]
         public virtual ThuongHieu Brand { get; set; }
