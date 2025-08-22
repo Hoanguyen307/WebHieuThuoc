@@ -1,0 +1,56 @@
+﻿@model Models.NhapKho
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "Nhập kho";
+}
+<form id="form-addNhapKho" autocomplete="off">
+    @Html.HiddenFor(m => m.Id)
+    <input type="hidden" id="SelectedProductsJson"
+           value='@Html.Raw(JsonConvert.SerializeObject(Model.ChiTietNhapKho))' />
+
+    <input type="hidden" id="ProductsData" value="@ViewBag.Products" />
+    <input type="hidden" id="TotalAmount" name="TotalAmount" value="@Model.TotalAmount" />
+    <div class="modal-body" style="color:black">
+        <div class="tab-pane" id="tabXemTruoc" role="tabpanel">
+            <table class="table table-sm table-bordered">
+                <tr><th>Mã phiếu</th><td>@Model.MaPhieu</td></tr>
+                <tr><th>Ngày nhập</th><td>@Model.NgayNhap.ToString("dd/MM/yyyy")</td></tr>
+                <tr><th>Người nhập</th><td>@Model.NguoiNhap</td></tr>
+                <tr><th>Ghi chú</th><td>@Model.GhiChu</td></tr>
+                <tr><th>Tổng tiền</th><td>@Model.TotalAmount.ToString("N0") VNĐ</td></tr>
+            </table>
+            <h6>Chi tiết sản phẩm</h6>
+            <table class="table table-bordered" id="previewChiTiet">
+                <thead>
+                    <tr>
+                        <th>Tên sản phẩm</th>
+                        <th>Số lượng</th>
+                        <th>Đơn giá nhập</th>
+                        <th>Hạn sử dụng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model.ChiTietNhapKho)
+                    {
+                        <tr>
+                            <td>@c.ProductName</td>
+                            <td>@c.SoLuong</td>
+                            <td>@c.DonGiaNhap.ToString("N0")</td>
+                            <td>@c.HanSuDung</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modal">
+            <i class="fas fa-times"></i> Đóng
+        </button>
+        @*<button type="button" onclick="SavePhieuNhap()" class="btn btn-primary">
+                <i class="fas fa-save"></i> Lưu
+            </button>*@
+    </div>
+</form>

@@ -1,0 +1,102 @@
+﻿@model PagedList.IPagedList<Models.NhapKho>
+@{
+    ViewBag.Title = "Danh mục nhập kho";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
+<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+    <div class="d-flex justify-content-between mb-3" style="padding: 81px 10px 0 260px;">
+        <h4>Danh sách sản phẩm nhập</h4>
+        <div>
+            <button type="button" class="btn btn-primary" onclick="LoadForm()">
+                <i class="fas fa-plus"></i>
+                Thêm mới
+            </button>
+        </div>
+    </div>
+    <form id="filterForm" class="filter-form">
+
+        <!-- Tên sản phẩm -->
+        <input type="text" class="form-control form-control-sm search-input"
+               id="searchString" name="searchString"
+               placeholder="Tìm kiếm theo tên sản phẩm..." />
+
+        <!-- Tháng -->
+        <select id="month" name="Month" class="form-select form-select-sm" style=" width: 95px !important;">
+            <option value="">Tháng</option>
+            @foreach (var m in ViewBag.Months as SelectList)
+            {
+                <option value="@m.Value">@m.Text</option>
+            }
+        </select>
+
+        <!-- Năm -->
+        <select id="year" name="Year" class="form-select form-select-sm" style=" width: 75px !important;">
+            <option value="">Năm</option>
+            @foreach (var y in ViewBag.Years as SelectList)
+            {
+                <option value="@y.Value">@y.Text</option>
+            }
+        </select>
+
+        <!-- Nút lọc -->
+        <button class="btn btn-primary" type="submit" id="searchBtn">
+            <i class="fa fa-search"></i> Lọc
+        </button>
+    </form>
+    <div class="main-content" style="flex:1; overflow: auto;">
+        <div style=" overflow-x: auto;">
+            <table class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;" id="ds-nhapkho">
+                <thead class="thead-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã phiếu</th>
+                        <th>Ngày nhập</th>
+                        <th>Người nhập</th>
+                        <th>Nhà cung cấp</th>
+                        <th>Ghi chú</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody id="nhapkho-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination" class="d-flex justify-content-end mt-2"></div>
+    </div>
+    <div class="modal" id="modalNhapKho" style="color:black">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modaldanhmucLabel">Thông tin nhập kho    </h5>
+                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="color: black">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalDetail" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" style="text-align:center;">Chi tiết phiếu nhập</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body" style="color:black">
+                    <!-- Ajax sẽ load nội dung ở đây -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script src="~/Content/assets/js/NhapKho.js?v=(@DateTime.Now.Ticks)"></script>
+}
+

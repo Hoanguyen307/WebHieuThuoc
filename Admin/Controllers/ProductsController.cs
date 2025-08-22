@@ -14,7 +14,7 @@ using static Models.Product;
 
 namespace Admin.Controllers
 {
-    [Authorize(Roles = "Admin, Employee")]
+    /*[Authorize(Roles = "Admin, Employee")]*/
     public class ProductsController : Controller
     {
         private DBConnect db = new DBConnect();
@@ -55,11 +55,27 @@ namespace Admin.Controllers
             };
 
             var processes = new Product_DAL().Select_Product_All(filter);
+            int threshold = 10;
+
             var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+            var result = pagedList.Select(p => new
+            {
+                p.Id,
+                p.Image,
+                p.Name,
+                p.ProductCategoryName,
+                p.Price,
+                p.Quantity,
+                p.Sold,
+                p.SalePrice,
+                p.IsActive,
+                p.IsFeatured,
+                CanhBaoHetHang = p.Quantity <= threshold
+            }).ToList();
 
             return Json(new
             {
-                items = pagedList.ToList(),
+                items = result,
                 totalCount = pagedList.TotalItemCount,
                 currentPage = pagedList.PageNumber,
                 pageSize = pagedList.PageSize

@@ -63,4 +63,31 @@ namespace Models
             public decimal? MaxPrice { get; set; }
         }
     }
+
+    [Table("ProductReviews")]
+    public class ProductReview
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public int ProductId { get; set; }
+
+        
+        public int CustomerId { get; set; }
+
+        [Range(1, 5)]
+        public int Rating { get; set; }
+
+        public string Comment { get; set; }
+
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime? UpdatedDate { get; set; }
+
+        public bool IsDeleted { get; set; } = false;
+
+        [ForeignKey("ProductId")]
+        public virtual Product Product { get; set; }
+        [ForeignKey("CustomerId")]
+        public virtual KhachHang Customer { get; set; }
+    }
 }

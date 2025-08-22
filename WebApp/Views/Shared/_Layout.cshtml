@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>@ViewBag.Title - Mỹ phẩm chính hãng</title>
+    <link rel="shortcut icon" href="~/Content/assets/images/Logo/Logo2.png">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
@@ -19,9 +20,18 @@
     <header class="header">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
-                <a href="/" class="text-decoration-none fs-3">
-                    <span class="logo-text">Hoà <span class="text-pink">Đại</span> <span class="text-gradient">Nhân</span></span>
+                <a href="@Url.Action("Index", "Home1")" class="logo logo-dark">
+                    <span class="logo-sm">
+                        <img src="~/Content/assets/images/Logo/Logo2.png" alt="" height="100">
+                    </span>
+                    @*<span class="logo-lg">
+                        <img src="~/Content/assets/images/Logo/Logo2.png" alt="" height="70">
+                    </span>*@
                 </a>
+                @*<a href="/" class="text-decoration-none fs-3">
+                    <img src="~/Content/assets/images/Logo/Logo2.png" alt="" height="70" />
+                    <span class="logo-text">Hoà <span class="text-pink">Đại</span> <span class="text-gradient">Nhân</span></span>
+                </a>*@
 
                 <div class="header-right d-flex align-items-center gap-4">
                     <div class="search-box">

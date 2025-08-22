@@ -68,6 +68,20 @@
                     </ul>
                 </div>
             </li>
+            <li class="nav-item">
+                <a class="nav-link menu-link" href="#sidebarKho" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCategory">
+                    <i class="fa fa-warehouse"></i> <span data-key="t-dashboards">Quản lý Kho</span>
+                </a>
+                <div class="collapse menu-dropdown" id="sidebarKho">
+                    <ul class="nav nav-sm flex-column">
+                        <li class="nav-item">
+                            <a href="~/NhapKho/Index" class="nav-link" data-key="t-analytics"> Nhập kho</a>
+                        <li class="nav-item">
+                            <a href="~/XuatKho/Index" class="nav-link" data-key="t-crm">Xuất kho</a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
             @if (User.IsInRole("Admin"))
             {
                 <li><a class="nav-link" href="~/NhanVien/Index"><i class="fa fa-user-tie"></i> Quản lý nhân viên</a></li>

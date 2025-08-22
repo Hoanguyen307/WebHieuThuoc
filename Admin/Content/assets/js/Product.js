@@ -176,7 +176,7 @@ function loadData(page = 1) {
             <td><img src="${item.Image}" alt="Ảnh" style="height:50px" /></td>
             <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.Name}</td>
             <td>${item.ProductCategoryName || ''}</td>
-            <td>${item.Quantity}</td>
+            <td class="${item.CanhBaoHetHang ? 'text-danger' : ''}">${item.Quantity}</td>
             <td>${item.Sold}</td>
             <td>${formatCurrency(item.Price)}</td>
             <td>${formatCurrency(item.SalePrice)}</td>

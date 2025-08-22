@@ -199,10 +199,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KhachHangController.cs" />
     <Compile Include="Controllers\NhanVienController.cs" />
+    <Compile Include="Controllers\NhapKhoController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\ProductCategoryController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\VoucherController.cs" />
+    <Compile Include="Controllers\XuatKhoController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -312,6 +314,9 @@
     <Content Include="Content\assets\images\Kem-tri-nam-da-Charme-Lumino-3.jpg" />
     <Content Include="Content\assets\images\kem-tri-nam-innisfree-brightening-pore-spot-treatment-833334.jpg" />
     <Content Include="Content\assets\images\logohead-min.png" />
+    <Content Include="Content\assets\images\Logo\Logo.png" />
+    <Content Include="Content\assets\images\Logo\Logo1.png" />
+    <Content Include="Content\assets\images\Logo\Logo2.png" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-1.jpg" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-2.jpg" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-3.jpg" />
@@ -377,6 +382,7 @@
     <Content Include="Content\assets\js\layout.js" />
     <Content Include="Content\assets\js\NguoiDung.js" />
     <Content Include="Content\assets\js\NhanVien.js" />
+    <Content Include="Content\assets\js\NhapKho.js" />
     <Content Include="Content\assets\js\pages\animation-aos.init.js" />
     <Content Include="Content\assets\js\pages\apexcharts-area.init.js" />
     <Content Include="Content\assets\js\pages\apexcharts-bar.init.js" />
@@ -479,6 +485,7 @@
     <Content Include="Content\assets\js\QUANLY.js" />
     <Content Include="Content\assets\js\single_custom.js" />
     <Content Include="Content\assets\js\Voucher.js" />
+    <Content Include="Content\assets\js\XuatKho.js" />
     <Content Include="Content\assets\libs\%40ckeditor\ckeditor5-build-classic\build\ckeditor.js" />
     <Content Include="Content\assets\libs\%40simonwep\pickr\pickr.min.js" />
     <Content Include="Content\assets\libs\%40simonwep\pickr\themes\classic.min.css" />
@@ -3738,6 +3745,21 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Uploads\Product\1_44022494ed4d41429ec9096353b24240.jpg" />
     <Content Include="Uploads\Product\637709368401022961_637709368439075065.jpg" />
+    <Content Include="Uploads\Product\Armaf%281%29.png" />
+    <Content Include="Uploads\Product\Armaf%282%29.png" />
+    <Content Include="Uploads\Product\Armaf.png" />
+    <Content Include="Uploads\Product\Dolce &amp; Gabbana%281%29.png" />
+    <Content Include="Uploads\Product\Dolce &amp; Gabbana.png" />
+    <Content Include="Uploads\Product\Kiss My Body%281%29.png" />
+    <Content Include="Uploads\Product\Kiss My Body%282%29.png" />
+    <Content Include="Uploads\Product\Kiss My Body%283%29.png" />
+    <Content Include="Uploads\Product\Kiss My Body.png" />
+    <Content Include="Uploads\Product\Laura Anne%281%29.png" />
+    <Content Include="Uploads\Product\Laura Anne%282%29.png" />
+    <Content Include="Uploads\Product\Laura Anne%283%29.png" />
+    <Content Include="Uploads\Product\Laura Anne%284%29.png" />
+    <Content Include="Uploads\Product\Laura Anne.png" />
+    <Content Include="Uploads\Product\Nước Hoa Nam Armaf Club De Nuit Intense Man EDT 105ml.png" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -3779,11 +3801,17 @@
     <Content Include="Views\DungTich\Index.cshtml" />
     <Content Include="Views\DungTich\Add.cshtml" />
     <Content Include="Views\DungTich\Edit.cshtml" />
+    <Content Include="Views\NhapKho\Index.cshtml" />
+    <Content Include="Views\NhapKho\Add.cshtml" />
+    <Content Include="Views\XuatKho\Index.cshtml" />
+    <Content Include="Views\XuatKho\Detail.cshtml" />
+    <Content Include="Views\NhapKho\Detail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Images\Products\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\TonKho\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

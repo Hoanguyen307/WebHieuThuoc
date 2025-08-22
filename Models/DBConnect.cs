@@ -32,5 +32,7 @@ namespace Models
         public virtual DbSet<VoucherCustomer> VoucherCustomers { get; set; }
         public virtual DbSet<DungTich> DungTiches { get; set; }
         public virtual DbSet<DungTichSanPham> DungTichSanPhams { get; set; }
+        public virtual DbSet<NhapKho> NhapKhos { get; set; }
+        public virtual DbSet<XuatKho> XuatKhos { get; set; }
     }
 }
