@@ -3,6 +3,7 @@ using Models;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -11,7 +12,7 @@ using static Models.Product;
 
 namespace Admin.Controllers
 {
-    [Authorize(Roles = "Admin, Employee")]
+    /*[Authorize(Roles = "Admin, Employee")]*/
     public class KhachHangController : Controller
     {
         // GET: KhachHang
@@ -182,6 +183,31 @@ namespace Admin.Controllers
             catch (Exception ex)
             {
                 return Json(new { code = 500, msg = "Lỗi: " + ex.InnerException?.Message ?? ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpGet]
+        public JsonResult GetPointHistory(int customerId, int page = 1, int pageSize = 10)
+        {
+            try
+            {
+                var history = new KhachHang_DAL().LichSu_Diem(customerId);
+                if (history == null || !history.Any())
+                {
+                    return Json(new { code = 404, msg = "Không có lịch sử điểm nào" }, JsonRequestBehavior.AllowGet);
+                }
+                var pagedList = history.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+                return Json(new
+                {
+                    code = 200,
+                    items = pagedList.ToList(),
+                    totalCount = pagedList.TotalItemCount,
+                    currentPage = pagedList.PageNumber,
+                    pageSize = pagedList.PageSize
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 

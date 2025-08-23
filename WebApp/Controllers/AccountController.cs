@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -10,8 +12,9 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Models;
+using WebApp;
 
-namespace WebApp.Controllers
+namespace Admin.Controllers
 {
     public class AccountController : Controller
     {
@@ -107,6 +110,148 @@ namespace WebApp.Controllers
             }
         }
 
+        [AllowAnonymous]
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult Register(string email, string userName, string password, string confirmPassword)
+        {
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
+            {
+                return Json(new { code = 400, msg = "Vui lòng nhập đầy đủ thông tin!" }, JsonRequestBehavior.AllowGet);
+                //ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
+                //return View();
+            }
+
+            if (password != confirmPassword)
+            {
+                return Json(new { code = 400, msg = "Mật khẩu xác nhận không khớp!" }, JsonRequestBehavior.AllowGet);
+                /*ViewBag.Error = "Mật khẩu xác nhận không khớp!";
+                return View();*/
+            }
+
+            if (!email.Contains("@") || !email.Contains("."))
+            {
+                return Json(new { code = 400, msg = "Email không hợp lệ!" }, JsonRequestBehavior.AllowGet);
+                /*ViewBag.Error = "Email không hợp lệ!";
+                return View();*/
+            }
+
+            // Kiểm tra email hoặc username đã tồn tại chưa
+            var existingUser = UserManager.Users.FirstOrDefault(u => u.Email == email || u.UserName == userName);
+            if (existingUser != null)
+            {
+                return Json(new { code = 400, msg = "Tên đăng nhập hoặc email đã tồn tại!" }, JsonRequestBehavior.AllowGet);
+                /*ViewBag.Error = "Tên đăng nhập hoặc email đã tồn tại!";
+                return View();*/
+            }
+
+            // Sinh mã OTP
+            string otp = new Random().Next(100000, 999999).ToString();
+
+            TempData["OTP"] = otp;
+            TempData["Email"] = email;
+            TempData["UserName"] = userName;
+            TempData["Password"] = password;
+
+            // Gửi mail OTP
+            bool mailSent = SendOTP(email, otp);
+            if (!mailSent)
+            {
+                return Json(new { code = 500, msg = "Không thể gửi email xác nhận. Vui lòng thử lại!" }, JsonRequestBehavior.AllowGet);
+                /*ViewBag.Error = "Không thể gửi email xác nhận. Vui lòng thử lại!";
+                return View();*/
+            }
+            return Json(new { code = 200, msg = "Đăng ký thành công!", redirectUrl = Url.Action("ConfirmOTP") }, JsonRequestBehavior.AllowGet);
+            //return RedirectToAction("ConfirmOTP");
+        }
+
+        [AllowAnonymous]
+        public ActionResult ConfirmOTP()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmOTP(string otp_input)
+        {
+            string otp = TempData["OTP"]?.ToString();
+            string email = TempData["Email"]?.ToString();
+            string userName = TempData["UserName"]?.ToString();
+            string password = TempData["Password"]?.ToString();
+
+            if (otp_input == otp)
+            {
+                var user = new ApplicationUser
+                {
+                    UserName = userName,
+                    Email = email,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = "System"
+                };
+
+                var result = await UserManager.CreateAsync(user, password);
+                if (result.Succeeded)
+                {
+                    TempData["Success"] = "Đăng ký thành công!";
+                    return RedirectToAction("Login");
+                }
+                else
+                {
+                    AddErrors(result);
+                    TempData.Keep();
+                    return View();
+                }
+            }
+
+            ViewBag.Error = "Mã OTP không đúng. Vui lòng thử lại!";
+            TempData.Keep();
+            return View();
+        }
+
+        private bool SendOTP(string toEmail, string otp)
+        {
+            try
+            {
+                var fromAddress = new MailAddress("hoanguyen3072003@gmail.com", "Hệ thống");
+                var toAddress = new MailAddress(toEmail);
+                string fromPassword = "grcb nutd uzan jzqc"; // Gmail App Password
+                string subject = "Mã xác nhận đăng ký tài khoản";
+                string body = $"Mã OTP của bạn là: {otp}";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
+                    EnableSsl = true,
+                    Timeout = 20000,
+                };
+
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body
+                })
+                {
+                    smtp.Send(message);
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         //
         // POST: /Account/LogOff

@@ -1,0 +1,64 @@
+﻿@model PagedList.IPagedList<Models.ProductReview>
+@{
+    ViewBag.Title = "Danh sách đánh giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
+<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+    <div class="d-flex justify-content-between mb-3" style="padding: 81px 10px 0 260px;">
+        <h4>Danh sách đánh giá sản phẩm</h4>
+    </div>
+    <form id="filterForm" class="filter-form">
+
+        <input type="text" class="form-control form-control-sm search-input"
+               id="searchString" name="searchString"
+               placeholder="Tìm kiếm sản phẩm hoặc khách hàng..." style="width: 250px !important;" />
+
+        <div class="form-group d-flex align-items-center me-2">
+            <input type="date" id="FromDate" name="FromDate" class="form-control form-control-sm" style="width: 140px !important;">
+        </div>
+
+        <div class="form-group d-flex align-items-center me-2">
+            <input type="date" id="ToDate" name="ToDate" class="form-control form-control-sm" style="width: 140px !important;">
+        </div>
+
+        <select id="Rating" name="Rating" class="form-select form-select-sm" style="width: 120px; font-size: 16px;">
+            <option value="">-- Số sao --</option>
+            <option value="1" style="color: gold; font-size: 16px;">★</option>
+            <option value="2" style="color: gold; font-size: 16px;">★★</option>
+            <option value="3" style="color: gold; font-size: 16px;">★★★</option>
+            <option value="4" style="color: gold; font-size: 16px;">★★★★</option>
+            <option value="5" style="color: gold; font-size: 16px;">★★★★★</option>
+        </select>
+
+        <!-- Nút lọc -->
+        <button class="btn btn-primary" type="submit" id="searchBtn">
+            <i class="fa fa-search"></i> Tìm kiếm
+        </button>
+    </form>
+    <div class="main-content" style="flex:1; overflow: auto;">
+        <div style=" overflow-x: auto;">
+            <table class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;" id="ds-review">
+                <thead class="thead-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên sản phẩm</th>
+                        <th>Khách hàng</th>
+                        <th>Số sao</th>
+                        <th>Bình luận</th>
+                        <th>Ngày tạo</th>
+                    </tr>
+                </thead>
+                <tbody id="review-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination" class="d-flex justify-content-end mt-2"></div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/Content/assets/js/DanhGia.js?v=(@DateTime.Now.Ticks)"></script>
+}
+

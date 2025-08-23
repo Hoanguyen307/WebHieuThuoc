@@ -31,7 +31,7 @@ namespace Models
         public bool IsActive { get; set; }
         public int SkipCount { get; set; }
         public int MaxResultCount { get; set; }
-
+        public decimal PointsBalance { get; set; }
         public class KhachHangFilter
         {
             public string FullName { get; set; }

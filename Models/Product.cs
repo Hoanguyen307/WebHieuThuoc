@@ -72,7 +72,8 @@ namespace Models
 
         public int ProductId { get; set; }
 
-        
+        public string ProductName { get; set; }
+        public string CustomerName { get; set; }
         public int CustomerId { get; set; }
 
         [Range(1, 5)]
@@ -89,5 +90,13 @@ namespace Models
         public virtual Product Product { get; set; }
         [ForeignKey("CustomerId")]
         public virtual KhachHang Customer { get; set; }
+
+        public class ProductReviewFilter
+        {
+            public string SearchString { get; set; }
+            public int? Rating { get; set; }
+            public DateTime? FromDate { get; set; }
+            public DateTime? ToDate { get; set; }
+        }
     }
 }

@@ -7,6 +7,7 @@ using System.Web;
 using Models;
 using static Models.Product;
 using static Models.KhachHang;
+using static Models.PointsModel;
 
 namespace DAL
 {
@@ -136,5 +137,27 @@ namespace DAL
                 return false;
             }
         }
+        public List<PointsHistory> LichSu_Diem(int customerId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CustomerId", customerId);
+
+                var history = SqlMapper.Query<PointsHistory>(
+                    Connection.getConnection(),
+                    "sp_GetPointsHistory_ByCustomer",
+                    param,
+                    commandType: System.Data.CommandType.StoredProcedure
+                ).ToList();
+
+                return history;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error retrieving point history for customer {customerId}", ex);
+            }
+        }
+
     }
 }

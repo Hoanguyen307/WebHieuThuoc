@@ -202,6 +202,7 @@
     <Compile Include="Controllers\NhapKhoController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
     <Compile Include="Controllers\ProductCategoryController.cs" />
+    <Compile Include="Controllers\ProductReviewController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\VoucherController.cs" />
     <Compile Include="Controllers\XuatKhoController.cs" />
@@ -374,6 +375,7 @@
     <Content Include="Content\assets\js\contact_custom.js" />
     <Content Include="Content\assets\js\custom.js" />
     <Content Include="Content\assets\js\DangNhap.js" />
+    <Content Include="Content\assets\js\DanhGia.js" />
     <Content Include="Content\assets\js\DoanhThu.js" />
     <Content Include="Content\assets\js\DonHang.js" />
     <Content Include="Content\assets\js\DungTich.js" />
@@ -3806,6 +3808,7 @@
     <Content Include="Views\XuatKho\Index.cshtml" />
     <Content Include="Views\XuatKho\Detail.cshtml" />
     <Content Include="Views\NhapKho\Detail.cshtml" />
+    <Content Include="Views\ProductReview\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
