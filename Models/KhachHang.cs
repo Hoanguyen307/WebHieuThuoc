@@ -27,10 +27,14 @@ namespace Models
         public string LockReason { get; set; }
         public string LockBy { get; set; }
         public DateTime? LockTime { get; set; }
+        [NotMapped]
         public bool IsMember { get; set; }
         public bool IsActive { get; set; }
+        [NotMapped]
         public int SkipCount { get; set; }
+        [NotMapped]
         public int MaxResultCount { get; set; }
+        [NotMapped]
         public decimal PointsBalance { get; set; }
         public class KhachHangFilter
         {

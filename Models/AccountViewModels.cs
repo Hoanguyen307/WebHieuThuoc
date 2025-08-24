@@ -107,37 +107,32 @@ namespace Models
         public DateTime? UpdatedDate { get; set; }
         public bool IsDeleted { get; set; }
     }
-    public class RegisterViewModel
+    public class RegisterCustomerViewModel
     {
-        [Required]
-        [Phone]
-        [Display(Name = "Phone")]
-        public string Phone { get; set; }
-
-        [Required]
-        [Display(Name = "FullName")]
+        [Required(ErrorMessage = "Họ tên không được để trống")]
         public string FullName { get; set; }
 
-        [Required]
-        
-        [Display(Name = "Username")]
-        public string Username { get; set; }
+        [Required(ErrorMessage = "Giới tính không được để trống")]
+        public bool Gender { get; set; }
 
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
+        [Required(ErrorMessage = "Ngày sinh không được để trống")]
+        [DataType(DataType.Date)]
+        public DateTime BirthDate { get; set; }
+
+        [Required(ErrorMessage = "Số điện thoại không được để trống")]
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        public string Phone { get; set; }
+
+        [Required(ErrorMessage = "Email không được để trống")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
         public string Email { get; set; }
 
-        [Required]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
-        [DataType(DataType.Password)]
-        [Display(Name = "Password")]
-        public string Password { get; set; }
+        [Required(ErrorMessage = "Địa chỉ không được để trống")]
+        public string Address { get; set; }
 
+        [Required(ErrorMessage = "Mật khẩu không được để trống")]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm password")]
-        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
-        public string ConfirmPassword { get; set; }
+        public string PasswordHash { get; set; }
     }
 
     public class ResetPasswordViewModel

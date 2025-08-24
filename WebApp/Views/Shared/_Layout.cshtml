@@ -53,10 +53,38 @@
                     <i class="fas fa-ellipsis-h"></i>
                 </div>
                 <div class="divider"></div>
-                <a href="@Url.Action("Login", "Account")" class="header-item">
-                    <i class="fas fa-user"></i>
-                    <span>Đăng nhập</span>
-                </a>
+                @if (Session["Login"] != null)
+                {
+                    var kh = Session["Login"] as Models.KhachHang;
+                    <div class="dropdown header-item">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
+                           id="userDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user me-2"></i>
+                            <span>@kh.FullName</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="@Url.Action("Profile", "Account")">
+                                    <i class="fas fa-id-card me-2"></i> Thông tin cá nhân
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="@Url.Action("LogOff", "Account")">
+                                    <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <a href="@Url.Action("Login", "Account")" class="header-item">
+                        <i class="fas fa-user"></i>
+                        <span>Đăng nhập</span>
+                    </a>
+                }
+
 
                 <div class="header-icon"><i class="far fa-heart"></i></div>
                 <a id="cart-toggle" href="javascript:void(0)" class="header-icon position-relative">

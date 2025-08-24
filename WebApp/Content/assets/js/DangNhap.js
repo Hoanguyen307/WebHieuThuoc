@@ -50,6 +50,7 @@
     });
 
     $("#form-register").submit(function (e) {
+        debugger
         e.preventDefault();
 
         var token = $('input[name="__RequestVerificationToken"]').val();

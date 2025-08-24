@@ -11,6 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <style>
@@ -91,43 +92,46 @@
             <h2>Đăng ký</h2>
             <p>Tạo tài khoản mới để tận hưởng các ưu đãi thành viên</p>
 
-            <form id="form-register" method="post" action="@Url.Action("Register", "Account")">
+            <form id="form-register">
                 @Html.AntiForgeryToken()
 
                 <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white"><i class="fas fa-envelope"></i></span>
+                    <input type="text" id="FullName" name="FullName" class="form-control" placeholder="Họ và tên" required />
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-md-6">
+                        <label>Giới tính:</label><br />
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Gender" id="GenderMale" value="true" checked>
+                            <label class="form-check-label" for="GenderMale">Nam</label>
                         </div>
-                        <input type="email" id="Email" class="form-control" name="email" placeholder="Email" required />
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="Gender" id="GenderFemale" value="false">
+                            <label class="form-check-label" for="GenderFemale">Nữ</label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="BirthDate">Ngày sinh:</label>
+                        <input type="date" id="BirthDate" name="BirthDate" class="form-control" required />
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white"><i class="fas fa-user"></i></span>
-                        </div>
-                        <input type="text" id="UserName" class="form-control" name="userName" placeholder="Tên đăng nhập" required />
-                    </div>
+                    <input type="text" id="Phone" name="Phone" class="form-control" placeholder="Số điện thoại" required />
                 </div>
 
                 <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white"><i class="fas fa-lock"></i></span>
-                        </div>
-                        <input type="password" id="Password" class="form-control" name="password" placeholder="Mật khẩu" required />
-                    </div>
+                    <input type="email" id="Email" name="Email" class="form-control" placeholder="Email" required />
                 </div>
 
                 <div class="form-group">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text bg-white"><i class="fas fa-lock"></i></span>
-                        </div>
-                        <input type="password" id="ConfirmPassword" class="form-control" name="confirmPassword" placeholder="Xác nhận mật khẩu" required />
-                    </div>
+                    <input type="text" id="Address" name="Address" class="form-control" placeholder="Địa chỉ" required />
+                </div>
+
+                <div class="form-group">
+                    <input type="password" id="PasswordHash" name="PasswordHash" class="form-control" placeholder="Mật khẩu" required />
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-block">Đăng ký</button>
@@ -147,5 +151,44 @@
             </div>
         </div>
     </div>
+    <script>
+        $(document).ready(function () {
+            $("#form-register").submit(function (e) {
+                debugger
+                e.preventDefault();
+
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                var formData = {
+                    FullName: $("#FullName").val(),
+                    Gender: $('input[name="Gender"]:checked').val() === "true",
+                    BirthDate: $("#BirthDate").val(),
+                    Phone: $("#Phone").val(),
+                    Email: $("#Email").val(),
+                    Address: $("#Address").val(),
+                    PasswordHash: $("#PasswordHash").val(),
+                    __RequestVerificationToken: token
+                };
+
+                $.ajax({
+                    url: '/Account/Register',
+                    type: 'POST',
+                    data: formData,
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success(res.msg || "Đăng ký thành công!");
+                            setTimeout(function () {
+                                window.location.href = "/Account/ConfirmOTP?email=" + encodeURIComponent(formData.Email);
+                            }, 1000);
+                        } else if (res.code === 400) {
+                            toastr.error(res.msg || "Đăng ký thất bại!");
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Có lỗi xảy ra, vui lòng thử lại!");
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

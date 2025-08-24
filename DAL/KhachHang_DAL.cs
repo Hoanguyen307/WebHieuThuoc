@@ -31,7 +31,36 @@ namespace DAL
             }
 
         }
+        public List<KhachHang> Select_KhachHang_GetAll()
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                var result = SqlMapper.Query<KhachHang>(Connection.getConnection(), "sp_Customers_SelectAll",
+               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
 
+        }
+        public KhachHang DangNhap(string tendangnhap, string matkhau)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@Identifier", tendangnhap);
+                param.Add("@Password", matkhau);
+                var model = SqlMapper.Query<KhachHang>(Connection.getConnection(), "sp_Customer_Login", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+                return model;
+            }
+            catch
+            {
+                throw;
+            }
+        }
         public KhachHang SelectById(int ID)
         {
             try

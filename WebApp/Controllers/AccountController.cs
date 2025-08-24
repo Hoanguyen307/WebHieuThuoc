@@ -13,60 +13,59 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Models;
 using WebApp;
+using DAL;
 
 namespace Admin.Controllers
 {
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
-        private ApplicationDbContext db = new ApplicationDbContext();
-        public AccountController()
-        {
-        }
+        private DBConnect db = new DBConnect();
+        //public AccountController()
+        //{
+        //}
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
-        {
-            UserManager = userManager;
-            SignInManager = signInManager;
-        }
+        //public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        //{
+        //    UserManager = userManager;
+        //    SignInManager = signInManager;
+        //}
 
-        public ApplicationSignInManager SignInManager
-        {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set
-            {
-                _signInManager = value;
-            }
-        }
+        //public ApplicationSignInManager SignInManager
+        //{
+        //    get
+        //    {
+        //        return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+        //    }
+        //    private set
+        //    {
+        //        _signInManager = value;
+        //    }
+        //}
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
+        //public ApplicationUserManager UserManager
+        //{
+        //    get
+        //    {
+        //        return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+        //    }
+        //    private set
+        //    {
+        //        _userManager = value;
+        //    }
+        //}
 
-        // GET: Admin/Account
-        public ActionResult Index()
-        {
-            var items = db.Users.ToList();
-            return View(items);
-        }
+        //// GET: Admin/Account
+        //public ActionResult Index()
+        //{
+        //    var items = db.Users.ToList();
+        //    return View(items);
+        //}
         //
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public ActionResult Login()
         {
-            ViewBag.ReturnUrl = returnUrl;
+            List<KhachHang> khachhang = new KhachHang_DAL().Select_KhachHang_GetAll();
             return View();
         }
 
@@ -75,38 +74,22 @@ namespace Admin.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public ActionResult Login(string tendangnhap, string matkhau/*, bool RememberMe = false*/)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return View(model);
+                var dangnhapnd = new KhachHang_DAL().DangNhap(tendangnhap, matkhau);
+                if (dangnhapnd != null)
+                {
+                    Session["Login"] = dangnhapnd;
+                    return Json(new { code = 200, msg = "Đăng nhập thành công", redirectUrl = Url.Action("Index", "Home1") }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { code = 401, msg = "Tên đăng nhập hoặc mật khẩu không đúng" }, JsonRequestBehavior.AllowGet);
             }
-
-            var user = await UserManager.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
-            if (user == null)
+            catch (Exception ex)
             {
-                ModelState.AddModelError("", "Tài khoản không tồn tại.");
-                return View(model);
-            }
-
-            var result = await SignInManager.PasswordSignInAsync(
-                user.UserName, 
-                model.Password,
-                model.RememberMe,
-                shouldLockout: false
-            );
-
-            switch (result)
-            {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                default:
-                    ModelState.AddModelError("", "Thông tin đăng nhập không chính xác.");
-                    return View(model);
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -119,56 +102,48 @@ namespace Admin.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(string email, string userName, string password, string confirmPassword)
+        public ActionResult Register(RegisterCustomerViewModel model)
         {
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
+            if (string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.FullName) || string.IsNullOrEmpty(model.PasswordHash) || string.IsNullOrEmpty(model.Address))
             {
                 return Json(new { code = 400, msg = "Vui lòng nhập đầy đủ thông tin!" }, JsonRequestBehavior.AllowGet);
-                //ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
-                //return View();
             }
 
-            if (password != confirmPassword)
-            {
-                return Json(new { code = 400, msg = "Mật khẩu xác nhận không khớp!" }, JsonRequestBehavior.AllowGet);
-                /*ViewBag.Error = "Mật khẩu xác nhận không khớp!";
-                return View();*/
-            }
 
-            if (!email.Contains("@") || !email.Contains("."))
+            if (model.BirthDate == null)
+                return Json(new { code = 400, msg = "Vui lòng nhập ngày sinh!" }, JsonRequestBehavior.AllowGet);
+
+
+            if (!model.Email.Contains("@") || !model.Email.Contains("."))
             {
                 return Json(new { code = 400, msg = "Email không hợp lệ!" }, JsonRequestBehavior.AllowGet);
-                /*ViewBag.Error = "Email không hợp lệ!";
-                return View();*/
             }
 
-            // Kiểm tra email hoặc username đã tồn tại chưa
-            var existingUser = UserManager.Users.FirstOrDefault(u => u.Email == email || u.UserName == userName);
+            var existingUser = db.KhachHangs.FirstOrDefault(u => u.Email == model.Email || u.Phone == model.Phone);
             if (existingUser != null)
             {
-                return Json(new { code = 400, msg = "Tên đăng nhập hoặc email đã tồn tại!" }, JsonRequestBehavior.AllowGet);
-                /*ViewBag.Error = "Tên đăng nhập hoặc email đã tồn tại!";
-                return View();*/
+                return Json(new { code = 400, msg = "Số điện thoại hoặc email đã tồn tại!" }, JsonRequestBehavior.AllowGet);
             }
 
             // Sinh mã OTP
             string otp = new Random().Next(100000, 999999).ToString();
 
-            TempData["OTP"] = otp;
-            TempData["Email"] = email;
-            TempData["UserName"] = userName;
-            TempData["Password"] = password;
+            Session["OTP"] = otp;
+            Session["Email"] = model.Email;
+            Session["Phone"] = model.Phone;
+            Session["PasswordHash"] = model.PasswordHash;
+            Session["FullName"] = model.FullName;
+            Session["Gender"] = model.Gender;
+            Session["BirthDate"] = model.BirthDate;
+            Session["Address"] = model.Address;
 
             // Gửi mail OTP
-            bool mailSent = SendOTP(email, otp);
+            bool mailSent = SendOTP(model.Email, otp);
             if (!mailSent)
             {
                 return Json(new { code = 500, msg = "Không thể gửi email xác nhận. Vui lòng thử lại!" }, JsonRequestBehavior.AllowGet);
-                /*ViewBag.Error = "Không thể gửi email xác nhận. Vui lòng thử lại!";
-                return View();*/
             }
-            return Json(new { code = 200, msg = "Đăng ký thành công!", redirectUrl = Url.Action("ConfirmOTP") }, JsonRequestBehavior.AllowGet);
-            //return RedirectToAction("ConfirmOTP");
+            return Json(new { code = 200, msg = "Gửi mã xác nhận thành công!", redirectUrl = Url.Action("ConfirmOTP") }, JsonRequestBehavior.AllowGet);
         }
 
         [AllowAnonymous]
@@ -180,40 +155,49 @@ namespace Admin.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ConfirmOTP(string otp_input)
+        public JsonResult ConfirmOTP(string otp_input)
         {
-            string otp = TempData["OTP"]?.ToString();
-            string email = TempData["Email"]?.ToString();
-            string userName = TempData["UserName"]?.ToString();
-            string password = TempData["Password"]?.ToString();
+            string otp = Session["OTP"]?.ToString();
+            string email = Session["Email"]?.ToString();
+            string phone = Session["Phone"]?.ToString();
+            string password = Session["PasswordHash"]?.ToString();
+            string fullName = Session["FullName"]?.ToString();
+            bool gender = Session["Gender"] != null && (bool)Session["Gender"];
+            DateTime? birthDate = Session["BirthDate"] as DateTime?;
+            string address = Session["Address"]?.ToString();
 
             if (otp_input == otp)
             {
-                var user = new ApplicationUser
+                string hashedPassword = Common.EncryptionHelper.Encode(password);
+
+                var customer = new KhachHang
                 {
-                    UserName = userName,
+                    FullName = fullName,
+                    Gender = gender,
+                    BirthDate = birthDate,
+                    Phone = phone,
                     Email = email,
-                    CreatedDate = DateTime.Now,
+                    Address = address,
+                    PasswordHash = password,
                     CreatedBy = "System"
                 };
 
-                var result = await UserManager.CreateAsync(user, password);
-                if (result.Succeeded)
+                var dal = new KhachHang_DAL();
+                int result = dal.Insert(customer);
+
+                if (result > 0)
                 {
-                    TempData["Success"] = "Đăng ký thành công!";
-                    return RedirectToAction("Login");
+                    return Json(new { code = 200, msg = "Đăng ký thành công!" });
                 }
                 else
                 {
-                    AddErrors(result);
                     TempData.Keep();
-                    return View();
+                    return Json(new { code = 400, msg = "Mã OTP không đúng!" });
                 }
             }
 
-            ViewBag.Error = "Mã OTP không đúng. Vui lòng thử lại!";
             TempData.Keep();
-            return View();
+            return Json(new { code = 400, msg = "Mã OTP không đúng!" });
         }
 
         private bool SendOTP(string toEmail, string otp)
@@ -222,7 +206,7 @@ namespace Admin.Controllers
             {
                 var fromAddress = new MailAddress("hoanguyen3072003@gmail.com", "Hệ thống");
                 var toAddress = new MailAddress(toEmail);
-                string fromPassword = "grcb nutd uzan jzqc"; // Gmail App Password
+                string fromPassword = "grcb nutd uzan jzqc"; 
                 string subject = "Mã xác nhận đăng ký tài khoản";
                 string body = $"Mã OTP của bạn là: {otp}";
 
@@ -259,191 +243,111 @@ namespace Admin.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff()
         {
-            AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Login", "Account");
+            Session["Login"] = null;
+            return RedirectToAction("Index", "Home1");
         }
-        //
-        // GET: /Account/Register
-        /*[Authorize(Roles = "Admin")]*/
-        public ActionResult Add(int? id)
+
+        public ActionResult ForgotPassword()
         {
-            var model = new CreateAccountViewModel();
-
-            return PartialView("Add", model);
+            return View();
         }
-
-
-        //
-        // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult> Add(CreateAccountViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = new ApplicationUser
-                {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    FullName = model.FullName,
-                    Phone = model.Phone,
-                    CreatedDate = DateTime.Now,
-                    CreatedBy = User.Identity.Name
-                };
-
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
-                {
-                    return Json(new { code = 200, msg = "Thêm người dùng thành công" });
-                }
-                AddErrors(result);
-            }
-
-            return PartialView("Add", model);
-        }
-
-
-        //[Authorize(Roles = "Admin")]
-        public ActionResult Edit(string id)
-        {
-            var item = UserManager.FindById(id);
-            var newUser = new CreateAccountViewModel();
-
-            if (item != null)
-            {
-                newUser.FullName = item.FullName;
-                newUser.Email = item.Email;
-                newUser.Phone = item.Phone;
-                newUser.UserName = item.UserName;
-                newUser.UpdatedBy = User.Identity.Name;
-                newUser.UpdatedDate = DateTime.Now;
-            }
-
-            return PartialView("Add", newUser);
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> Edit(CreateAccountViewModel model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return Json(new
-                {
-                    success = false,
-                    errors = ModelState.Values.SelectMany(v => v.Errors)
-                                              .Select(e => e.ErrorMessage)
-                }, JsonRequestBehavior.AllowGet);
-            }
-
-            //var user = await UserManager.FindByNameAsync(model.Id);
-            var user = await UserManager.FindByIdAsync(model.Id);
-
-            if (user == null)
-            {
-                return Json(new { code = 500, msg = "Không tìm thấy người dùng." });
-            }
-            user.UserName = model.UserName;
-            user.FullName = model.FullName;
-            user.Phone = model.Phone;
-            user.Email = model.Email;
-            user.UpdatedBy = User.Identity.Name;
-            user.UpdatedDate = DateTime.Now;
-
-            var result = await UserManager.UpdateAsync(user);
-
-            if (result.Succeeded)
-            {
-                return Json(new { code = 200, msg = "Cập nhật thành công" });
-
-            }
-            return Json(new { code = 500, msg = "Cập nhật thất bại" });
-        }
-
-
-        //[Authorize(Roles = "Admin")]
-        public ActionResult AssignRole()
-        {
-            var users = db.Users.ToList();
-            var model = users.Select(u => new AssignRoleViewModel
-            {
-                UserId = u.Id,
-                UserName = u.UserName,
-                FullName = u.FullName,
-                Role = UserManager.GetRoles(u.Id).FirstOrDefault()
-            }).ToList();
-
-            ViewBag.AllRoles = new SelectList(db.Roles.ToList(), "Name", "Name");
-            return View(model);
-        }
-
-        [HttpPost]
         [ValidateAntiForgeryToken]
-        //[Authorize(Roles = "Admin")]
-        public async Task<JsonResult> AssignRole(AssignRoleViewModel model)
+        public JsonResult ForgotPassword(string email)
         {
-            var user = await UserManager.FindByIdAsync(model.UserId);
-            if (user == null) 
-                return Json(new { code = 500, msg = "Phân quyền thất bại" });
-
-            var currentRoles = await UserManager.GetRolesAsync(user.Id);
-            if (currentRoles.Any())
-                await UserManager.RemoveFromRolesAsync(user.Id, currentRoles.ToArray());
-
-            if (!string.IsNullOrEmpty(model.Role))
-                await UserManager.AddToRoleAsync(user.Id, model.Role);
-
-            return Json(new { code = 200, msg = "Phân quyền thành công" });
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteAccount(string user, string id)
-        {
-            var code = new { Success = false };
-            var item = UserManager.FindByName(user);
-            if (item != null)
+            try
             {
-                var rolesForUser = UserManager.GetRoles(id);
-                if (rolesForUser != null)
+                var kh = db.KhachHangs.FirstOrDefault(u => u.Email == email);
+                if (kh == null)
                 {
-                    foreach (var role in rolesForUser)
-                    {
-                        //roles.Add(role);
-                        await UserManager.RemoveFromRoleAsync(id, role);
-                    }
-
+                    return Json(new { code = 404, msg = "Email không tồn tại trong hệ thống!" }, JsonRequestBehavior.AllowGet);
                 }
 
-                var res = await UserManager.DeleteAsync(item);
-                code = new { Success = res.Succeeded };
+                // Tạo mã OTP
+                string otp = new Random().Next(100000, 999999).ToString();
+
+                Session["ResetOTP"] = otp;
+                Session["ResetEmail"] = email;
+                Session["OtpExpire"] = DateTime.Now.AddMinutes(5);
+
+                // Gửi OTP qua email
+                bool mailSent = SendOTP(email, otp);
+                if (!mailSent)
+                {
+                    return Json(new { code = 500, msg = "Không thể gửi email, vui lòng thử lại!" }, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { code = 200, msg = "Mã OTP đã được gửi về email!", redirectUrl = Url.Action("VerifyResetOtp") }, JsonRequestBehavior.AllowGet);
             }
-            return Json(code);
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        private IAuthenticationManager AuthenticationManager
+        [AllowAnonymous]
+        public ActionResult VerifyResetOtp()
         {
-            get
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public JsonResult VerifyResetOtp(string otp)
+        {
+            if (Session["ResetOTP"] == null || Session["OtpExpire"] == null)
+                return Json(new { code = 400, msg = "OTP không tồn tại hoặc đã hết hạn" }, JsonRequestBehavior.AllowGet);
+
+            if (DateTime.Now > (DateTime)Session["OtpExpire"])
+                return Json(new { code = 401, msg = "OTP đã hết hạn" }, JsonRequestBehavior.AllowGet);
+
+            if (otp != Session["ResetOTP"].ToString())
+                return Json(new { code = 402, msg = "OTP không đúng" }, JsonRequestBehavior.AllowGet);
+
+            return Json(new { code = 200, msg = "Xác thực OTP thành công!", redirectUrl = Url.Action("ResetPassword") }, JsonRequestBehavior.AllowGet);
+        }
+
+        [AllowAnonymous]
+        public ActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public JsonResult ResetPassword(string newPassword)
+        {
+            try
             {
-                return HttpContext.GetOwinContext().Authentication;
+                if (Session["ResetEmail"] == null)
+                    return Json(new { code = 400, msg = "Không tìm thấy email để đặt lại mật khẩu" }, JsonRequestBehavior.AllowGet);
+
+                string email = Session["ResetEmail"].ToString();
+
+                var user = db.KhachHangs.FirstOrDefault(u => u.Email == email);
+                if (user == null)
+                    return Json(new { code = 404, msg = "Người dùng không tồn tại" }, JsonRequestBehavior.AllowGet);
+
+                user.PasswordHash = newPassword;
+                db.Entry(user).State = EntityState.Modified;
+                db.SaveChanges();
+
+                // clear session
+                Session.Remove("ResetOTP");
+                Session.Remove("ResetEmail");
+                Session.Remove("OtpExpire");
+
+                return Json(new { code = 200, msg = "Đặt lại mật khẩu thành công!", redirectUrl = Url.Action("Login") }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 
-        private ActionResult RedirectToLocal(string returnUrl)
-        {
-            if (Url.IsLocalUrl(returnUrl))
-            {
-                return Redirect(returnUrl);
-            }
-            return RedirectToAction("Index", "Home");
-        }
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error);
-            }
-        }
 
         protected override void Dispose(bool disposing)
         {
