@@ -133,6 +133,26 @@ namespace DAL
                 throw;
             }
         }
+        public int UpdateInfo(KhachHang obj)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@Id", obj.Id);
+                param.Add("@FullName", obj.FullName);
+                param.Add("@Gender", obj.Gender);
+                param.Add("@BirthDate", obj.BirthDate);
+                param.Add("@Phone", obj.Phone);
+                param.Add("@Email", obj.Email);
+                param.Add("@Address", obj.Address);
+                param.Add("@UpdatedBy", obj.UpdatedBy);
+                return Connection.getConnection().QuerySingle<int>("sp_Customer_UpdateInfo", param, commandType: System.Data.CommandType.StoredProcedure);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public bool Delete(int ID, string TenNguoiXoa)
         {
             try
@@ -187,6 +207,18 @@ namespace DAL
                 throw new Exception($"Error retrieving point history for customer {customerId}", ex);
             }
         }
-
+        public int GetCustomerPoints(int customerId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CustomerId", customerId);
+                return Connection.getConnection().Execute("sp_GetCustomerPoints", param, commandType: System.Data.CommandType.StoredProcedure);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

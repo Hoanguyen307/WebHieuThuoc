@@ -75,6 +75,7 @@ body {
         flex: 1;
         padding: 5px 8px;
         font-size: 14px;
+        width:333px;
     }
 
 .header-right {

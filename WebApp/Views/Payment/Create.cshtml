@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Tạo thanh toán PayOS";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Tạo thanh toán PayOS</h2>
+<p>Nhập thông tin đơn hàng và bấm <b>Tạo thanh toán</b> để chuyển sang PayOS.</p>
+
+<form method="post" asp-controller="Payment" asp-action="Create">
+    <div class="row">
+        <div>
+            <label for="itemName">Tên sản phẩm</label>
+            <input id="itemName" name="itemName" type="text" value="Gói Premium" required />
+        </div>
+        <div>
+            <label for="quantity">Số lượng</label>
+            <input id="quantity" name="quantity" type="number" value="1" min="1" required />
+        </div>
+    </div>
+
+    <div class="row mt-2">
+        <div>
+            <label for="price">Giá (VND)</label>
+            <input id="price" name="price" type="number" value="10000" min="1000" required />
+        </div>
+        <div>
+            <label>&nbsp;</label>
+            <button type="submit" class="btn">Tạo thanh toán</button>
+        </div>
+    </div>
+</form>
+
+<div class="mt-4">
+    <a class="btn secondary" asp-controller="Payment" asp-action="Return">Xem trang Return mẫu</a>
+</div>

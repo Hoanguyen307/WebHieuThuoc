@@ -27,46 +27,53 @@
                     <div class="product-ratings d-flex align-items-center mb-3">
                         <span>23 đánh giá | 60 Hỏi đáp | Mã sản phẩm: 422208871</span>
                     </div>
-                    <div class="product-price-info mt-3">
-                        @*<div class="flash-deal-section mb-3">
-                                <div class="flash-deal-badge">FLASH DEAL</div>
-                                <div class="flash-deal-timer">KẾT THÚC TRONG <span>01</span>:<span>14</span>:<span>47</span></div>
-                            </div>*@
+                    <div class="stars me-2">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            if (i <= Math.Round(Model.AverageRating))
+                            {
+                                <i class="fas fa-star text-warning"></i>
+                            }
+                            else
+                            {
+                                <i class="far fa-star text-warning"></i>
+                            }
+                        }
+                        <span class="ms-2">(@Model.TotalReviews đánh giá)</span>
+                    </div>
 
-                        @if (Model.Product.SalePrice.HasValue && Model.Product.Price.HasValue)
+                    
+                    @*<div class="flash-deal-section mb-3">
+                        <div class="flash-deal-badge">FLASH DEAL</div>
+                        <div class="flash-deal-timer">KẾT THÚC TRONG <span>01</span>:<span>14</span>:<span>47</span></div>
+                    </div>*@
+                    <div class="product-price-info mt-3">
+                        <span id="productSalePrice" class="current-price">
+                            @(Model.Product.SalePrice.HasValue ? Model.Product.SalePrice.Value.ToString("N0") + " đ" : "")
+                        </span>
+                        @if (Model.Product.Price.HasValue)
                         {
-                            <span class="current-price">@Model.Product.SalePrice.Value.ToString("N0") đ</span>
-                            <span class="original-price">@Model.Product.Price.Value.ToString("N0") đ</span>
-                            decimal discountPercentage = ((Model.Product.Price.Value - Model.Product.SalePrice.Value) / Model.Product.Price.Value) * 100;
-                            <span class="discount-percentage">(-@Math.Round(discountPercentage, 0)%)</span>
+                            <span id="productPrice" class="original-price">@Model.Product.Price.Value.ToString("N0") đ</span>
                         }
-                        else
-                        {
-                            <span class="current-price">@Model.Product.Price.Value.ToString("N0") đ</span>
-                        }
+
                     </div>
 
                     <div class="product-variants mt-4">
-                        @*<label>Chọn dung tích:</label>
-                        <select id="volumeSelect" class="form-control">
-                            @foreach (var item in Model.ProductVolumes)
-                            {
-                                <option value="@item.Id" data-price="@item.Price" data-sale="@item.SalePrice">
-                                    @item.Volume
-                                </option>
-                            }
-                        </select>*@
                         <p class="mb-2 fw-bold">Dung tích</p>
-                        @*@foreach (var variant in Model.Variants)
-        {
-            <button class="btn btn-outline-secondary variant-btn">@variant</button>
-        }*@
-
                         <div class="d-flex gap-2">
-                            <button class="btn btn-outline-secondary variant-btn active">2 x 440ml</button>
-                            <button class="btn btn-outline-secondary variant-btn">100ml</button>
+                            @foreach (var v in Model.dungTichSanPhams)
+                            {
+                                <button class="btn btn-outline-secondary variant-btn"
+                                        data-price="@v.Gia"
+                                        data-sale="@v.SalePrice"
+                                        data-volume="@v.DungTichValue"
+                                        data-id="@v.Id">
+                                    @v.DungTichValue
+                                </button>
+                            }
                         </div>
                     </div>
+
 
                     <div class="product-quantity mt-3 d-flex align-items-center">
                         <p class="mb-0 fw-bold me-3">Số lượng:</p>
@@ -105,10 +112,68 @@
                 </ul>
                 <div class="tab-content pt-3" id="productTabsContent">
                     <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                        <div class="product-specs-table">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <td>Thương Hiệu</td>
+                                        <td>@Model.Product.BrandName</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Xuất xứ thương hiệu</td>
+                                        <td>@Model.Product.XuatXu</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nơi sản xuất</td>
+                                        <td>@Model.Product.NoiSX</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dung Tích</td>
+                                        <td>
+                                            @foreach (var v in Model.dungTichSanPhams)
+                                            {
+                                                <span>@v.DungTichValue </span>
+                                            }
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="tab-pane fade" id="usage" role="tabpanel" aria-labelledby="usage-tab">
                     </div>
                     <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                        <h4 class="mt-3">Đánh giá sản phẩm</h4>
+                        @if (Model.productReviews != null && Model.productReviews.Any())
+                        {
+                            foreach (var review in Model.productReviews)
+                            {
+                                <div class="review-item mb-4 p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h6 class="mb-0">@review.CustomerName</h6>
+                                        <small class="text-muted">@review.CreatedDate.ToShortDateString()</small>
+                                    </div>
+                                    <div class="stars mb-2">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= review.Rating)
+                                            {
+                                                <i class="fas fa-star text-warning"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="far fa-star text-warning"></i>
+                                            }
+                                        }
+                                    </div>
+                                    <p class="review-comment mb-0">@review.Comment</p>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center mt-3">Chưa có đánh giá nào cho sản phẩm này.</p>
+                        }
                     </div>
                 </div>
             </div>
@@ -129,6 +194,20 @@
                                 <div class="col-8">
                                     <div class="card-body">
                                         <h6 class="card-title">@relatedProduct.Name</h6>
+                                        <div class="stars me-2">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= Math.Round(Model.AverageRating))
+                                                {
+                                                    <i class="fas fa-star text-warning"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="far fa-star text-warning"></i>
+                                                }
+                                            }
+                                            <span class="ms-2">(@Model.TotalReviews đánh giá)</span>
+                                        </div>
                                         @if (relatedProduct.SalePrice.HasValue)
                                         {
                                             <p class="card-price mb-0">@relatedProduct.SalePrice.Value.ToString("N0") đ</p>
@@ -153,7 +232,7 @@
 </div>
 <script>
     $(document).ready(function () {
-    $('.btn-add-to-cart').on('click', function () {
+        $('.btn-add-to-cart').on('click', function () {
         var productId = '@Model.Product.Id';
         var quantity = $('.quantity-selector input').val();
 
@@ -177,19 +256,32 @@
             }
         });
     });
-});
-</script>
-<script>
-    $('#volumeSelect').on('change', function () {
-        var price = $(this).find(':selected').data('price');
-        var sale = $(this).find(':selected').data('sale');
+        $(".variant-btn").on("click", function () {
+            $(".variant-btn").removeClass("active");
+            $(this).addClass("active");
 
-        $('#productPrice').text(price + 'đ');
-        if (sale > 0 && sale < price) {
-            $('#productSalePrice').text(sale + 'đ').show();
-        } else {
-            $('#productSalePrice').hide();
-        }
-    });
+            var price = $(this).data("price");
+            var sale = $(this).data("sale");
+
+            if (sale && sale < price) {
+                $("#productSalePrice").text(sale.toLocaleString() + " đ").show();
+                $("#productPrice").text(price.toLocaleString() + " đ").show();
+            } else {
+                $("#productSalePrice").text(price.toLocaleString() + " đ").show();
+                $("#productPrice").hide();
+            }
+        });
+        $('#volumeSelect').on('change', function () {
+            var price = $(this).find(':selected').data('price');
+            var sale = $(this).find(':selected').data('sale');
+
+            $('#productPrice').text(price + 'đ');
+            if (sale > 0 && sale < price) {
+                $('#productSalePrice').text(sale + 'đ').show();
+            } else {
+                $('#productSalePrice').hide();
+            }
+        });
+});
 </script>
 

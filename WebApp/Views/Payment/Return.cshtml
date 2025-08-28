@@ -1,0 +1,147 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "Kết quả thanh toán";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+
+    string status = (Model?.status as string) ?? "UNKNOWN";
+    string orderCode = (Model?.orderCode?.ToString()) ?? "";
+
+    string statusClass = status.Equals("SUCCESS", StringComparison.OrdinalIgnoreCase) || status.Equals("PAID", StringComparison.OrdinalIgnoreCase)
+        ? "status-ok"
+        : status.Equals("FAILED", StringComparison.OrdinalIgnoreCase)
+            ? "status-fail"
+            : "status-pending";
+
+    string statusText = status.Equals("SUCCESS", StringComparison.OrdinalIgnoreCase) || status.Equals("PAID", StringComparison.OrdinalIgnoreCase)
+        ? "THANH TOÁN THÀNH CÔNG"
+        : status.Equals("FAILED", StringComparison.OrdinalIgnoreCase)
+            ? "THANH TOÁN THẤT BẠI"
+            : "ĐANG XỬ LÝ / CHƯA XÁC NHẬN";
+}
+
+<style>
+    html, body {
+        height: 100%;
+        margin: 0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f7f9fc;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+    }
+
+    .container {
+        background: white;
+        max-width: 90%;
+        width: 730px;
+        padding: 2.5rem 2rem;
+        border-radius: 15px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    h2 {
+        font-size: 2.4rem;
+        margin-bottom: 1.5rem;
+        color: #007bff;
+        font-weight: 700;
+    }
+
+    p {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+    }
+
+    .status-ok {
+        color: #28a745;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-top: 1rem;
+    }
+
+    .status-fail {
+        color: #dc3545;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-top: 1rem;
+    }
+
+    .status-pending {
+        color: #ffc107;
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-top: 1rem;
+    }
+
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 1.3rem 0;
+        margin: 1rem 0;
+        background-color: #007bff;
+        color: white !important;
+        font-size: 1.5rem;
+        font-weight: 700;
+        border-radius: 12px;
+        text-decoration: none;
+        user-select: none;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 3px 8px rgba(0, 123, 255, 0.4);
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .btn.secondary {
+            background-color: #6c757d;
+            box-shadow: 0 3px 8px rgba(108, 117, 125, 0.4);
+        }
+
+            .btn.secondary:hover {
+                background-color: #5a6268;
+            }
+</style>
+
+<div class="container">
+    <h2>@ViewData["Title"]</h2>
+
+    <p><strong>Mã đơn hàng:</strong></p>
+    <p style="font-size:2rem; font-weight:700; color:#333;">@orderCode</p>
+
+    <p class="@statusClass">@statusText</p>
+
+    <a id="btnBackHome" asp-controller="TheTraTruoc" asp-action="Index" class="btn">
+        Quay về trang chủ (<span id="countdown-value">5</span>s)
+    </a>
+
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let timeLeft = 5;
+        const countdownEl = document.getElementById('countdown-value');
+        const btnBackHome = document.getElementById('btnBackHome');
+
+        const countdownInterval = setInterval(() => {
+            timeLeft--;
+            if (countdownEl) {
+                countdownEl.textContent = timeLeft;
+            }
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                if (btnBackHome) {
+                    window.location.href = btnBackHome.href;
+                }
+            }
+        }, 1000);
+    });
+</script>

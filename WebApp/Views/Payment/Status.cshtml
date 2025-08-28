@@ -1,0 +1,89 @@
+﻿@model dynamic
+@{
+    ViewBag.Title = "Trạng thái đơn hàng";
+    Layout = "~/Views/Shared/_Layout2.cshtml";
+
+    string status = (Model?.status as string) ?? "UNKNOWN";
+    string orderCode = (Model?.orderCode?.ToString()) ?? "";
+
+    string statusClass = status.Equals("SUCCESS", StringComparison.OrdinalIgnoreCase) || status.Equals("PAID", StringComparison.OrdinalIgnoreCase)
+        ? "status-ok"
+        : status.Equals("FAILED", StringComparison.OrdinalIgnoreCase)
+            ? "status-fail"
+            : "status-pending";
+}
+
+<style>
+    .container-centered {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 70vh;
+        text-align: center;
+        padding: 2rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    h2 {
+        font-size: 3rem;
+        margin-bottom: 2rem;
+        color: #007bff;
+    }
+
+    p {
+        font-size: 2rem;
+        margin: 0.5rem 0;
+    }
+
+    .status-ok {
+        color: #28a745;
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-top: 1rem;
+    }
+
+    .status-fail {
+        color: #dc3545; 
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-top: 1rem;
+    }
+
+    .status-pending {
+        color: #ffc107; 
+        font-weight: 700;
+        font-size: 2.5rem;
+        margin-top: 1rem;
+    }
+
+    .btn {
+        margin-top: 3rem;
+        padding: 1rem 3rem;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: white;
+        background-color: #007bff;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+</style>
+
+<div class="container-centered">
+    <h2>@ViewData["Title"]</h2>
+
+    <p><strong>Mã đơn hàng:</strong></p>
+    <p>@orderCode</p>
+
+    <p class="@statusClass">@status</p>
+
+    <a class="btn" asp-controller="Payment" asp-action="Create">Tạo thanh toán mới</a>
+</div>

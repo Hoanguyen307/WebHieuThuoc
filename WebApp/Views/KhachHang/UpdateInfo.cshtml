@@ -1,0 +1,75 @@
+﻿@model Models.KhachHang
+@{
+    ViewBag.Title = "UpdateInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h3>Cập nhật thông tin cá nhân</h3>
+    <form id="formUpdateInfo" method="post">
+        @Html.AntiForgeryToken()
+        <div class="mb-3">
+            <label for="FullName" class="form-label">Họ và tên</label>
+            <input type="text" class="form-control" id="FullName" name="FullName" value="@Model.FullName" required />
+        </div>
+
+        <input class="form-check-input" type="radio" name="Gender" id="male" value="true" @(Model.Gender == true ? "checked" : "") />
+        <label class="form-check-label" for="male">Nam</label>
+
+        <input class="form-check-input" type="radio" name="Gender" id="female" value="false" @(Model.Gender == false ? "checked" : "") />
+        <label class="form-check-label" for="female">Nữ</label>
+
+        <input type="date" class="form-control" id="BirthDate" name="BirthDate"
+               value="@(Model.BirthDate.HasValue ? Model.BirthDate.Value.ToString("yyyy-MM-dd") : "")" />
+
+        <div class="mb-3">
+            <label for="Phone" class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" id="Phone" name="Phone" value="@Model.Phone" />
+        </div>
+
+        <div class="mb-3">
+            <label for="Email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" />
+        </div>
+
+        <div class="mb-3">
+            <label for="Address" class="form-label">Địa chỉ</label>
+            <input type="text" name="Address" id="Address" class="form-control" value="@Model.Address" >
+        </div>
+
+        <button type="submit" class="btn btn-primary">Cập nhật</button>
+    </form>
+</div>
+
+@section scripts {
+    <script>
+        $("#formUpdateInfo").submit(function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: '/KhachHang/UpdateInfo',
+                type: 'POST',
+                data: formData,
+                success: function (res) {
+                    if (res.code === 200) {
+                        toastr.success(res.msg || "Cập nhật thành công!");
+                        setTimeout(function () {
+                            location.reload();
+                        }, 1000);
+                        /*setTimeout(function () {
+                            window.location.href = "/Account/ConfirmOTP?email=" + encodeURIComponent(formData.Email);
+                        }, 1000);*/
+                    } else if (res.code === 400) {
+                        toastr.error(res.msg || "Đăng ký thất bại!");
+                    }
+                },
+                error: function () {
+                    toastr.error("Có lỗi xảy ra, vui lòng thử lại!");
+                }
+            });
+        });
+    </script>
+}
+
+

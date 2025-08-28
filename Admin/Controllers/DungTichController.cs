@@ -45,7 +45,7 @@ namespace Admin.Controllers
 
             var listDungTich = new DungTich_DAL().Select_DungTich_All();
             ViewBag.DungTiches = new SelectList(listDungTich, "Id", "Value");
-            return PartialView("Add", lstmodel);
+            return PartialView("Edit", lstmodel);
         }
         [HttpPost]
         public JsonResult Update(DungTichSanPham model/*, HttpPostedFileBase ImageFile*/)
@@ -68,11 +68,11 @@ namespace Admin.Controllers
             }
         }
         [HttpPost]
-        public JsonResult DeleteAccount(int Id, string TenNguoiXoa)
+        public JsonResult DeleteAccount(int Id)
         {
             try
             {
-                var result = new DungTich_DAL().Delete(Id, TenNguoiXoa);
+                var result = new DungTich_DAL().Delete(Id);
                 if (result)
                 {
                     return Json(new { code = 200, msg = "Xóa thành công" }, JsonRequestBehavior.AllowGet);

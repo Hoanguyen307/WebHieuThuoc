@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace Models
 {
+    [Table("VoucherCustomers")]
     public class VoucherCustomer
     {
+        [Key]
         public int Id { get; set; }
 
         public int VoucherId { get; set; }

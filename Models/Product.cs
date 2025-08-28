@@ -27,6 +27,8 @@ namespace Models
         public string ProductCategoryName { get; set; }
 
         public string Image { get; set; }
+        public string XuatXu { get; set; }
+        public string NoiSX { get; set; }
 
         public decimal? Price { get; set; }
 
@@ -50,7 +52,6 @@ namespace Models
         //public virtual ICollection<Wishlist> Wishlists { get; set; }
         /*[ForeignKey("OrderId")]
         public virtual Order Order { get; set; }*/
-
         public class ProductFilter
         {
             public string Name { get; set; }

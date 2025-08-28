@@ -151,7 +151,22 @@ namespace DAL
                 return new List<Product>();
             }
         }
+        public List<Product> Search(string SearchString)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@SearchString", SearchString);
 
+                var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_SearchOnly",
+                               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                return new List<Product>();
+            }
+        }
         public List<Product> Select_TopSelling(int limit = 8)
         {
             try

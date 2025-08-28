@@ -62,6 +62,7 @@
     <Compile Include="Buidings.cs" />
     <Compile Include="CaLam.cs" />
     <Compile Include="CartItemModel.cs" />
+    <Compile Include="CheckoutViewModel.cs" />
     <Compile Include="ChiTietNhapKho.cs" />
     <Compile Include="ChiTietXuatKho.cs" />
     <Compile Include="DBConnect.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="TonKhoModel.cs" />
     <Compile Include="Voucher.cs" />
     <Compile Include="VoucherCustomer.cs" />
+    <Compile Include="VoucherViewModel.cs" />
     <Compile Include="XuatKho.cs" />
   </ItemGroup>
   <ItemGroup>

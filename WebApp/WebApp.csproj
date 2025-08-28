@@ -164,7 +164,9 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CartController.cs" />
+    <Compile Include="Controllers\DiaChiGiaoHangController.cs" />
     <Compile Include="Controllers\Home1Controller.cs" />
+    <Compile Include="Controllers\KhachHangController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -280,6 +282,11 @@
     <Content Include="Content\assets\images\Kem-tri-nam-da-Charme-Lumino-3.jpg" />
     <Content Include="Content\assets\images\kem-tri-nam-innisfree-brightening-pore-spot-treatment-833334.jpg" />
     <Content Include="Content\assets\images\logohead-min.png" />
+    <Content Include="Content\assets\images\Logo\banner-2-9.png" />
+    <Content Include="Content\assets\images\Logo\Logo.png" />
+    <Content Include="Content\assets\images\Logo\Logo1.png" />
+    <Content Include="Content\assets\images\Logo\Logo2.png" />
+    <Content Include="Content\assets\images\Logo\logo3.png" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-1.jpg" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-2.jpg" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-3.jpg" />
@@ -3711,6 +3718,14 @@
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\VerifyResetOtp.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
+    <Content Include="Views\KhachHang\UpdateInfo.cshtml" />
+    <Content Include="Views\DiaChiGiaoHang\Index.cshtml" />
+    <Content Include="Views\DiaChiGiaoHang\Create.cshtml" />
+    <Content Include="Views\Payment\Cancel.cshtml" />
+    <Content Include="Views\Payment\Create.cshtml" />
+    <Content Include="Views\Payment\Return.cshtml" />
+    <Content Include="Views\Payment\Status.cshtml" />
+    <Content Include="Views\Cart\Checkout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

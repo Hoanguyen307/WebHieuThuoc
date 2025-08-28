@@ -318,6 +318,7 @@
     <Content Include="Content\assets\images\Logo\Logo.png" />
     <Content Include="Content\assets\images\Logo\Logo1.png" />
     <Content Include="Content\assets\images\Logo\Logo2.png" />
+    <Content Include="Content\assets\images\Logo\logo4.png" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-1.jpg" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-2.jpg" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-3.jpg" />
@@ -3801,7 +3802,6 @@
     <Content Include="Views\Voucher\Add.cshtml" />
     <Content Include="Views\Products\DungTich.cshtml" />
     <Content Include="Views\DungTich\Index.cshtml" />
-    <Content Include="Views\DungTich\Add.cshtml" />
     <Content Include="Views\DungTich\Edit.cshtml" />
     <Content Include="Views\NhapKho\Index.cshtml" />
     <Content Include="Views\NhapKho\Add.cshtml" />

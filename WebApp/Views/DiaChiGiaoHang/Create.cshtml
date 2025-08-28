@@ -1,0 +1,27 @@
+﻿@model Models.DiaChiGiaoHang
+
+@using (Html.BeginForm("", "", FormMethod.Post, new { id = "formDiaChi" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.DiaChiId)
+
+    <div class="mb-3">
+        <label>Người nhận</label>
+        @Html.TextBoxFor(m => m.TenNguoiNhan, new { @class = "form-control", placeholder = "Nhập tên người nhận" })
+    </div>
+
+    <div class="mb-3">
+        <label>Số điện thoại</label>
+        @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
+    </div>
+
+    <div class="mb-3">
+        <label>Địa chỉ chi tiết</label>
+        @Html.TextBoxFor(m => m.DiaChiChiTiet, new { @class = "form-control", placeholder = "Nhập địa chỉ giao hàng" })
+    </div>
+
+    <div class="mb-3 form-check">
+        @Html.CheckBoxFor(m => m.MacDinh, new { @class = "form-check-input" })
+        <label class="form-check-label">Đặt làm mặc định</label>
+    </div>
+}

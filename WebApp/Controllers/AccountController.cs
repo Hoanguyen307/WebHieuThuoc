@@ -79,6 +79,7 @@ namespace Admin.Controllers
             try
             {
                 var dangnhapnd = new KhachHang_DAL().DangNhap(tendangnhap, matkhau);
+
                 if (dangnhapnd != null)
                 {
                     Session["Login"] = dangnhapnd;

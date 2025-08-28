@@ -20,8 +20,24 @@ namespace DAL
                 param.Add("@ProductId", productId);
                 param.Add("@Quantity", quantity);
 
+                var totalCartCount = SqlMapper.Query<int>(Connection.getConnection(), "sp_AddToCart", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+
+                return totalCartCount;
+            }
+            catch (Exception)
+            {
+                throw new Exception("An error occurred while adding the item to the cart. Please try again later.");
+            }
+        }
+        public int GetTotalCartCount(int userId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@UserId", userId);
+
                 return Connection.getConnection().Execute(
-                    "sp_AddToCart",
+                    "sp_Cart_GetTotalCount",
                     param,
                     commandType: System.Data.CommandType.StoredProcedure
                 );
@@ -31,7 +47,6 @@ namespace DAL
                 throw new Exception("An error occurred while adding the item to the cart. Please try again later.");
             }
         }
-
         public List<CartItemModel> GetCartByCustomer(int customerId)
         {
             try
@@ -44,6 +59,27 @@ namespace DAL
                     param,
                     commandType: System.Data.CommandType.StoredProcedure
                 ).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public List<CartItemModel> GetCartForCheckout(int customerId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CustomerId", customerId);
+
+                var result = SqlMapper.Query<CartItemModel>(
+                    Connection.getConnection(),
+                    "sp_GetCart_Checkout",
+                    param,
+                    commandType: System.Data.CommandType.StoredProcedure
+                ).ToList();
+
                 return result;
             }
             catch (Exception)
@@ -72,7 +108,26 @@ namespace DAL
                 return false;
             }
         }
+        public bool UpdateStatus(int cartItemId, bool status)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CartItemId", cartItemId);
+                param.Add("@Status", status);
 
+                Connection.getConnection().Execute(
+                    "sp_UpdateCartItemStatus",
+                    param,
+                    commandType: System.Data.CommandType.StoredProcedure
+                );
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         public bool RemoveItem(int cartItemId)
         {
             try
@@ -81,7 +136,7 @@ namespace DAL
                 param.Add("@CartItemId", cartItemId);
 
                 Connection.getConnection().Execute(
-                    "sp_RemoveCartItem",
+                    "sp_CartItem_Remove",
                     param,
                     commandType: System.Data.CommandType.StoredProcedure
                 );

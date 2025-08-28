@@ -36,6 +36,7 @@ namespace Models
         public int MaxResultCount { get; set; }
         [NotMapped]
         public decimal PointsBalance { get; set; }
+        public virtual ICollection<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
         public class KhachHangFilter
         {
             public string FullName { get; set; }
@@ -43,4 +44,22 @@ namespace Models
             public int? Year { get; set; }
         }
     }
+    [Table("DiaChiGiaoHang")]
+    public class DiaChiGiaoHang
+    {
+        [Key]
+        public int Id { get; set; }
+        public int DiaChiId { get; set; }
+        public int KhachHangId { get; set; }
+
+        public string TenNguoiNhan { get; set; }
+        public string SoDienThoai { get; set; }
+        public string DiaChiChiTiet { get; set; }
+        public string GhiChu { get; set; }
+        public bool MacDinh { get; set; }
+        public DateTime NgayTao { get; set; }
+        [ForeignKey("KhachHangId")]
+        public virtual KhachHang KhachHang { get; set; }
+    }
+
 }

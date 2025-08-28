@@ -64,6 +64,7 @@
     <Compile Include="Cart_DAL.cs" />
     <Compile Include="Category_DAL.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="DiaChiGiaoHang_DAL.cs" />
     <Compile Include="DoanhThu_DAL.cs" />
     <Compile Include="DungTich_DAL.cs" />
     <Compile Include="KhachHang_DAL.cs" />

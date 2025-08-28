@@ -34,5 +34,6 @@ namespace Models
         public virtual DbSet<DungTichSanPham> DungTichSanPhams { get; set; }
         public virtual DbSet<NhapKho> NhapKhos { get; set; }
         public virtual DbSet<XuatKho> XuatKhos { get; set; }
+        public virtual DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
     }
 }

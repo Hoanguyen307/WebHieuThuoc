@@ -40,6 +40,27 @@ namespace DAL
                 throw;
             }
         }
+        public List<VoucherViewModel> GetVouchersByCustomer(int customerId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CustomerId", customerId);
+
+                var model = SqlMapper.Query<VoucherViewModel>(
+                    Connection.getConnection(),
+                    "sp_Vouchers_GetByCustomer",
+                    param,
+                    commandType: System.Data.CommandType.StoredProcedure
+                ).ToList();
+
+                return model;
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
+        }
 
         public int Insert(Voucher obj)
         {
