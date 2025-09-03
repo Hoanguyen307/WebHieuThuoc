@@ -1,0 +1,93 @@
+﻿@{
+    ViewBag.Title = "Thông tin tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var kh = Session["Login"] as Models.KhachHang;
+    var currentController = ViewContext.RouteData.Values["controller"].ToString();
+    var currentAction = ViewContext.RouteData.Values["action"].ToString();
+}
+@RenderSection("Styles", required: false)
+<style>
+    .list-group-item.active-menu {
+        background-color: #f5f5f5; /* nền sáng */
+        font-weight: bold;
+        border-left: 4px solid #28a745; /* viền trái màu xanh */
+        color: #28a745 !important; /* chữ xanh */
+    }
+
+    .list-group-item a {
+        display: block;
+        width: 100%;
+    }
+
+        .list-group-item a:hover {
+            color: #28a745;
+        }
+</style>
+
+<div class="container my-4">
+    <div class="row">
+        <!-- Menu bên trái -->
+        <div class="col-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body text-center border-bottom">
+                    <i class="fas fa-user-circle fa-3x mb-2 text-secondary"></i>
+                    <h6 class="mb-0">Chào @kh.FullName</h6>
+                    <small class="text-muted">Chỉnh sửa tài khoản</small>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="UpdateInfo" ? "active-menu" : "")">
+                        <a href="@Url.Action("UpdateInfo", "KhachHang")" class="text-decoration-none text-dark">
+                            Thông tin tài khoản
+                        </a>
+                    </li>
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="Diem" ? "active-menu" : "")">
+                        <a href="@Url.Action("Diem", "KhachHang")" class="text-decoration-none text-dark">
+                            Tích điểm
+                        </a>
+                    </li>
+                    <li class="list-group-item @(currentController=="Order" && currentAction=="DonHang" ? "active-menu" : "")">
+                        <a href="@Url.Action("DonHang", "KhachHang")" class="text-decoration-none text-dark">
+                            Đơn hàng của tôi
+                        </a>
+                    </li>
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="Booking" ? "active-menu" : "")">
+                        <a href="@Url.Action("Booking", "KhachHang")" class="text-decoration-none text-dark">
+                            Booking của tôi
+                        </a>
+                    </li>
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="SoDiaChi" ? "active-menu" : "")">
+                        <a href="@Url.Action("SoDiaChi", "KhachHang")" class="text-decoration-none text-dark">
+                            Sổ địa chỉ nhận hàng
+                        </a>
+                    </li>
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="Wishlist" ? "active-menu" : "")">
+                        <a href="@Url.Action("Wishlist", "KhachHang")" class="text-decoration-none text-dark">
+                            Danh sách yêu thích
+                        </a>
+                    </li>
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="MuaLai" ? "active-menu" : "")">
+                        <a href="@Url.Action("MuaLai", "KhachHang")" class="text-decoration-none text-dark">
+                            Mua lại
+                        </a>
+                    </li>
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="HoiDap" ? "active-menu" : "")">
+                        <a href="@Url.Action("HoiDap", "KhachHang")" class="text-decoration-none text-dark">
+                            Hỏi đáp
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- Nội dung bên phải -->
+        <div class="col-md-9">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@RenderSection("scripts", required: false)

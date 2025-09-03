@@ -1,0 +1,132 @@
+﻿@model List<Models.Order>
+@{
+    ViewBag.Title = "Đơn hàng của tôi";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<style>
+    .nav-tabs .nav-link.active {
+        background-color: #ff4fa4; 
+        border-color: #dee2e6 #dee2e6 #fff; 
+        color: #fff; 
+        font-weight: 600; 
+    }
+
+    .nav-tabs .nav-link:not(.active) {
+        color: #6c757d; 
+    }
+
+    .nav-tabs .nav-link {
+        background-color: #f8f9fa; 
+    }
+
+    .btn-pink {
+        background-color: #ff4fa4;
+        border-color: #ff4fa4;
+        color: #fff;
+    }
+
+        .btn-pink:hover {
+            background-color: #e54794;
+            border-color: #e54794;
+        }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h4 class="fw-bold mb-4">Đơn hàng của tôi</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <ul class="nav nav-tabs nav-justified" id="myOrderTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="online-tab" data-bs-toggle="tab" data-bs-target="#online-orders" type="button" role="tab" aria-controls="online-orders" aria-selected="true">
+                        Mua online
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="store-tab" data-bs-toggle="tab" data-bs-target="#store-orders" type="button" role="tab" aria-controls="store-orders" aria-selected="false">
+                        Mua tại cửa hàng
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="myOrderTabContent">
+                <div class="tab-pane fade show active" id="online-orders" role="tabpanel" aria-labelledby="online-tab">
+                    <div id="order-status-buttons" class="d-flex flex-wrap mt-3">
+                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2 active" data-status="">Tất cả</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Mới đặt">Mới đặt</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Đang xử lý">Đang xử lý</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Đang vận chuyển">Đang vận chuyển</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Thành công">Thành công</button>
+                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Đã hủy">Đã hủy</button>
+                    </div>
+                    <div class="card shadow-sm p-4 mt-3">
+                        @if (Model == null || !Model.Any())
+                        {
+                            <div class="text-center py-5">
+                                <h5 class="text-muted">Bạn chưa có đơn hàng nào</h5>
+                                <a href="@Url.Action("Index", "Products")" class="btn btn-pink mt-3">
+                                    Tiếp tục mua sắm
+                                </a>
+                            </div>
+                        }
+                        else
+                        {
+                            <div id="order-list">
+                                @foreach (var order in Model)
+                                {
+                                    <div class="order-item p-3 mb-3 border rounded">
+                                        <p><strong>Mã đơn hàng:</strong> @order.OrderCode</p>
+                                        <p>
+                                            <strong>Ngày đặt:</strong>
+                                            @if (order.CreatedDate.HasValue)
+                                            {
+                                                @order.CreatedDate.Value.ToString("dd/MM/yyyy")
+                                            }
+                                        </p>
+                                        <p><strong>Tổng tiền:</strong> @string.Format("{0:N0}", order.TotalAmount) đ</p>
+                                        <span class="badge bg-secondary">@order.Status</span>
+                                        <a href="@Url.Action("ChiTietDonHang", "KhachHang", new { id = order.ID })" class="btn btn-sm btn-outline-primary float-end">
+                                            Xem chi tiết
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="store-orders" role="tabpanel" aria-labelledby="store-tab">
+                    <div class="card shadow-sm p-4">
+                        <div class="text-center py-5">
+                            <h5 class="text-muted mt-3">Chức năng đang được phát triển...</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function() {
+            // Viết JavaScript/jQuery để xử lý khi người dùng click vào các nút trạng thái.
+            // Bạn có thể gửi một yêu cầu AJAX tới controller để lấy danh sách đơn hàng theo trạng thái mới.
+            $('.btn[data-status]').on('click', function() {
+                $('.btn[data-status]').removeClass('active');
+                $(this).addClass('active');
+                var status = $(this).data('status');
+
+                // Gửi AJAX request đến action để lấy đơn hàng theo trạng thái
+                // Ví dụ: $.get('@Url.Action("LichSu_DonHang", "KhachHang")', { status: status }, function(data) {
+                //      $('#order-list').html(data); // Cập nhật danh sách
+                // });
+            });
+
+        });
+    </script>
+}

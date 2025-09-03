@@ -96,7 +96,7 @@ body {
 }
 
     .header-item:hover {
-        color: #c0392b;
+        color: #ff4fa4;
     }
 
 .header-icon {
@@ -107,7 +107,7 @@ body {
 }
 
     .header-icon:hover {
-        color: #c0392b;
+        color: #ff4fa4;
     }
 
 .divider {
@@ -320,3 +320,4 @@ body {
 .mini-cart-footer .btn {
     margin-top: 8px;
 }
+

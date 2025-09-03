@@ -174,7 +174,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult Checkout()
+        public ActionResult Checkout(int? diaChiId)
         {
             if (CurrentUserId == 0)
             {
@@ -189,7 +189,12 @@ namespace WebApp.Controllers
 
             // Lấy địa chỉ giao hàng
             model.Addresses = new DiaChiGiaoHang_DAL().GetByKhachHang(CurrentUserId);
-            var defaultAddress = model.Addresses.FirstOrDefault(a => a.MacDinh);
+            if (diaChiId.HasValue)
+            {
+                new DiaChiGiaoHang_DAL().SetDefault(CurrentUserId, diaChiId.Value);
+            }
+            var defaultAddress = new DiaChiGiaoHang_DAL().GetDefault(CurrentUserId);
+            //var defaultAddress = model.Addresses.FirstOrDefault(a => a.MacDinh);
 
             // Lấy voucher khả dụng cho khách
             model.Vouchers = new Voucher_DAL().GetVouchersByCustomer(CurrentUserId);
@@ -205,6 +210,9 @@ namespace WebApp.Controllers
             };
             model.SelectedPaymentMethod = "COD";
 
+            model.SubTotal = model.CartItems.Sum(x => x.UnitPrice * x.Quantity);
+            model.Discount = 0; // nếu có giảm giá thì thay đổi
+            model.FinalTotal = model.SubTotal - model.Discount;
             return View(model);
         }
 
@@ -234,5 +242,14 @@ namespace WebApp.Controllers
 
             return RedirectToAction("OrderSuccess", new { id = orderId });
         }*/
+
+        [HttpGet]
+        public JsonResult GetCartCount()
+        {
+            var count = new Cart_DAL().GetTotalCartCount(CurrentUserId);
+            return Json(new { count = count }, JsonRequestBehavior.AllowGet);
+        }
+
+
     }
 }

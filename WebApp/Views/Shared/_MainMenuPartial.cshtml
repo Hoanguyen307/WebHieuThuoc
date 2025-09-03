@@ -1,0 +1,192 @@
+﻿<style>
+    .mega-dropdown-menu {
+        display: none;
+        position: absolute;
+        z-index: 1000;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        border-radius: 6px;
+        box-sizing: border-box;
+        padding: 0;
+    }
+
+    .menu-item:hover .mega-dropdown-menu {
+        display: block;
+    }
+
+    .mega-inner {
+        display: grid;
+        grid-template-columns: 220px 1fr; /* trái 280px, phải chiếm phần còn lại */
+        align-items: stretch;
+        min-height: 250px;
+        border: 2px solid #ff4fa4;
+    }
+
+    .left-col {
+        border-right: 1px solid #eee;
+        background: #fafafa;
+        padding: 6px 0;
+        border: 2px solid #ff4fa4;
+    }
+
+        .left-col ul {
+            margin: 0;
+        }
+
+    .main-category {
+        padding: .7rem 1rem;
+        cursor: pointer;
+        transition: .2s;
+        font-size: 15px;
+    }
+
+        .main-category:hover,
+        .main-category.active {
+            background: #ff4fa4;
+            color: #fff;
+            font-weight: 600;
+        }
+
+    .right-col {
+        padding: 16px 20px;
+        min-width: 600px;
+        background: #fff;
+        border: 2px solid #ff4fa4;
+    }
+
+    .sub-category-content {
+        display: none;
+    }
+
+        .sub-category-content.active {
+            display: block;
+        }
+
+        .sub-category-content .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr)); 
+            gap: 12px 16px;
+        }
+
+        .sub-category-content h6 {
+            font-size: 14px;
+            margin: 0;
+            white-space: normal;
+            word-break: break-word; 
+        }
+
+            .sub-category-content h6 a {
+                color: #333;
+                text-decoration: none;
+                transition: color .2s;
+                display: block;
+            }
+
+                .sub-category-content h6 a:hover {
+                    color: #ff4fa4;
+                }
+
+    @@media (max-width: 991.98px) {
+        .mega-dropdown-menu {
+            position: static;
+        }
+
+        .mega-inner {
+            grid-template-columns: 1fr;
+            min-height: auto;
+        }
+
+        .left-col {
+            border-right: 0;
+        }
+    }
+</style>
+
+
+<div class="main-menu-container">
+    <div class="container">
+        <ul class="main-menu d-flex justify-content-center">
+            <li class="menu-item">
+                <a href="#"><i class="fas fa-bars"></i> DANH MỤC</a>
+                <div class="mega-dropdown-menu">
+                    <div class="mega-inner">
+                        <!-- Cột trái -->
+                        <div class="left-col">
+                            <ul class="list-unstyled">
+                                @if (ViewBag.Categories != null)
+                                {
+                                    foreach (var parentCategory in ViewBag.Categories)
+                                    {
+                                        <li class="main-category" data-target="category-@parentCategory.ID">
+                                            @parentCategory.Name
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+
+                        <!-- Cột phải -->
+                        <div class="right-col">
+                            @if (ViewBag.Categories != null && ViewBag.ProductCategory != null)
+                            {
+                                foreach (var parentCategory in ViewBag.Categories)
+                                {
+                                    <div id="category-@parentCategory.ID" class="sub-category-content">
+                                        <div class="grid">
+                                            @foreach (var productCategory in ((List<Models.ProductCategory>)ViewBag.ProductCategory)
+                                                                               .Where(pc => pc.CategoryId == parentCategory.ID))
+                                            {
+                                                <h6>
+                                                    <a href="@Url.Action("Index", "Products", new { ProductCategoryId = productCategory.Id })">
+                                                        @productCategory.Name
+                                                    </a>
+                                                </h6>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </li>
+            <li class="menu-item"><a href="#">HOT DEALS</a></li>
+            <li class="menu-item"><a href="#">THƯƠNG HIỆU</a></li>
+            <li class="menu-item"><a href="/Products?sortOrder=newest">HÀNG MỚI VỀ</a></li>
+            <li class="menu-item"><a href="#">BÁN CHẠY</a></li>
+            <li class="menu-item"><a href="#">CLINIC & SPA</a></li>
+            <li class="menu-item"><a href="#">DERMAHAIR</a></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        const $main = $('.main-category');
+        const $subs = $('.sub-category-content');
+
+        function showFirst() {
+            $main.removeClass('active').first().addClass('active');
+            $subs.hide().removeClass('active').first().addClass('active').show();
+        }
+
+        $main.on('mouseenter', function () {
+            const id = $(this).data('target');
+            $main.removeClass('active');
+            $(this).addClass('active');
+
+            $subs.hide().removeClass('active');
+            $('#' + id).addClass('active').show();
+        });
+
+        showFirst();
+
+        // Ẩn tất cả khi rời dropdown rồi mở lại sẽ lại mặc định mục đầu
+        $('.mega-dropdown-menu').on('mouseleave', showFirst);
+    });
+</script>
+

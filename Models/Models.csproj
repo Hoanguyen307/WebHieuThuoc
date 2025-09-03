@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccountViewModels.cs" />
+    <Compile Include="BacSi.cs" />
     <Compile Include="BaseModel.cs" />
     <Compile Include="Buidings.cs" />
     <Compile Include="CaLam.cs" />
@@ -65,7 +66,10 @@
     <Compile Include="CheckoutViewModel.cs" />
     <Compile Include="ChiTietNhapKho.cs" />
     <Compile Include="ChiTietXuatKho.cs" />
+    <Compile Include="DatLichPhongKham.cs" />
     <Compile Include="DBConnect.cs" />
+    <Compile Include="DichVuPhongKham.cs" />
+    <Compile Include="DichVuViewModel.cs" />
     <Compile Include="DoanhThu.cs" />
     <Compile Include="DungTich.cs" />
     <Compile Include="DungTichSanPham.cs" />
@@ -84,6 +88,7 @@
     <Compile Include="PointsModel.cs" />
     <Compile Include="Position.cs" />
     <Compile Include="Post.cs" />
+    <Compile Include="Process.cs" />
     <Compile Include="Product.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="ProductCategory.cs" />

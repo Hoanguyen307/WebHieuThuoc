@@ -19,7 +19,7 @@ namespace Models
         public int AccountId { get; set; }
 
         [ForeignKey("AccountId")]
-        public virtual User User { get; set; }
+        public virtual KhachHang User { get; set; }
 
         [Required] 
         [MaxLength(255)] 

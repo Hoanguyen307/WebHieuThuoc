@@ -1,0 +1,55 @@
+﻿@model IEnumerable<Models.PointsModel>
+@{
+    ViewBag.Title = "Lịch sử điểm thưởng";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<h4 class="mb-3">Lịch sử điểm thưởng</h4>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead class="table-light">
+            <tr>
+                <th>Ngày</th>
+                <th>Mô tả</th>
+                <th>Điểm</th>
+                <th>Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CreatedDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Description</td>
+                        <td class="@(item.Points > 0 ? "text-success" : "text-danger")">
+                            @(item.Points > 0 ? "+" : "")@item.Points
+                        </td>
+                        <td>
+                            @if (item.Status == "Added")
+                            {
+                                <span class="badge bg-success">Đã cộng</span>
+                            }
+                            else if (item.Status == "Used")
+                            {
+                                <span class="badge bg-primary">Đã dùng</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">@item.Status</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-muted">Chưa có dữ liệu</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

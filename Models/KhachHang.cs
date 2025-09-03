@@ -48,7 +48,6 @@ namespace Models
     public class DiaChiGiaoHang
     {
         [Key]
-        public int Id { get; set; }
         public int DiaChiId { get; set; }
         public int KhachHangId { get; set; }
 

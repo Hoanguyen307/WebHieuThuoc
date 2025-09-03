@@ -115,11 +115,10 @@
 	line-height: 1.5em;
 	text-decoration: none; /* Bỏ gạch chân */
 	color: #333;
-	;
 }
 
 	.product-name:hover {
-		color: #ff66b2;
+		color: #ff4fa4;
 	}
 
 .product-price {
@@ -387,4 +386,114 @@ h4.fw-bold {
 	.product-category-sublist li a.active {
 		font-weight: bold;
 		color: #007bff;
+	}
+.service-grid {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: 15px;
+}
+
+.service-card {
+	border: 1px solid #eee;
+	border-radius: 8px;
+	padding: 10px;
+	background: #fff;
+	text-align: center;
+	transition: all 0.3s;
+}
+
+	.service-card:hover {
+		box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+		transform: translateY(-3px);
+	}
+
+.service-img {
+	max-height: 140px;
+	margin-bottom: 8px;
+}
+
+.price {
+	color: red;
+	font-weight: bold;
+}
+
+.rating {
+	font-size: 14px;
+	color: #666;
+}
+.price-list-container {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: 20px;
+	align-items: start;
+	background: #fafafa;
+	padding: 15px;
+	border-radius: 10px;
+}
+
+.price-banner img {
+	width: 100%;
+	border-radius: 10px;
+}
+
+.price-list {
+	background: #fff;
+	padding: 15px;
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.price-category {
+	font-weight: bold;
+	color: #2d5c4a;
+	margin-bottom: 10px;
+	border-bottom: 1px solid #eee;
+	padding-bottom: 5px;
+}
+
+.price-list ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	max-height: 320px;
+	overflow-y: auto;
+}
+
+.price-item {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 0;
+	border-bottom: 1px dashed #eee;
+	font-size: 15px;
+}
+
+.service-name {
+	flex: 1;
+	color: #444;
+}
+
+.service-price {
+	color: #e74c3c;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.view-all {
+	text-align: center;
+	margin-top: 10px;
+}
+
+.btn-view-all {
+	display: inline-block;
+	padding: 8px 20px;
+	background: #2d5c4a;
+	color: #fff;
+	border-radius: 20px;
+	text-decoration: none;
+	font-size: 14px;
+	transition: background 0.3s;
+}
+
+	.btn-view-all:hover {
+		background: #1f4031;
 	}

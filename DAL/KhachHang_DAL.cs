@@ -213,7 +213,7 @@ namespace DAL
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@CustomerId", customerId);
-                return Connection.getConnection().Execute("sp_GetCustomerPoints", param, commandType: System.Data.CommandType.StoredProcedure);
+                return Connection.getConnection().QueryFirstOrDefault<int>("sp_GetCustomerPoints", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
             {

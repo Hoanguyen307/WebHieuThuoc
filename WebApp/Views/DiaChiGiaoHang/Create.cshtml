@@ -1,27 +1,42 @@
 ﻿@model Models.DiaChiGiaoHang
 
-@using (Html.BeginForm("", "", FormMethod.Post, new { id = "formDiaChi" }))
-{
-    @Html.AntiForgeryToken()
+<form id="form-addDiaChi" autocomplete="off">
     @Html.HiddenFor(m => m.DiaChiId)
+    @Html.HiddenFor(m => m.KhachHangId)
 
     <div class="mb-3">
-        <label>Người nhận</label>
-        @Html.TextBoxFor(m => m.TenNguoiNhan, new { @class = "form-control", placeholder = "Nhập tên người nhận" })
-    </div>
-
-    <div class="mb-3">
-        <label>Số điện thoại</label>
-        @Html.TextBoxFor(m => m.SoDienThoai, new { @class = "form-control", placeholder = "Nhập số điện thoại" })
+        <label for="TenNguoiNhan" class="form-label fw-bold">Người nhận</label>
+        <input type="text" class="form-control" id="TenNguoiNhan" name="TenNguoiNhan"
+               placeholder="Tên người nhận" value="@Model.TenNguoiNhan" />
     </div>
 
     <div class="mb-3">
-        <label>Địa chỉ chi tiết</label>
-        @Html.TextBoxFor(m => m.DiaChiChiTiet, new { @class = "form-control", placeholder = "Nhập địa chỉ giao hàng" })
+        <label for="SoDienThoai" class="form-label fw-bold">Số điện thoại</label>
+        <input type="text" class="form-control" id="SoDienThoai" name="SoDienThoai"
+               placeholder="Số điện thoại" value="@Model.SoDienThoai" />
     </div>
 
-    <div class="mb-3 form-check">
-        @Html.CheckBoxFor(m => m.MacDinh, new { @class = "form-check-input" })
-        <label class="form-check-label">Đặt làm mặc định</label>
+    <div class="mb-3">
+        <label for="DiaChiChiTiet" class="form-label fw-bold">Địa chỉ chi tiết</label>
+        <input type="text" class="form-control" id="DiaChiChiTiet" name="DiaChiChiTiet"
+               placeholder="Địa chỉ chi tiết" value="@Model.DiaChiChiTiet" />
     </div>
-}
+
+    <div class="form-check mb-3">
+        <input type="hidden" name="MacDinh" value="false" />
+        <input class="form-check-input" type="checkbox" id="MacDinh" name="MacDinh"
+               value="true" @(Model.MacDinh ? "checked" : "") />
+        <label class="form-check-label" for="MacDinh">
+            Đặt làm mặc định
+        </label>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-end">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i> Đóng
+        </button>
+        <button type="button" onclick="SaveDiaChi()" class="btn btn-primary ms-2">
+            <i class="fas fa-save"></i> Lưu
+        </button>
+    </div>
+</form>

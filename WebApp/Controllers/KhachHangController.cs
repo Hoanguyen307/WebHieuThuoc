@@ -65,6 +65,37 @@ namespace WebApp.Controllers
             }
         }
 
+        public ActionResult Diem()
+        {
+            var kh = Session["Login"] as KhachHang;
+            if (kh == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
+            var dal = new KhachHang_DAL();
+
+            int tongDiem = dal.GetCustomerPoints(kh.Id);
+            ViewBag.TongDiem = tongDiem;
+
+            var lichSu = dal.LichSu_Diem(kh.Id);
+            ViewBag.LichSuDiem = lichSu;
+
+            return View();
+        }
+
+        public ActionResult DonHang()
+        {
+            var khachHang = Session["Login"] as KhachHang;
+            if (khachHang == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var orderDAL = new Order_DAL();
+            var donHang = orderDAL.LichSu_DonHang(khachHang.Id);
+
+            return View(donHang);
+        }
     }
 }

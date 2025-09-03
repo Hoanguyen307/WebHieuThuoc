@@ -6,10 +6,10 @@
 
 <div class="container my-5">
     <h2 class="mb-4">Thanh toán</h2>
-    <form id="checkoutForm" method="post" action="/Checkout/PlaceOrder">
+    <form id="checkoutForm" method="post" action="/Cart/Checkout">
         <div class="row">
             <!-- BÊN TRÁI: Danh sách sản phẩm -->
-            <div class="col-md-7">
+            <div class="col-md-8">
                 <div class="card shadow-sm mb-3">
                     <div class="card-header bg-light">
                         <h5 class="mb-0">Sản phẩm trong giỏ</h5>
@@ -19,14 +19,18 @@
                         {
                             <div class="d-flex justify-content-between align-items-center border-bottom py-2">
                                 <div class="d-flex align-items-center">
-                                    <img src="@item.ProductImage" width="60" class="me-3" />
-                                    <div>
+                                    <img src="https://localhost:44310/@item.ProductImage" width="125" class="me-3" />
+                                    <div style="width: 550px; padding-right: 25px;">
                                         <strong>@item.ProductName</strong><br />
-                                        SL: @item.Quantity x @item.UnitPrice.ToString("N0") đ
+                                        SL: @item.Quantity 
+
                                     </div>
                                 </div>
-                                <div>
-                                    <strong>@(item.Quantity * item.UnitPrice).ToString("N0") đ</strong>
+                                <div style="width: 120px;">
+                                    <strong>
+                                        @string.Format(System.Globalization.CultureInfo.GetCultureInfo("vi-VN"), "{0:N0} đ", item.Quantity * item.UnitPrice)
+                                    </strong>
+
                                 </div>
                             </div>
                         }
@@ -35,33 +39,54 @@
             </div>
 
             <!-- BÊN PHẢI: Thông tin đơn hàng -->
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <!-- Địa chỉ giao hàng -->
                 <div class="card shadow-sm mb-3">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">Địa chỉ giao hàng</h5>
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Chọn địa chỉ nhận hàng</h5>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="LoadForm()">
+                            <i class="fas fa-plus"></i>
+                            Thêm địa chỉ
+                        </button>
                     </div>
-                    <div class="card-body">
-                        @if (Model.Addresses != null && Model.Addresses.Any())
+                    <div class="list-group list-group-flush">
+                        @foreach (var addr in Model.Addresses)
                         {
-                            foreach (var addr in Model.Addresses)
-                            {
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input" type="radio" name="ShippingAddressId"
-                                           value="@addr.Id" @(addr.MacDinh ? "checked" : "") />
-                                    <label class="form-check-label">
-                                        <strong>@addr.TenNguoiNhan</strong> - @addr.DiaChiChiTiet <br />
-                                    </label>
+                            <label class="list-group-item d-flex align-items-start">
+                                <input class="form-check-input me-2 mt-1" type="radio" name="SelectedAddressId"
+                                       value="@addr.DiaChiId" @(addr.MacDinh ? "checked" : "") />
+
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>@addr.TenNguoiNhan</strong>
+                                            <span class="text-muted ms-2">(@addr.SoDienThoai)</span>
+                                        </div>
+                                        <div class="btn-group">
+                                            <button type="button"
+                                                    onclick="handleFormUpdateDanhMuc(@addr.DiaChiId)"
+                                                    class="btn btn-sm btn-link text-primary">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button"
+                                                    onclick="handleDelete(@addr.DiaChiId)"
+                                                    class="btn btn-sm btn-link text-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div>@addr.DiaChiChiTiet</div>
+                                    @if (addr.MacDinh)
+                                    {
+                                        <span class="badge bg-danger mt-1">Mặc định</span>
+                                    }
                                 </div>
-                            }
+                            </label>
                         }
-                        <div class="mt-3">
-                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">
-                                + Thêm địa chỉ mới
-                            </button>
-                        </div>
                     </div>
                 </div>
+
+
 
                 <!-- Phương thức thanh toán -->
                 <div class="card shadow-sm mb-3">
@@ -85,12 +110,13 @@
                         <h5 class="mb-0">Điểm thưởng</h5>
                     </div>
                     <div class="card-body">
-                        <p>Bạn hiện có: <strong>@Model.CurrentPoints</strong> điểm</p>
+                        <p>Bạn hiện có: <strong id="availablePoints">@(Model.CurrentPoints > 0 ? Model.CurrentPoints : 0)</strong> điểm</p>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="UsePoints" value="true" id="chkUsePoints" />
                             <label class="form-check-label" for="chkUsePoints">Sử dụng điểm để giảm giá</label>
                         </div>
-                        <input type="number" name="PointsToUse" class="form-control mt-2" placeholder="Nhập số điểm muốn dùng" min="0" max="@Model.CurrentPoints" />
+                        <!-- Ẩn input, chỉ dùng để submit về server -->
+                        <input type="hidden" name="PointsToUse" id="PointsToUse" value="0" />
                     </div>
                 </div>
 
@@ -102,18 +128,31 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Mã giảm giá</label>
-                            <select name="VoucherId" class="form-select">
+                            <select id="voucherSelect" name="VoucherId" class="form-select">
                                 <option value="">-- Chọn voucher --</option>
                                 @foreach (var voucher in Model.Vouchers)
                                 {
-                                    <option value="@voucher.VoucherId">@voucher.Code - Giảm @voucher.DiscountValue.ToString("N0")</option>
+                                    <option value="@voucher.VoucherId" data-discount-value="@voucher.DiscountValue">
+                                        @voucher.Code - Giảm @voucher.DiscountValue.ToString("N0")
+                                    </option>
                                 }
                             </select>
+
                         </div>
                         <hr />
-                        <p>Tạm tính: <span class="float-end">@Model.SubTotal.ToString("N0") đ</span></p>
-                        <p>Giảm giá: <span class="float-end text-danger">-@Model.Discount.ToString("N0") đ</span></p>
-                        <h5>Tổng tiền: <span class="float-end text-primary">@Model.FinalTotal.ToString("N0") đ</span></h5>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tạm tính:</span>
+                            <span class="tam-tinh" data-subtotal="@Model.SubTotal">@Model.SubTotal.ToString("N0") ₫</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Giảm giá:</span>
+                            <span class="giam-gia">0 ₫</span>
+                        </div>
+                        <div class="d-flex justify-content-between font-weight-bold">
+                            <span>Tổng tiền:</span>
+                            <span class="tong-tien">@Model.SubTotal.ToString("N0") ₫</span>
+                        </div>
+
                         <button type="submit" class="btn btn-danger w-100 mt-3">Đặt hàng</button>
                     </div>
                 </div>
@@ -123,31 +162,251 @@
 </div>
 
 <!-- Modal thêm địa chỉ -->
-<div class="modal fade" id="addAddressModal" tabindex="-1">
-    <div class="modal-dialog">
+<div class="modal fade" id="modalDiaChi" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Thêm địa chỉ mới</h5>
+                <h5 class="modal-title" id="modalDiaChiTitle">Thêm/Sửa địa chỉ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
-                <div class="mb-2">
-                    <label>Họ tên</label>
-                    <input type="text" name="NewAddress.FullName" class="form-control" />
-                </div>
-                <div class="mb-2">
-                    <label>Số điện thoại</label>
-                    <input type="text" name="NewAddress.Phone" class="form-control" />
-                </div>
-                <div class="mb-2">
-                    <label>Địa chỉ chi tiết</label>
-                    <textarea name="NewAddress.Detail" class="form-control"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary">Lưu</button>
+            <div class="modal-body" style="color: black">
+                <!-- Nội dung form sẽ load ở đây -->
             </div>
         </div>
     </div>
 </div>
+
+<script>
+function handleDelete(id) {
+    if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
+        $.ajax({
+            url: '/DiaChiGiaoHang/Delete',
+            type: 'POST',
+            data: { DiaChiId: id },
+            success: function (res) {
+                if (res.code === 200) {
+                    alert(res.msg);
+                    location.reload();
+                    //loadKhachHang();
+                } else {
+                    alert(res.msg);
+                }
+            }
+        });
+    }
+}
+// Khi chọn radio, gọi AJAX set mặc định
+$(document).on("change", "input[name='SelectedAddressId']", function () {
+    let id = $(this).val();
+
+    $.post("@Url.Action("SetDefault", "DiaChiGiaoHang")", { DiaChiId: id }, function (res) {
+        toastr[res.code === 200 ? "success" : "error"](res.msg);
+
+        if (res.code === 200) {
+            // Cập nhật lại UI mà không cần reload
+            $(".badge.bg-danger").remove(); // xóa badge cũ
+            $("input[name='SelectedAddressId']:checked")
+                .closest("label")
+                .find(".flex-grow-1")
+                .append('<span class="badge bg-danger mt-1">Mặc định</span>');
+        }
+    });
+});
+
+    function LoadForm() {
+        $.ajax({
+            url: '/DiaChiGiaoHang/Create',
+            type: 'Get',
+            success: function (res) {
+                if ($('#formAdd').length > 0) {
+                    $('#formAdd')[0].reset();
+                }
+                $('#DiaChiId').val('');
+                $('#modalDiaChi .modal-body').html(res);
+                $('#modalDiaChi').modal('show');
+            }
+        })
+    }
+
+    function handleFormUpdateDanhMuc(id) {
+        debugger
+        if (!id || parseInt(id) <= 0) {
+            toastr.error("ID không hợp lệ");
+            return;
+        }
+
+        $.ajax({
+            url: '/DiaChiGiaoHang/Edit',
+            type: 'GET',
+            data: { DiaChiId: id },
+            success: function (res) {
+                $('#modalDiaChi .modal-body').html(res);
+                $('#modalDiaChi').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error('Lỗi khi load form:', error);
+                alert('Có lỗi xảy ra khi tải form. Vui lòng thử lại!');
+            }
+        });
+    }
+    function SaveDiaChi() {
+        debugger
+        var form = $('#form-addDiaChi')[0];
+        var formData = new FormData(form);
+        var id = $('#DiaChiId').val();
+        formData.append("MacDinh", $('#MacDinh').is(':checked'));
+
+        var url = (id != null && parseInt(id) > 0) ? '/DiaChiGiaoHang/Edit' : '/DiaChiGiaoHang/Create';
+        console.log([...formData.entries()]);
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (res) {
+                if (res.code === 200) {
+                    toastr.success(res.msg || "Cập nhật thành công");
+                    $('#modalDiaChi').modal('hide');
+                    setTimeout(function () {
+                        location.reload();
+                    }, 1500);
+                    //loadDanhMuc();
+                } else if (typeof res === 'string') {
+                    $('#modalDiaChi .modal-body').html(res);
+                } else {
+                    toastr.error(res.msg || "Cập nhật thất bại");
+                }
+            }
+        });
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+        const chkUsePoints = document.getElementById("chkUsePoints");
+        const pointsHiddenInput = document.getElementById("PointsToUse");
+        const voucherSelect = document.getElementById("voucherSelect");
+        const subtotalElem = document.querySelector(".tam-tinh");
+        const discountElem = document.querySelector(".giam-gia");
+        const totalElem = document.querySelector(".tong-tien");
+
+        const subtotal = parseInt(subtotalElem.dataset.subtotal);
+        const availablePoints = parseInt(document.getElementById("availablePoints").textContent) || 0;
+
+        // giả sử 1 điểm = 1đ (nếu khác thì sửa ở đây)
+        const pointValue = 1;
+
+        function formatCurrency(value) {
+            return value.toLocaleString("vi-VN") + " ₫";
+        }
+
+        function calculateTotal() {
+            let discount = 0;
+
+            // Tính giảm giá từ điểm thưởng
+            if (chkUsePoints.checked) {
+                // Tối đa số điểm có thể dùng = min(điểm hiện có, subtotal/pointValue)
+                let maxPointsUsable = Math.min(availablePoints, Math.floor(subtotal / pointValue));
+                pointsHiddenInput.value = maxPointsUsable;
+                discount += maxPointsUsable * pointValue;
+            } else {
+                pointsHiddenInput.value = 0;
+            }
+
+            // Tính giảm giá từ voucher
+            let selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
+            if (selectedOption && selectedOption.dataset.discountValue) {
+                discount += parseInt(selectedOption.dataset.discountValue);
+            }
+
+            // Không cho vượt quá subtotal
+            if (discount > subtotal) discount = subtotal;
+
+            let finalTotal = subtotal - discount;
+
+            discountElem.textContent = "-" + formatCurrency(discount);
+            totalElem.textContent = formatCurrency(finalTotal);
+        }
+
+        chkUsePoints.addEventListener("change", calculateTotal);
+        voucherSelect.addEventListener("change", calculateTotal);
+
+        // gọi 1 lần ban đầu để sync giá trị
+        calculateTotal();
+    });
+    /*document.addEventListener("DOMContentLoaded", function () {
+        const addAddressBtn = document.querySelector('button[data-bs-target="#addAddressModal"]');
+        const modalBody = document.querySelector('#addAddressModal .modal-body');
+        const addressListContainer = document.getElementById('address-list-container');
+        const saveAddressBtn = document.querySelector('#addAddressModal .btn-primary');
+        const modal = new bootstrap.Modal(addAddressModal);
+
+        // Bước 1: Tải form thêm địa chỉ vào modal khi nút được nhấn
+        addAddressBtn.addEventListener('click', function () {
+            modalBody.innerHTML = '<div class="text-center py-5">Đang tải...</div>';
+
+            fetch('/DiaChiGiaoHang/Create')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Lỗi mạng hoặc server không phản hồi.');
+                    }
+                    return response.text();
+                })
+                .then(html => {
+                    modalBody.innerHTML = html;
+                })
+                .catch(error => {
+                    console.error('Lỗi AJAX:', error);
+                    modalBody.innerHTML = '<div class="text-danger py-5">Có lỗi xảy ra khi tải form. Vui lòng thử lại.</div>';
+                });
+        });
+
+        // Bước 2: Xử lý sự kiện khi form trong modal được submit
+        saveAddressBtn.addEventListener('click', function (e) {
+            const form = document.getElementById('formDiaChi');
+
+            if (!form) {
+                console.error('Form không tồn tại.');
+                return;
+            }
+
+            e.preventDefault();
+
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 200) {
+                    alert(data.msg);
+                    modal.hide();
+
+                    // Tạo một phần tử HTML mới cho địa chỉ vừa thêm
+                    const newAddressHtml = `
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="ShippingAddressId" value="${data.addressId}" checked />
+                            <label class="form-check-label">
+                                <strong>${formData.get('TenNguoiNhan')}</strong> - ${formData.get('DiaChiChiTiet')} <br />
+                            </label>
+                        </div>
+                    `;
+
+                    // Thêm địa chỉ mới vào danh sách và chọn nó
+                    addressListContainer.insertAdjacentHTML('afterbegin', newAddressHtml);
+
+                } else {
+                    alert('Lỗi: ' + data.msg);
+                }
+            })
+            .catch(error => {
+                console.error('Lỗi:', error);
+                alert('Có lỗi xảy ra trong quá trình thêm địa chỉ.');
+            });
+        });
+    });*/
+</script>

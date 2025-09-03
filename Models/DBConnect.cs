@@ -24,7 +24,7 @@ namespace Models
         public virtual DbSet<NhanVien> NhanViens { get; set; }
         public virtual DbSet<KhachHang> KhachHangs { get; set; }
         public virtual DbSet<Post> BaiViets { get; set; }
-        //public virtual DbSet<Process> Processes { get; set; }
+        public virtual DbSet<Process> Processes { get; set; }
         public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
         public virtual DbSet<ThuongHieu> Brands { get; set; }
         public virtual DbSet<ProductCategory> ProductCategories { get; set; }
@@ -35,5 +35,8 @@ namespace Models
         public virtual DbSet<NhapKho> NhapKhos { get; set; }
         public virtual DbSet<XuatKho> XuatKhos { get; set; }
         public virtual DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
+        public virtual DbSet<DichVuPhongKham> DichVuPhongKhams { get; set; }
+        public virtual DbSet<BacSi> BacSis { get; set; }
+        public virtual DbSet<DatLichPhongKham> DatLichPhongKhams { get; set; }
     }
 }

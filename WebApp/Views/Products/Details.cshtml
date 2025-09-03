@@ -246,7 +246,7 @@
             success: function (res) {
                 if (res.success) {
                     alert('Sản phẩm đã được thêm vào giỏ hàng');
-                    // Có thể cập nhật số lượng hiển thị giỏ hàng ở header
+                    updateCartCount();
                 } else {
                     alert(res.message || 'Thêm giỏ hàng thất bại');
                 }

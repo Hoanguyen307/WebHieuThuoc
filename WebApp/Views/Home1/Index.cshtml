@@ -35,12 +35,19 @@
                     <div class="product-card">
                         @{
                             decimal? discount = 0;
-                            if (product.Price > 0)
+                            if (product.Price > 0 && product.SalePrice < product.Price)
                             {
                                 discount = ((product.Price - product.SalePrice) / product.Price) * 100;
                             }
+                            else
+                            {
+                                discount = 0;
+                            }
                         }
-                        <div class="discount-badge">@((int)discount)%</div>
+                        @if (discount > 0)
+                        {
+                            <div class="discount-badge">@((int)discount)%</div>
+                        }
 
                         <a href="#">
                             <div class="product-image">
@@ -51,7 +58,10 @@
                         <a href="#" class="product-name">@product.Name</a>
                         <div class="product-price">
                             <span class="flash-price">@product.SalePrice.Value.ToString("N0") đ</span>
-                            <span class="original-price">@product.Price.Value.ToString("N0") đ</span>
+                            @if (discount > 0)
+                            {
+                                <span class="original-price">@product.Price.Value.ToString("N0") đ</span>
+                            }
                         </div>
                     </div>
                 }
@@ -79,9 +89,13 @@
                 <div class="product-card-has-image">
                     @{
                         decimal? discount = 0;
-                        if (product.Price.HasValue && product.Price > 0 && product.SalePrice.HasValue)
+                        if (product.Price.HasValue && product.SalePrice.HasValue && product.SalePrice < product.Price)
                         {
                             discount = ((product.Price - product.SalePrice) / product.Price) * 100;
+                        }
+                        else
+                        {
+                            discount = 0;
                         }
                     }
 
@@ -101,7 +115,7 @@
                             @product.Name
                         </a>
                         <div class="product-prices">
-                            @if (product.SalePrice.HasValue && product.SalePrice < product.Price)
+                            @if (discount > 0)
                             {
                                 <span class="product-price-sale">@product.SalePrice.Value.ToString("N0") đ</span>
                                 <span class="product-price-original">@product.Price.Value.ToString("N0") đ</span>
@@ -127,6 +141,77 @@
         }
     </div>
 </div>
+
+<div class="clinic-section mt-5">
+    <ul class="nav nav-tabs" id="clinicTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">Dịch vụ phòng khám</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="prices-tab" data-bs-toggle="tab" data-bs-target="#prices" type="button" role="tab">Bảng giá</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="clinicTabContent">
+        <!-- Tab Dịch vụ -->
+        <div class="tab-pane fade show active" id="services" role="tabpanel">
+            <div class="service-grid mt-3">
+                @if (Model.DichVuPhongKhamList != null && Model.DichVuPhongKhamList.Any())
+                {
+                    foreach (var item in Model.DichVuPhongKhamList)
+                    {
+                        <div class="service-card">
+                            <img src="@item.HinhAnh" alt="@item.TenDichVu" class="service-img" />
+                            <div class="service-body">
+                                <h5 class="price">@string.Format("{0:N0} đ", item.Gia)</h5>
+                                <p class="name">@item.TenDichVu</p>
+                                <div class="rating">
+                                    ⭐ 4.8 | 200 lượt
+                                </div>
+                                <div class="info">
+                                    @item.ThoiGian phút
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Hiện chưa có dịch vụ nào.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Tab Bảng giá -->
+        <div class="tab-pane fade" id="prices" role="tabpanel">
+            <div class="price-list-container mt-3">
+                <!-- Banner bên trái -->
+                <div class="price-banner">
+                    <img src="~/Content/assets/images/Logo/clinic-banner.png" alt="Clinic Promo" />
+                </div>
+
+                <!-- Danh sách dịch vụ bên phải -->
+                <div class="price-list">
+                    <h5 class="price-category" style="text-align:center">ĐIỀU TRỊ MỤN</h5>
+                    <ul>
+                        @foreach (var item in Model.DichVuPhongKhamList.Take(8))
+                        {
+                        <li class="price-item">
+                            <span class="service-name">@item.TenDichVu</span>
+                            <span class="service-price">@string.Format("{0:N0} đ", item.Gia)</span>
+                        </li>
+                        }
+                    </ul>
+                    <div class="view-all">
+                        <a href="@Url.Action("Index", "DichVu")" class="btn-view-all">Xem tất cả</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {

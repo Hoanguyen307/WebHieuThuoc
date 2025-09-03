@@ -35,7 +35,6 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public JsonResult Create(DiaChiGiaoHang model)
         {
             try
@@ -48,17 +47,19 @@ namespace WebApp.Controllers
                 var newId = _dal.Insert(model);
 
                 if (newId > 0)
-                    return Json(new { code = 200, msg = "Thêm địa chỉ thành công!" });
+                    //return Json(new { code = 200, msg = "Thêm địa chỉ thành công!", addressId = newId });
+                    return Json(new { id = newId, code = 200, msg = "Thêm mới thành công" }, JsonRequestBehavior.AllowGet);
                 else
-                    return Json(new { code = 400, msg = "Không thể thêm địa chỉ." });
+                    return Json(new { code = 500, msg = "Thêm mới thất bại" }, JsonRequestBehavior.AllowGet);
+                //return Json(new { code = 400, msg = "Không thể thêm địa chỉ." });
             }
             catch (Exception ex)
             {
-                return Json(new { code = 500, msg = "Lỗi hệ thống: " + ex.Message });
+                return Json(new { code = 500, msg = "Lỗi:" + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
 
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int DiaChiId)
         {
             var kh = Session["Login"] as KhachHang;
             if (kh == null)
@@ -67,7 +68,7 @@ namespace WebApp.Controllers
             }
 
             var list = _dal.GetByKhachHang(kh.Id);
-            var model = list.FirstOrDefault(x => x.DiaChiId == id);
+            var model = list.FirstOrDefault(x => x.DiaChiId == DiaChiId);
             if (model == null)
             {
                 return HttpNotFound();
@@ -76,7 +77,6 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public JsonResult Edit(DiaChiGiaoHang model)
         {
             try
@@ -100,7 +100,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult Delete(int id)
+        public JsonResult Delete(int DiaChiId)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace WebApp.Controllers
                 if (kh == null)
                     return Json(new { code = 401, msg = "Phiên đăng nhập hết hạn!" });
 
-                var ok = _dal.Delete(id, kh.Id);
+                var ok = _dal.Delete(DiaChiId, kh.Id);
 
                 if (ok)
                     return Json(new { code = 200, msg = "Xóa địa chỉ thành công!" });
@@ -122,7 +122,7 @@ namespace WebApp.Controllers
         }
 
         [HttpPost]
-        public JsonResult SetDefault(int id)
+        public JsonResult SetDefault(int DiaChiId)
         {
             try
             {
@@ -130,7 +130,7 @@ namespace WebApp.Controllers
                 if (kh == null)
                     return Json(new { code = 401, msg = "Phiên đăng nhập hết hạn!" });
 
-                var ok = _dal.SetDefault(kh.Id, id);
+                var ok = _dal.SetDefault(kh.Id, DiaChiId);
 
                 if (ok)
                     return Json(new { code = 200, msg = "Đặt địa chỉ mặc định thành công!" });

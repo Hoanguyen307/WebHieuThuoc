@@ -82,8 +82,8 @@ namespace WebApp.Controllers
         public ActionResult Add(int? id)
         {
             var tientrinh = new Process();
-            var listUser = new Account_DAL().Select_NguoiDung_All();
-            ViewBag.Users = new SelectList(listUser, "Id", "UserName");
+            var listUser = new KhachHang_DAL().Select_KhachHang_GetAll();
+            ViewBag.Users = new SelectList(listUser, "Id", "FullName");
             if (id != null)
             {
                 var bv = db.Processes.Find(id);

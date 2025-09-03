@@ -64,6 +64,7 @@
     <Compile Include="Cart_DAL.cs" />
     <Compile Include="Category_DAL.cs" />
     <Compile Include="Class1.cs" />
+    <Compile Include="DatLich_DAL.cs" />
     <Compile Include="DiaChiGiaoHang_DAL.cs" />
     <Compile Include="DoanhThu_DAL.cs" />
     <Compile Include="DungTich_DAL.cs" />
@@ -71,6 +72,8 @@
     <Compile Include="NhanVien_DAL.cs" />
     <Compile Include="NhapKho_DAL.cs" />
     <Compile Include="Order_DAL.cs" />
+    <Compile Include="DichVuPhongKham_DAL.cs" />
+    <Compile Include="Process_DAL.cs" />
     <Compile Include="ProductCategory_DAL.cs" />
     <Compile Include="ProductReview_DAL.cs" />
     <Compile Include="Product_DAL.cs" />

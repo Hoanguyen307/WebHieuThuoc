@@ -1,7 +1,8 @@
 ﻿@model Models.KhachHang
 @{
-    ViewBag.Title = "UpdateInfo";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Thông tin tài khoản";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+    var kh = Session["Login"] as Models.KhachHang;
 }
 
 <div class="container mt-4">
@@ -34,7 +35,7 @@
 
         <div class="mb-3">
             <label for="Address" class="form-label">Địa chỉ</label>
-            <input type="text" name="Address" id="Address" class="form-control" value="@Model.Address" >
+            <input type="text" name="Address" id="Address" class="form-control" value="@Model.Address">
         </div>
 
         <button type="submit" class="btn btn-primary">Cập nhật</button>

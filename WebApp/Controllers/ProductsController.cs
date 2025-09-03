@@ -21,7 +21,7 @@ namespace WebApp.Controllers
                 BrandId = BrandId
             };
 
-            var product = new Product_DAL().Select_Published(filter, sortOrder).Take(pageSize).ToList(); ;
+            var product = new Product_DAL().Select_Published(filter, sortOrder).Take(pageSize).ToList();
             var category = new Category_DAL().Select_Category_All();
             ViewBag.Categories = category;
             var listBrands = new Product_DAL().Select_Brands_All();

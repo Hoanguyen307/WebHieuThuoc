@@ -161,6 +161,10 @@
         </div>
     </div>
     <script>
+        $(document).ready(function () {
+            updateCartCount(); // Load số giỏ hàng đúng sau khi login
+        });
+
         $("#loginForm").submit(function (e) {
             e.preventDefault();
 

@@ -29,15 +29,15 @@ namespace DAL
                 throw new Exception("An error occurred while adding the item to the cart. Please try again later.");
             }
         }
-        public int GetTotalCartCount(int userId)
+        public int GetTotalCartCount(int customerId)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@UserId", userId);
+                param.Add("@CustomerId", customerId);
 
-                return Connection.getConnection().Execute(
-                    "sp_Cart_GetTotalCount",
+                return Connection.getConnection().QuerySingle<int>(
+                    "sp_GetCartCount_ByCustomer",
                     param,
                     commandType: System.Data.CommandType.StoredProcedure
                 );
