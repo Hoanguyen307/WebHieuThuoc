@@ -194,6 +194,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaiVietController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
+    <Compile Include="Controllers\ChatAdminController.cs" />
     <Compile Include="Controllers\DoanhThuController.cs" />
     <Compile Include="Controllers\DungTichController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -3809,6 +3810,8 @@
     <Content Include="Views\XuatKho\Detail.cshtml" />
     <Content Include="Views\NhapKho\Detail.cshtml" />
     <Content Include="Views\ProductReview\Index.cshtml" />
+    <Content Include="Views\ChatAdmin\Index.cshtml" />
+    <Content Include="Views\ChatAdmin\Chat.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,31 @@
+﻿@model IEnumerable<Models.ChatSession>
+
+<div class="container mt-4">
+    <h3>📋 Danh sách phiên chat</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>SessionId</th>
+                <th>Khách hàng</th>
+                <th>Thời gian tạo</th>
+                <th>Trạng thái</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var s in Model)
+            {
+                <tr>
+                    <td>@s.SessionId</td>
+                    <td>@s.CustomerId</td>
+                    <td>@s.CreatedDate</td>
+                    <td>@(s.IsActive ? "Đang hoạt động" : "Kết thúc")</td>
+                    <td>
+                        <a href="@Url.Action("Chat", "ChatAdmin", new { sessionId = s.SessionId })"
+                           class="btn btn-sm btn-primary">Vào chat</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

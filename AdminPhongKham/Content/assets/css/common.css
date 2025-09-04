@@ -1,0 +1,173 @@
+﻿
+.table td, .table th {
+	padding: 4px 8px !important;
+	font-size: 16px;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.table-bordered {
+	border: 1px solid #dee2e6;
+}
+
+#tableBody tr {
+	line-height: 1.5;
+}
+
+.modal-xl {
+	max-width: 65% !important;
+	width: auto !important;
+}
+
+.pagination {
+	display: flex;
+	justify-content: flex-end;
+	list-style: none;
+	padding-left: 0;
+}
+
+.page-item {
+	margin: 0 2px;
+}
+
+.page-link {
+	display: block;
+	padding: 6px 12px;
+	color: #007bff;
+	background-color: #f8f9fa;
+	border: 1px solid #dee2e6;
+	border-radius: 4px;
+	text-decoration: none;
+}
+
+.page-item.active .page-link {
+	background-color: #007bff;
+	color: white;
+	border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+	pointer-events: none;
+	color: #6c757d;
+	background-color: #e9ecef;
+}
+
+fieldset {
+	border: 2px solid #0d6efd;
+	border-radius: 10px;
+	padding: 16px 20px 12px 20px;
+	margin-bottom: 20px;
+	position: relative;
+}
+
+legend {
+	font-weight: bold;
+	font-size: 16px;
+	padding: 0 10px;
+	color: #007bff;
+}
+
+.form-control,
+.form-select {
+	border-radius: 6px;
+	padding: 6px 12px;
+	font-size: 14px;
+}
+
+.btn-primary {
+	background-color: #009ef7;
+	border-color: #009ef7;
+}
+
+.btn-danger {
+	background-color: #f1416c;
+	border-color: #f1416c;
+}
+
+.btn-primary:hover {
+	background-color: #0275d8;
+}
+
+.btn-danger:hover {
+	background-color: #dc3545;
+}
+
+.input-group .form-control[readonly] {
+	background-color: #f5f8fa;
+}
+
+label {
+	font-weight: 500;
+	margin-bottom: 4px;
+}
+
+.row.mb-2 {
+	margin-bottom: 16px !important;
+}
+
+textarea.form-control {
+	min-height: 85px;
+}
+
+.input-group .btn i {
+	margin-right: 4px;
+}
+
+.container-wrapper {
+	min-height: 100%;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: auto;
+	overflow: auto;
+}
+
+
+.main-content {
+	/*max-height: 505px;*/
+	overflow-x: auto;
+	overflow-y: hidden;
+	margin-left: 260px;
+	padding-bottom: 160px;
+}
+
+.history-fixed {
+	
+	margin-left: 260px;
+	top: 660px;
+	left: 0;
+	right: 0;
+	background: white;
+	border-top: 1px solid #ddd;
+	z-index: 999;
+}
+.filter-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	align-items: center;
+	margin-left: 260px;
+	margin-bottom: 15px;
+}
+
+	.filter-form .form-control,
+	.filter-form .form-select {
+		min-width: 110px;
+		max-width: 165px;
+		font-size: 0.875rem;
+		padding: 0.25rem 0.5rem;
+	}
+
+	.filter-form .search-input {
+		flex: 1;
+		min-width: 200px;
+	}
+
+	.filter-form .btn {
+		padding: 0.3rem 0.75rem;
+		font-size: 0.875rem;
+	}
+
+
+

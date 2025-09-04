@@ -56,7 +56,7 @@ namespace DAL
 
                 return model;
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 throw;
             }

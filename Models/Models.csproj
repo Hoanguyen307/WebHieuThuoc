@@ -63,11 +63,13 @@
     <Compile Include="Buidings.cs" />
     <Compile Include="CaLam.cs" />
     <Compile Include="CartItemModel.cs" />
+    <Compile Include="ChatSession.cs" />
     <Compile Include="CheckoutViewModel.cs" />
     <Compile Include="ChiTietNhapKho.cs" />
     <Compile Include="ChiTietXuatKho.cs" />
     <Compile Include="DatLichPhongKham.cs" />
     <Compile Include="DBConnect.cs" />
+    <Compile Include="DichVu.cs" />
     <Compile Include="DichVuPhongKham.cs" />
     <Compile Include="DichVuViewModel.cs" />
     <Compile Include="DoanhThu.cs" />
@@ -80,6 +82,7 @@
     <Compile Include="LichLamViecViewModel\LichTrongTuanModel.cs" />
     <Compile Include="LichLamViecViewModel\XepLichNhanVienModel.cs" />
     <Compile Include="LichSu_ChucVu.cs" />
+    <Compile Include="ChatMessage.cs" />
     <Compile Include="myConnection.cs" />
     <Compile Include="NhanVien.cs" />
     <Compile Include="NhapKho.cs" />

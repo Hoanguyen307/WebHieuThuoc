@@ -52,10 +52,7 @@ namespace DAL
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@TenDichVu", obj.TenDichVu);
-                param.Add("@Gia", obj.Gia);
-                param.Add("@ThoiGian", obj.ThoiGian);
                 param.Add("@MoTa", obj.MoTa);
-                param.Add("@HinhAnh", obj.HinhAnh);
                 param.Add("@CreatedBy", obj.CreatedBy);
 
                 return Connection.getConnection().Execute(
@@ -77,10 +74,7 @@ namespace DAL
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@DichVuId", obj.DichVuId);
                 param.Add("@TenDichVu", obj.TenDichVu);
-                param.Add("@Gia", obj.Gia);
-                param.Add("@ThoiGian", obj.ThoiGian);
                 param.Add("@MoTa", obj.MoTa);
-                param.Add("@HinhAnh", obj.HinhAnh);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
 
                 return Connection.getConnection().Execute(

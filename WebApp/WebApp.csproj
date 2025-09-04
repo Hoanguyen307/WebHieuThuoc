@@ -165,6 +165,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\CaseController.cs" />
+    <Compile Include="Controllers\ChatController.cs" />
     <Compile Include="Controllers\DiaChiGiaoHangController.cs" />
     <Compile Include="Controllers\DichVuController.cs" />
     <Compile Include="Controllers\Home1Controller.cs" />
@@ -286,8 +287,10 @@
     <Content Include="Content\assets\images\kem-tri-nam-innisfree-brightening-pore-spot-treatment-833334.jpg" />
     <Content Include="Content\assets\images\logohead-min.png" />
     <Content Include="Content\assets\images\Logo\banner-2-9.png" />
+    <Content Include="Content\assets\images\Logo\banner1.png" />
+    <Content Include="Content\assets\images\Logo\banner2.png" />
+    <Content Include="Content\assets\images\Logo\banner3.png" />
     <Content Include="Content\assets\images\Logo\Logo.png" />
-    <Content Include="Content\assets\images\Logo\Logo1.png" />
     <Content Include="Content\assets\images\Logo\Logo2.png" />
     <Content Include="Content\assets\images\Logo\logo3.png" />
     <Content Include="Content\assets\images\mat-na-sur-medic-multi-vita-30g-1.jpg" />
@@ -3740,6 +3743,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Chat\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.rtl.min.css.map" />

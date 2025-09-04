@@ -63,9 +63,11 @@
     <Compile Include="BaiViet_DAL.cs" />
     <Compile Include="Cart_DAL.cs" />
     <Compile Include="Category_DAL.cs" />
+    <Compile Include="Chat_DAL.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="DatLich_DAL.cs" />
     <Compile Include="DiaChiGiaoHang_DAL.cs" />
+    <Compile Include="DichVu_DAL.cs" />
     <Compile Include="DoanhThu_DAL.cs" />
     <Compile Include="DungTich_DAL.cs" />
     <Compile Include="KhachHang_DAL.cs" />

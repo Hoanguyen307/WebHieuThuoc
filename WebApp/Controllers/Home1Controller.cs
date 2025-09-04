@@ -17,7 +17,7 @@ namespace WebApp.Controllers
 
             viewModel.TopSellingProducts = new Product_DAL().Select_TopSelling(8);
             viewModel.LatestProducts = new Product_DAL().Select_GetLatest(8);
-            viewModel.DichVuPhongKhamList = new DichVuPhongKham_DAL().Select_All();
+            viewModel.DichVus = new DichVu_DAL().Select_GetLatest(8);
             return View(viewModel);
         }
 

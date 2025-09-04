@@ -38,5 +38,6 @@ namespace Models
         public virtual DbSet<DichVuPhongKham> DichVuPhongKhams { get; set; }
         public virtual DbSet<BacSi> BacSis { get; set; }
         public virtual DbSet<DatLichPhongKham> DatLichPhongKhams { get; set; }
+        public virtual DbSet<DichVu> DichVus { get; set; }
     }
 }

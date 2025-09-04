@@ -1,0 +1,58 @@
+﻿@{
+    ViewBag.Title = "Chat với khách";
+    int sessionId = ViewBag.SessionId;
+}
+
+<div class="container mt-4">
+    <h3>💬 Chat với khách hàng (Session @sessionId)</h3>
+    <div id="chatBox" class="border rounded p-3 mb-3" style="height:400px; overflow-y:auto; background:#fff;"></div>
+
+    <div class="input-group">
+        <input type="text" id="txtMessage" class="form-control" placeholder="Nhập tin nhắn..." />
+        <button class="btn btn-success" id="btnSend">Gửi</button>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const sessionId = @sessionId;
+
+    $(document).ready(function () {
+        loadMessages();
+        setInterval(loadMessages, 3000);
+    });
+
+    $("#btnSend").click(function () { sendMessage(); });
+    $("#txtMessage").keypress(function (e) {
+        if (e.which === 13) sendMessage();
+    });
+
+    function sendMessage() {
+        const msg = $("#txtMessage").val();
+        if (msg.trim() === "") return;
+
+        appendMessage("Admin", msg);
+        $("#txtMessage").val("");
+
+        $.post("/ChatAdmin/SendMessage", {
+            sessionId: sessionId,
+            message: msg
+        }, function (res) {
+            if (!res.success) alert(res.error);
+        });
+    }
+
+    function loadMessages() {
+        $.get("/ChatAdmin/GetMessages", { sessionId: sessionId }, function (data) {
+            $("#chatBox").html("");
+            data.forEach(m => {
+                appendMessage(m.SenderType, m.Message);
+            });
+        });
+    }
+
+    function appendMessage(sender, text) {
+        $("#chatBox").append(`<div><b>${sender}:</b> ${text}</div>`);
+        $("#chatBox").scrollTop($("#chatBox")[0].scrollHeight);
+    }
+</script>

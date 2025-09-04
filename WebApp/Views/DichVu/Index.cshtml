@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Models.DichVuPhongKham>
+﻿@model IEnumerable<Models.DichVu>
 @{
     ViewBag.Title = "Chọn dịch vụ";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -60,19 +60,19 @@
                         <ul class="dropdown-menu" aria-labelledby="sortDropdown">
                             <li>
                                 <a class="dropdown-item @(currentSortOrder == "newest" ? "active" : "")"
-                                   href="@Url.Action("Index", "Products", new { sortOrder = "newest", BrandId = ViewBag.SelectedBrandId, CategoryId = ViewBag.SelectedCategoryId })">
+                                   href="@Url.Action("Index", "DichVu", new { sortOrder = "newest", CategoryId = ViewBag.SelectedCategoryId })">
                                     Mới nhất
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item @(currentSortOrder == "price_asc" ? "active" : "")"
-                                   href="@Url.Action("Index", "Products", new { sortOrder = "price_asc", BrandId = ViewBag.SelectedBrandId, CategoryId = ViewBag.SelectedCategoryId })">
+                                   href="@Url.Action("Index", "DichVu", new { sortOrder = "price_asc", CategoryId = ViewBag.SelectedCategoryId })">
                                     Giá tăng dần
                                 </a>
                             </li>
                             <li>
                                 <a class="dropdown-item @(currentSortOrder == "price_desc" ? "active" : "")"
-                                   href="@Url.Action("Index", "Products", new { sortOrder = "price_desc", BrandId = ViewBag.SelectedBrandId, CategoryId = ViewBag.SelectedCategoryId })">
+                                   href="@Url.Action("Index", "DichVu", new { sortOrder = "price_desc", CategoryId = ViewBag.SelectedCategoryId })">
                                     Giá giảm dần
                                 </a>
                             </li>
@@ -85,8 +85,6 @@
                         </select>
 
                         <!-- Giữ lại các tham số filter khi gửi form -->
-                        <input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedProductCategoryId" />
-                        <input type="hidden" name="BrandId" value="@ViewBag.SelectedBrandId" />
                         <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
                     </form>
                 </div>
@@ -97,7 +95,7 @@
             <div class="products-grid-list">
                 @if (Model != null && Model.Any())
                 {
-                    foreach (var product in Model)
+                    foreach (var dv in Model)
                     {
 
                         <div class="product-card-has-image">
@@ -110,8 +108,8 @@
                                 }*@
 
                             <div class="product-image-box">
-                                <a href="@Url.Action("Details", "DichVu", new { id = product.DichVuId })">
-                                    <img src="https://localhost:44310/@product.HinhAnh" alt="@product.TenDichVu" class="product-img" />
+                                <a href="@Url.Action("Details", "DichVu", new { id = dv.Id })">
+                                    <img src="https://localhost:44314/@dv.HinhAnh" alt="@dv.TenDichVu" class="product-img" />
                                 </a>
                                 @*@if (discount > 0)
                                     {
@@ -120,17 +118,19 @@
                             </div>
 
                             <div class="product-info">
-                                <a class="product-title" href="@Url.Action("Details", "DichVu", new { id = product.DichVuId })">
-                                    @product.TenDichVu
+                                <a class="product-title" href="@Url.Action("Details", "DichVu", new { id = dv.Id })">
+                                    @dv.TenDichVu
                                 </a>
                                 <div class="product-prices">
-
-                                    <p class="card-text">@product.MoTa</p>
-                                    <p class="text-primary fw-bold">@product.Gia.ToString("N0") đ</p>
+                                    <p class="text-primary fw-bold" style="color: #f96226 !important;">@dv.Gia.ToString("N0") đ</p>
+                                    <div class="info-item">
+                                        <i class="fas fa-history"></i>
+                                        <span class="text">1 Lần | @dv.ThoiGian phút</span>
+                                    </div>
                                     <button class="btn btn-success" data-bs-toggle="modal"
                                             data-bs-target="#bookingModal"
-                                            data-service="@product.TenDichVu"
-                                            data-id="@product.DichVuId">
+                                            data-service="@dv.TenDichVu"
+                                            data-id="@dv.Id" style="text-align:center">
                                         Đặt lịch
                                     </button>
                                 </div>
