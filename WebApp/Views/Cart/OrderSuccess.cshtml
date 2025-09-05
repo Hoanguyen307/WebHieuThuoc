@@ -1,0 +1,113 @@
+﻿@model Models.Order
+@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .order-success {
+        max-width: 900px;
+        margin: 0 auto;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+    .order-header h2 {
+        font-weight: 700;
+        color: #d63384;
+    }
+
+    .order-card {
+        border-radius: 12px;
+        border: none;
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(0,0,0,.05);
+    }
+
+        .order-card h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-bottom: 2px solid #f8f9fa;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+    .table th {
+        background: #fce4ec;
+        color: #d63384;
+    }
+
+    .btn-pink {
+        background-color: #d63384;
+        border: none;
+        color: white;
+    }
+
+        .btn-pink:hover {
+            background-color: #b52a6c;
+            color: white;
+        }
+</style>
+
+<div class="container py-5 order-success">
+    <!-- Tiêu đề -->
+    <div class="text-center order-header mb-5">
+        <div class="mb-3">
+            <i class="bi bi-bag-check-fill text-pink" style="font-size: 3rem; color: #d63384;"></i>
+        </div>
+        <h2>Đặt hàng thành công!</h2>
+        <p class="text-muted">Cảm ơn bạn đã tin tưởng mua sắm tại cửa hàng của chúng tôi 💖</p>
+        <p>Mã đơn hàng của bạn: <strong>#@Model.OrderCode</strong></p>
+    </div>
+
+    <!-- Thông tin đơn hàng -->
+    <div class="card order-card p-4 mb-4">
+        <h4>🧾 Thông tin đơn hàng</h4>
+        <p><strong>Ngày đặt:</strong> @Model.CreatedDate</p>
+        <p><strong>Tổng tiền:</strong> <span class="text-danger fw-bold">@Model.TotalAmount.ToString("N0") ₫</span></p>
+        <p><strong>Phương thức thanh toán:</strong> @Model.TypePayment</p>
+        <p><strong>Địa chỉ giao hàng:</strong> @Model.Address</p>
+    </div>
+
+    <!-- Chi tiết sản phẩm -->
+    <div class="card order-card p-4 mb-4">
+        <h4>💄 Sản phẩm đã mua</h4>
+        <table class="table table-bordered align-middle">
+            <thead>
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th class="text-center">Số lượng</th>
+                    <th class="text-end">Đơn giá</th>
+                    <th class="text-end">Thành tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.OrderDetails)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <img src="https://localhost:44310/@item.Image" alt="@item.ProductName"
+                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 10px;" />
+                                <span>@item.ProductName</span>
+                            </div>
+                        </td>
+                        <td class="text-center">@item.Quantity</td>
+                        <td class="text-end">@item.UnitPrice.ToString("N0") ₫</td>
+                        <td class="text-end">@(item.UnitPrice * item.Quantity).ToString("N0") ₫</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Nút điều hướng -->
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-pink px-4 py-2 rounded-pill me-2">
+            <i class="bi bi-shop"></i> Tiếp tục mua sắm
+        </a>
+        <a href="@Url.Action("Details", "Order", new { id = Model.ID })" class="btn btn-outline-secondary px-4 py-2 rounded-pill">
+            <i class="bi bi-receipt"></i> Xem chi tiết đơn hàng
+        </a>
+    </div>
+</div>

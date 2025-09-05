@@ -208,7 +208,6 @@ namespace WebApp.Controllers
                 new PaymentMethodViewModel { Code = "MOMO", Name = "Thanh toán qua Momo" },
                 new PaymentMethodViewModel { Code = "CARD", Name = "Thẻ tín dụng/ghi nợ" }
             };
-            model.SelectedPaymentMethod = "COD";
 
             model.SubTotal = model.CartItems.Sum(x => x.UnitPrice * x.Quantity);
             model.Discount = 0; // nếu có giảm giá thì thay đổi
@@ -216,32 +215,96 @@ namespace WebApp.Controllers
             return View(model);
         }
 
-        /*
         [HttpPost]
         public ActionResult Checkout(CheckoutViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (CurrentUserId == 0)
             {
+                return RedirectToAction("Login", "Account");
+            }
+
+            try
+            {
+                // Lấy lại giỏ hàng từ DB (an toàn)
+                var cartItems = new Cart_DAL().GetCartForCheckout(CurrentUserId);
+                if (cartItems == null || !cartItems.Any())
+                {
+                    return RedirectToAction("Index", "Cart");
+                }
+
+                // Tạo Order object
+                var order = new Models.Order
+                {
+                    OrderCode = "DH" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    CustomerId = CurrentUserId,
+                    Status = 0,
+                    Note = model?.Note ?? string.Empty,
+                    CreatedBy = CurrentUserId.ToString(),
+                    TotalAmount = 0 // store sẽ tính lại
+                };
+
+                // Chuyển cart -> danh sách OrderDetail để truyền TVP
+                var orderDetails = new List<OrderDetail>();
+                foreach (var c in cartItems)
+                {
+                    orderDetails.Add(new OrderDetail
+                    {
+                        ProductId = c.ProductId,
+                        Quantity = c.Quantity,
+                        UnitPrice = c.UnitPrice,
+                        Discount = 0 // nếu có discount theo sản phẩm thì fill vào
+                    });
+                }
+
+                // Gọi DAL.Insert (overload) — store sẽ chèn chi tiết + xử lý voucher & points
+                var orderDal = new Order_DAL();
+                int newOrderId = orderDal.Insert(
+                    order,
+                    orderDetails,
+                    model.SelectedVoucherId,
+                    model.UsePoints ? model.PointsToUse : 0m
+                );
+
+                // Xóa giỏ hàng
+                new Cart_DAL().ClearCart(CurrentUserId);
+
+                // Nếu COD -> success page
+                if (model.SelectedPaymentMethod == "COD")
+                {
+                    return RedirectToAction("OrderSuccess", new { id = newOrderId });
+                }
+
+                // Nếu thanh toán online -> ở đây xử lý redirect tới cổng (VNPay/Momo) trước khi confirm
+                // TODO: generate payment url, redirect
+                return RedirectToAction("OrderSuccess", new { id = newOrderId });
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
                 return View(model);
             }
+        }
 
-            // Tính toán lại tổng sau khi áp dụng mã giảm giá + điểm
-            decimal discount = new Voucher_DAL().(model.VoucherCode, model.TotalAmount);
-            decimal pointsDiscount = model.UsePoints ? model.PointsToUse * 1000 : 0; // ví dụ 1 điểm = 1000đ
-            decimal finalAmount = model.TotalAmount - discount - pointsDiscount;
-
-            // Lưu đơn hàng
-            var orderId = new Order_DAL().CreateOrder(CurrentUserId, model.AddressId, finalAmount, model.PaymentMethod);
-
-            if (model.PaymentMethod == "Online")
+        public ActionResult OrderSuccess(int id)
+        {
+            try
             {
-                // Redirect sang VNPay/Momo
-                string paymentUrl = PaymentService.GenerateUrl(orderId, finalAmount);
-                return Redirect(paymentUrl);
-            }
+                var order = new Order_DAL().GetOrderDetails(id);
+                if (order == null)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
 
-            return RedirectToAction("OrderSuccess", new { id = orderId });
-        }*/
+                return View(order);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = ex.Message;
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+
 
         [HttpGet]
         public JsonResult GetCartCount()

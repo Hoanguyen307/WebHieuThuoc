@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using Models;
 using static Models.Order;
+using System.Data;
 
 namespace DAL
 {
@@ -71,25 +72,54 @@ namespace DAL
                 throw new Exception($"Error retrieving order with ID {ID}", ex);
             }
         }
-        public int Insert(Order obj)
+        public int Insert(Order obj, List<OrderDetail> details, int? customerVoucherId = null, decimal usedPoints = 0)
         {
             try
             {
-                DynamicParameters param = new DynamicParameters();
+                var param = new DynamicParameters();
                 param.Add("@OrderCode", obj.OrderCode);
                 param.Add("@CustomerId", obj.CustomerId);
                 param.Add("@Status", obj.Status);
                 param.Add("@Note", obj.Note);
-                param.Add("@TotalAmount", obj.TotalAmount);
                 param.Add("@CreatedBy", obj.CreatedBy);
-                return Connection.getConnection().Execute("sp_Order_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
+
+                // Tạo DataTable tương ứng OrderDetailType (ProductId, Quantity, UnitPrice, Discount)
+                var dt = new DataTable();
+                dt.Columns.Add("ProductId", typeof(int));
+                dt.Columns.Add("Quantity", typeof(int));
+                dt.Columns.Add("UnitPrice", typeof(decimal));
+                dt.Columns.Add("Discount", typeof(decimal));
+
+                if (details != null)
+                {
+                    foreach (var d in details)
+                    {
+                        var unitPrice = d.UnitPrice;
+                        var discount = d.Discount;
+                        dt.Rows.Add(d.ProductId, d.Quantity, unitPrice, discount);
+                    }
+                }
+
+                // Table Valued Parameter (tên type phải trùng với DB: OrderDetailType)
+                param.Add("@OrderDetails", dt.AsTableValuedParameter("OrderDetailType"));
+                param.Add("@CustomerVoucherId", customerVoucherId);
+                param.Add("@UsedPoints", usedPoints);
+
+                // Store trả về NewOrderId (SELECT @OrderId AS NewOrderId)
+                var conn = Connection.getConnection();
+                var newOrderId = conn.QuerySingle<int>(
+                    "sp_Order_Insert",
+                    param,
+                    commandType: CommandType.StoredProcedure);
+
+                return newOrderId;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return 0;
-                throw;
+                throw new Exception("Error inserting order with details", ex);
             }
         }
+
         public bool Delete(int ID, string TenNguoiXoa)
         {
             try

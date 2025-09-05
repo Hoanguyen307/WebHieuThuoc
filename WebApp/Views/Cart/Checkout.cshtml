@@ -97,7 +97,7 @@
                         @foreach (var pm in Model.PaymentMethods)
                         {
                             <div class="form-check">
-                                <input class="form-check-input" type="radio" name="PaymentMethod" value="@pm.Code" @(pm.Code == Model.SelectedPaymentMethod ? "checked" : "") />
+                                <input class="form-check-input" type="radio" name="SelectedPaymentMethod" value="@pm.Code" @(pm.Code == Model.SelectedPaymentMethod ? "checked" : "") />
                                 <label class="form-check-label">@pm.Name</label>
                             </div>
                         }
@@ -119,6 +119,15 @@
                         <input type="hidden" name="PointsToUse" id="PointsToUse" value="0" />
                     </div>
                 </div>
+                <!-- Ghi chú đơn hàng -->
+                <div class="card shadow-sm mb-3">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0">Ghi chú</h5>
+                    </div>
+                    <div class="card-body">
+                        <textarea name="Note" class="form-control" placeholder="Nhập ghi chú nếu có">@Model.Note</textarea>
+                    </div>
+                </div>
 
                 <!-- Voucher + Tổng tiền -->
                 <div class="card shadow-sm">
@@ -128,7 +137,7 @@
                     <div class="card-body">
                         <div class="mb-3">
                             <label class="form-label">Mã giảm giá</label>
-                            <select id="voucherSelect" name="VoucherId" class="form-select">
+                            <select id="voucherSelect" name="SelectedVoucherId" class="form-select">
                                 <option value="">-- Chọn voucher --</option>
                                 @foreach (var voucher in Model.Vouchers)
                                 {
@@ -153,7 +162,10 @@
                             <span class="tong-tien">@Model.SubTotal.ToString("N0") ₫</span>
                         </div>
 
-                        <button type="submit" class="btn btn-danger w-100 mt-3">Đặt hàng</button>
+                        <button id="btnPlaceOrder" type="submit" class="btn btn-danger w-100 mt-3">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
+                            <span class="btn-text">Đặt hàng</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -177,6 +189,29 @@
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const btn = document.getElementById("btnPlaceOrder");
+        const spinner = btn.querySelector(".spinner-border");
+        const btnText = btn.querySelector(".btn-text");
+
+        btn.addEventListener("click", function (e) {
+            // Nếu form submit bình thường thì giữ nguyên
+            // Nếu dùng Ajax thì uncomment dòng e.preventDefault()
+            // e.preventDefault();
+
+            // Ẩn chữ, hiện loading
+            btn.disabled = true;
+            spinner.classList.remove("d-none");
+            btnText.textContent = "Đang xử lý...";
+
+            // Timeout 3s (có thể chỉnh theo ý bạn)
+            setTimeout(function () {
+                spinner.classList.add("d-none");
+                btnText.textContent = "Đặt hàng";
+                btn.disabled = false;
+            }, 3000);
+        });
+    });
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({

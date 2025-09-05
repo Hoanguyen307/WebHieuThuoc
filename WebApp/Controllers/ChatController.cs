@@ -118,6 +118,7 @@ namespace WebApp.Controllers
         /// </summary>
         private async Task<MessageAnalysis> AnalyzeMessageIntent(string message)
         {
+            string lowerMessage = message.ToLower();
             string prompt = $@"
 Phân tích tin nhắn của khách hàng về mỹ phẩm sau:
 '{message}'
@@ -143,7 +144,18 @@ Ví dụ phân tích:
 - 'Tìm kem chống nắng' → intent: product_search, keywords: ""kem chống nắng""
 - 'Xin chào' → intent: greeting
 ";
+            string[] productKeywords = { "kem", "serum", "son", "phấn", "sữa rửa mặt", "toner", "nước hoa" };
 
+            if (productKeywords.Any(k => lowerMessage.Contains(k)) ||
+                lowerMessage.Contains("tìm") ||
+                lowerMessage.Contains("mua"))
+            {
+                return new MessageAnalysis
+                {
+                    Intent = "product_search",
+                    Keywords = ExtractSimpleKeywords(message)
+                };
+            }
             try
             {
                 string aiResponse = await GetGeminiResponse(prompt);
@@ -158,11 +170,12 @@ Ví dụ phân tích:
                 System.Diagnostics.Debug.WriteLine($"AI Analysis error: {ex.Message}");
 
                 // Fallback logic dựa trên từ khóa đơn giản
-                string lowerMessage = message.ToLower();
 
                 if (lowerMessage.Contains("tìm") || lowerMessage.Contains("mua") ||
                     lowerMessage.Contains("kem") || lowerMessage.Contains("serum") ||
-                    lowerMessage.Contains("son") || lowerMessage.Contains("phấn"))
+                    lowerMessage.Contains("son") || lowerMessage.Contains("phấn") ||
+                    lowerMessage.Contains("sữa rửa mặt") || lowerMessage.Contains("toner") ||
+                    lowerMessage.Contains("nước hoa"))
                 {
                     return new MessageAnalysis
                     {
@@ -181,12 +194,23 @@ Ví dụ phân tích:
                 }
                 else
                 {
+                    string extracted = ExtractSimpleKeywords(message);
+                    if (extracted.Contains("nước hoa"))
+                    {
+                        return new MessageAnalysis
+                        {
+                            Intent = "product_search",
+                            Keywords = extracted
+                        };
+                    }
+
                     return new MessageAnalysis
                     {
                         Intent = "other",
-                        Keywords = ExtractSimpleKeywords(message)
+                        Keywords = extracted
                     };
                 }
+
             }
         }
 

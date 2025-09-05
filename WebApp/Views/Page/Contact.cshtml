@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "Liên hệ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Liên hệ với chúng tôi</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <form class="p-4 shadow rounded bg-light">
+                <div class="mb-3">
+                    <label class="form-label">Họ và tên</label>
+                    <input type="text" class="form-control" placeholder="Nhập họ tên của bạn">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" placeholder="Nhập email của bạn">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Tin nhắn</label>
+                    <textarea class="form-control" rows="5" placeholder="Nhập nội dung cần liên hệ"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Gửi liên hệ</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Thông tin liên hệ</h5>
+            <p><i class="bi bi-geo-alt"></i> </p>
+            <p><i class="bi bi-telephone"></i> 0979 310 351</p>
+            <p><i class="bi bi-envelope"></i> </p>
+            <div class="mt-3">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!..." width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+</div>

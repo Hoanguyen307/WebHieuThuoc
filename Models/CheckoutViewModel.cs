@@ -8,7 +8,7 @@ namespace Models
 {
     public class CheckoutViewModel
     {
-        // Giỏ hàng
+        // Giỏ hàng (chỉ để hiển thị, chúng ta sẽ lấy giỏ từ DB trong POST)
         public List<CartItemModel> CartItems { get; set; }
         public decimal SubTotal { get; set; }
         public decimal Discount { get; set; }
@@ -28,8 +28,13 @@ namespace Models
 
         // Điểm thưởng (nếu có)
         public int CurrentPoints { get; set; }
-        public bool UseRewardPoints { get; set; }
+        public bool UsePoints { get; set; }
+        public int PointsToUse { get; set; }
+
+        // Ghi chú đơn hàng
+        public string Note { get; set; }
     }
+
     public class PaymentMethodViewModel
     {
         public string Code { get; set; }   // VD: "COD", "VNPAY", "MOMO"

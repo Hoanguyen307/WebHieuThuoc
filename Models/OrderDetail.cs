@@ -16,11 +16,14 @@ namespace Models
         public int ID { get; set; }
         //OrderID
         [ForeignKey("Order")]
-        public int Orderld { get; set; }
+        public int OrderId { get; set; }
         //productID
         [ForeignKey("Product")]
-        public int Productld { get; set; }
-        public decimal Price { get; set; }
+        public int ProductId { get; set; }
+        public string Image { get; set; }
+        public string ProductName { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal Discount { get; set; }
 
         public int Quantity { get; set; }
         public virtual Order Order { get; set; }

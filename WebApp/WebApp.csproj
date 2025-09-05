@@ -171,6 +171,7 @@
     <Compile Include="Controllers\Home1Controller.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KhachHangController.cs" />
+    <Compile Include="Controllers\PageController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -3739,6 +3740,16 @@
     <Content Include="Views\Home1\MainMenu.cshtml" />
     <Content Include="Views\Shared\_MainMenuPartial.cshtml" />
     <Content Include="Views\DichVu\Index.cshtml" />
+    <Content Include="Views\Page\OrderGuide.cshtml" />
+    <Content Include="Views\Page\FAQ.cshtml" />
+    <Content Include="Views\Page\Shipping.cshtml" />
+    <Content Include="Views\Page\ReturnPolicy.cshtml" />
+    <Content Include="Views\Page\About.cshtml" />
+    <Content Include="Views\Page\Privacy.cshtml" />
+    <Content Include="Views\Page\Terms.cshtml" />
+    <Content Include="Views\Page\Contact.cshtml" />
+    <Content Include="Views\Page\Blog.cshtml" />
+    <Content Include="Views\Cart\OrderSuccess.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

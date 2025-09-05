@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Câu hỏi thường gặp";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container my-5">
+    <h2 class="text-center mb-4">Câu hỏi thường gặp (FAQ)</h2>
+
+    <div class="accordion" id="faqAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                    Tôi cần tạo tài khoản để mua hàng không?
+                </button>
+            </h2>
+            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Bạn có thể mua hàng mà không cần tài khoản, nhưng đăng ký sẽ giúp quản lý đơn hàng tốt hơn.
+                </div>
+            </div>
+        </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                    Shop có hỗ trợ đổi/trả hàng không?
+                </button>
+            </h2>
+            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                    Có, bạn được đổi trả trong vòng 7 ngày nếu sản phẩm chưa qua sử dụng và còn nguyên bao bì.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

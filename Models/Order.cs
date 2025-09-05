@@ -11,14 +11,7 @@ namespace Models
     [Table("Order")]
     public class Order : BaseModel
     {
-        public Order()
-        {
-            this.OrderDetails = new HashSet<OrderDetail>();
-            //this.ThongKes = new HashSet<ThongKe>();
-            //this.Products = new HashSet<Product>();
-        }
         [Key]
-        [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         [Required]
         public string OrderCode { get; set; }
@@ -33,10 +26,10 @@ namespace Models
         public int TypePayment { get; set; }
         public decimal TotalAmount { get; set; }
         //lấy thông tin người dùng khi đặt hàng
-        public string CustomerId { get; set; }
+        public int CustomerId { get; set; }
         public string PaymentStatus { get; set; }
         public string Note { get; set; }
-        public int Status { get; set; }
+        public string Status { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<ThongKe> ThongKes { get; set; }
         //public virtual ICollection<Product> Products { get; set; }
