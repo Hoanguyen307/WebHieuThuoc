@@ -55,7 +55,7 @@ namespace DAL
                 param.Add("@Year", filter.Year);
                 param.Add("@PositionId", filter.PositionId);
                 param.Add("@ShiftId", filter.ShiftId);
-                var result = SqlMapper.Query<NhanVien>(Connection.getConnection(), "sp_Employee_GetAll",
+                var result = SqlMapper.Query<NhanVien>(Connection.getConnection(), "sp_NhanVien_GetAll",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;
             }
@@ -119,7 +119,7 @@ namespace DAL
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Id", ID);
-                var model = SqlMapper.Query<NhanVien>(Connection.getConnection(), "sp_Employee_GetById", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+                var model = SqlMapper.Query<NhanVien>(Connection.getConnection(), "sp_NhanVien_GetById", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
                 return model;
             }
             catch (Exception)
@@ -142,7 +142,7 @@ namespace DAL
                 param.Add("@StartDate", obj.StartDate);
                 param.Add("@ShiftId", obj.ShiftId);
                 param.Add("@CreatedBy", obj.CreatedBy);
-                return Connection.getConnection().Execute("sp_Employee_Add", param, commandType: System.Data.CommandType.StoredProcedure);
+                return Connection.getConnection().Execute("sp_NhanVien_Add", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
             {
@@ -192,7 +192,7 @@ namespace DAL
                 param.Add("@StartDate", obj.StartDate);
                 param.Add("@ShiftId", obj.ShiftId);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
-                return Connection.getConnection().Execute("sp_Employee_Update", param, commandType: System.Data.CommandType.StoredProcedure);
+                return Connection.getConnection().Execute("sp_NhanVien_Update", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
             {
@@ -239,7 +239,7 @@ namespace DAL
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Id", ID);
                 param.Add("@DeletedBy", TenNguoiXoa);
-                Connection.getConnection().Execute("sp_Employee_Delete", param, commandType: System.Data.CommandType.StoredProcedure);
+                Connection.getConnection().Execute("sp_NhanVien_Delete", param, commandType: System.Data.CommandType.StoredProcedure);
                 return true;
             }
             catch (Exception)

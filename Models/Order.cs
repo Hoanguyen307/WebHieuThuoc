@@ -8,28 +8,28 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    [Table("Order")]
+    [Table("DonHang")]
     public class Order : BaseModel
     {
         [Key]
         public int ID { get; set; }
+        public int DiaChiId { get; set; }
         [Required]
         public string OrderCode { get; set; }
-        [Required(ErrorMessage = "Tên khách hàng không được để trống")]
+        [NotMapped]
         public string CustomerName { get; set; }
-        [Required(ErrorMessage = "Số điện thoại không được để trống")]
+        [NotMapped]
         public string Phone { get; set; }
-        [Required(ErrorMessage = "Địa chỉ không được để trống")]
-        public string Address { get; set; }
+        /*public string Address { get; set; }
         public string Email { get; set; }
-        public int Quantity { get; set; }
-        public int TypePayment { get; set; }
+        public int Quantity { get; set; }*/
         public decimal TotalAmount { get; set; }
-        //lấy thông tin người dùng khi đặt hàng
         public int CustomerId { get; set; }
         public string PaymentStatus { get; set; }
+        public string PaymentMethod { get; set; }
         public string Note { get; set; }
         public string Status { get; set; }
+        //public string DiaChiChiTiet { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<ThongKe> ThongKes { get; set; }
         //public virtual ICollection<Product> Products { get; set; }

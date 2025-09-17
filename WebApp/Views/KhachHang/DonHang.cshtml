@@ -6,10 +6,10 @@
 
 <style>
     .nav-tabs .nav-link.active {
-        background-color: #ff4fa4; 
-        border-color: #dee2e6 #dee2e6 #fff; 
-        color: #fff; 
-        font-weight: 600; 
+        background-color: #28a745;
+        border-color: #dee2e6 #dee2e6 #fff;
+        color: #fff;
+        font-weight: 600;
     }
 
     .nav-tabs .nav-link:not(.active) {
@@ -78,21 +78,46 @@
                             <div id="order-list">
                                 @foreach (var order in Model)
                                 {
-                                    <div class="order-item p-3 mb-3 border rounded">
-                                        <p><strong>Mã đơn hàng:</strong> @order.OrderCode</p>
-                                        <p>
-                                            <strong>Ngày đặt:</strong>
-                                            @if (order.CreatedDate.HasValue)
-                                            {
-                                                @order.CreatedDate.Value.ToString("dd/MM/yyyy")
-                                            }
-                                        </p>
-                                        <p><strong>Tổng tiền:</strong> @string.Format("{0:N0}", order.TotalAmount) đ</p>
-                                        <span class="badge bg-secondary">@order.Status</span>
-                                        <a href="@Url.Action("ChiTietDonHang", "KhachHang", new { id = order.ID })" class="btn btn-sm btn-outline-primary float-end">
-                                            Xem chi tiết
-                                        </a>
-                                    </div>
+                                <div class="order-item p-3 mb-3 border rounded">
+                                    <p><strong>Mã đơn hàng:</strong> @order.OrderCode</p>
+                                    <p>
+                                        <strong>Ngày đặt:</strong>
+                                        @if (order.CreatedDate.HasValue)
+                                        {
+                                            @order.CreatedDate.Value.ToString("dd/MM/yyyy")
+                                        }
+                                    </p>
+                                    <p><strong>Tổng tiền:</strong> @string.Format("{0:N0}", order.TotalAmount) đ</p>
+                                    @{
+                                        string badgeClass = "bg-secondary";
+                                        switch (order.Status)
+                                        {
+                                            case "Chờ xác nhận":
+                                                badgeClass = "bg-secondary";
+                                                break;
+                                            case "Đã xác nhận":
+                                                badgeClass = "bg-info text-dark";
+                                                break;
+                                            case "Đang vận chuyển":
+                                                badgeClass = "bg-warning text-dark";
+                                                break;
+                                            case "Thành công":
+                                                badgeClass = "bg-success";
+                                                break;
+                                            case "Đã hủy":
+                                                badgeClass = "bg-danger";
+                                                break;
+                                            default:
+                                                badgeClass = "bg-secondary";
+                                                break;
+                                        }
+                                    }
+                                    <span class="badge @badgeClass">@order.Status</span>
+
+                                    <a href="@Url.Action("ChiTietDonHang", "KhachHang", new { id = order.ID })" class="btn btn-sm btn-outline-primary float-end">
+                                        Xem chi tiết
+                                    </a>
+                                </div>
                                 }
                             </div>
                         }
@@ -114,14 +139,10 @@
 @section scripts {
     <script>
         $(document).ready(function() {
-            // Viết JavaScript/jQuery để xử lý khi người dùng click vào các nút trạng thái.
-            // Bạn có thể gửi một yêu cầu AJAX tới controller để lấy danh sách đơn hàng theo trạng thái mới.
             $('.btn[data-status]').on('click', function() {
                 $('.btn[data-status]').removeClass('active');
                 $(this).addClass('active');
                 var status = $(this).data('status');
-
-                // Gửi AJAX request đến action để lấy đơn hàng theo trạng thái
                 // Ví dụ: $.get('@Url.Action("LichSu_DonHang", "KhachHang")', { status: status }, function(data) {
                 //      $('#order-list').html(data); // Cập nhật danh sách
                 // });

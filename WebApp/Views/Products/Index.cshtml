@@ -13,40 +13,52 @@
         <div class="col-md-3 sidebar-filters">
             <h3 class="filter-title">Danh mục</h3>
             <div class="filter-section">
-                <ul>
+                <ul class="list-unstyled">
                     @foreach (var category in ViewBag.Categories as List<Models.Category>)
                     {
-                        <li class="category-item">
-                            <strong>@category.Name</strong>
+                        var collapseId = "cat-" + category.ID;
+                        <li class="category-item mb-2">
+                            <!-- Danh mục cha -->
+                            <a class="d-block fw-bold text-dark"
+                               data-bs-toggle="collapse"
+                               href="#@collapseId"
+                               role="button"
+                               aria-expanded="false"
+                               aria-controls="@collapseId">
+                                @category.Name
+                            </a>
 
-                            @if (category.ProductCategories != null && category.ProductCategories.Any())
-                            {
-                                <ul class="product-category-sublist">
-                                    @foreach (var sub in category.ProductCategories)
+                            <!-- Danh mục con -->
+                            <ul class="collapse ps-3 mt-1 @(ViewBag.SelectedCategoryId != null && (ViewBag.ProductCategory as List<Models.ProductCategory>).Any(p => p.DanhMucId == ViewBag.SelectedCategoryId && p.Category_ID == category.ID) ? "show" : "")"
+                                id="@collapseId">
+                                @foreach (var sub in ViewBag.ProductCategory as List<Models.ProductCategory>)
+                                {
+                                    if (sub.Category_ID == category.ID)
                                     {
                                         <li>
-                                            <a href="@Url.Action("Index", "Products", new { ProductCategoryId = sub.Id, sortOrder = ViewBag.SortOrder })"
-                                               class="@(ViewBag.SelectedProductCategoryId == sub.Id ? "active" : "")">
-                                                @sub.Name
+                                            <a href="@Url.Action("Index", "Products", new { ProductCategoryId = sub.DanhMucId, sortOrder = ViewBag.SortOrder })"
+                                               class="@(ViewBag.SelectedCategoryId == sub.DanhMucId ? "active text-primary fw-bold" : "")">
+                                                @sub.TenDanhMuc
                                             </a>
                                         </li>
                                     }
-                                </ul>
-                            }
+                                }
+                            </ul>
                         </li>
                     }
                 </ul>
             </div>
 
-            <h3 class="filter-title mt-4">Thương hiệu</h3>
+
+            <h3 class="filter-title mt-4">Nhà cung cấp</h3>
             <div class="filter-section">
                 <ul>
-                    @foreach (var brand in ViewBag.Brands as List<Models.ThuongHieu>)
+                    @foreach (var ncc in ViewBag.NhaCungCaps as List<Models.NhaCungCap>)
                     {
                         <li>
-                            <a href="@Url.Action("Index", "Products", new { BrandId = brand.Id, sortOrder = ViewBag.SortOrder })"
-                               class="@(ViewBag.SelectedBrandId == brand.Id ? "active" : "")">
-                                @brand.TenThuongHieu
+                            <a href="@Url.Action("Index", "Products", new { NhaCungCapId = ncc.NhaCungCapId, sortOrder = ViewBag.SortOrder })"
+                               class="@(ViewBag.SelectedBrandId == ncc.NhaCungCapId ? "active" : "")">
+                                @ncc.TenNhaCungCap
                             </a>
                         </li>
                     }
@@ -116,7 +128,7 @@
                         </select>
 
                         <!-- Giữ lại các tham số filter khi gửi form -->
-                        <input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedProductCategoryId" />
+                        <input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedCategoryId" />
                         <input type="hidden" name="BrandId" value="@ViewBag.SelectedBrandId" />
                         <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
                     </form>
@@ -133,15 +145,15 @@
                         <div class="product-card-has-image">
                             @{
                                 decimal? discount = 0;
-                                if (product.Price.HasValue && product.Price > 0 && product.SalePrice.HasValue)
+                                if (product.GiaGoc.HasValue && product.GiaGoc > 0 && product.GiaBan.HasValue)
                                 {
-                                    discount = ((product.Price - product.SalePrice) / product.Price) * 100;
+                                    discount = ((product.GiaGoc - product.GiaBan) / product.GiaGoc) * 100;
                                 }
                             }
 
                             <div class="product-image-box">
-                                <a href="@Url.Action("Details", "Products", new { id = product.Id })">
-                                    <img src="https://localhost:44310/@product.Image" alt="@product.Name" class="product-img" />
+                                <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
+                                    <img src="https://localhost:44310/@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
                                 </a>
                                 @if (discount > 0)
                                 {
@@ -150,21 +162,22 @@
                             </div>
 
                             <div class="product-info">
-                                <div class="product-brand">@product.BrandName</div>
-                                <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.Id })">
-                                    @product.Name
+                                <div class="product-brand">@product.TenNhaCungCap</div>
+                                <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
+                                    @product.TenThuoc
                                 </a>
                                 <div class="product-prices">
-                                    @if (product.SalePrice.HasValue && product.SalePrice < product.Price)
+                                    @if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
                                     {
-                                        <span class="product-price-sale">@product.SalePrice.Value.ToString("N0") đ</span>
-                                        <span class="product-price-original">@product.Price.Value.ToString("N0") đ</span>
+                                        <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
+                                        <span class="product-price-original">@((product.GiaGoc ?? 0).ToString("N0")) đ</span>
                                     }
                                     else
                                     {
-                                        <span class="product-price-sale">@product.Price.Value.ToString("N0") đ</span>
+                                <span class="product-price-sale">@((product.GiaGoc ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
                                     }
                                 </div>
+
 
                                 <div class="product-rating">
                                     <span class="stars">★★★★★</span>

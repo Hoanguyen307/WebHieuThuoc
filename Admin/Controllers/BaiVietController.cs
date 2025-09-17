@@ -12,7 +12,7 @@ using static Models.Post;
 
 namespace Admin.Controllers
 {
-    [Authorize(Roles = "Admin, Employee")]
+    //[Authorize(Roles = "Admin, Employee")]
     public class BaiVietController : Controller
     {
         // GET: Admin/BaiViet
@@ -88,7 +88,6 @@ namespace Admin.Controllers
 
                 model.CreatedDate = DateTime.Now;
                 model.CreatedBy = User?.Identity?.Name ?? "Unknown";
-                model.IsDeleted = false;
 
                 var result = new BaiViet_DAL().Insert(model);
                 if (result > 0)
@@ -125,7 +124,6 @@ namespace Admin.Controllers
             {
                 model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
-                model.IsDeleted = false;
 
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
@@ -154,7 +152,7 @@ namespace Admin.Controllers
         {
             try
             {
-                TenNguoiXoa = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
+                TenNguoiXoa = User?.Identity?.Name ?? "Unknown";
                 var result = new BaiViet_DAL().Delete(Id, TenNguoiXoa);
                 if (result)
                 {
@@ -167,32 +165,13 @@ namespace Admin.Controllers
                 return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+        
         [HttpPost]
-        public ActionResult DeleteAll(string ids)
-        {
-            if (!string.IsNullOrEmpty(ids))
-            {
-                var items = ids.Split(',');
-                if (items != null && items.Any())
-                {
-                    foreach (var item in items)
-                    {
-                        var obj = db.BaiViets.Find(Convert.ToInt32(item));
-                        db.BaiViets.Remove(obj);
-                        db.SaveChanges();
-                    }
-                }
-                return Json(new { success = true });
-            }
-            return Json(new { success = false });
-        }
-        [HttpPost]
-        public JsonResult ToggleStatus(int Id, string nguoiThucHien)
+        public JsonResult ToggleStatus(int Id)
         {
             try
             {
-                nguoiThucHien = Session["UserName"] != null ? Session["UserName"].ToString() : "Unknown";
-                var result = new BaiViet_DAL().ToggleStatus(Id, nguoiThucHien);
+                var result = new BaiViet_DAL().ToggleStatus(Id);
                 if (result)
                 {
                     return Json(new { code = 200, msg = "Cập nhật trạng thái thành công" }, JsonRequestBehavior.AllowGet);

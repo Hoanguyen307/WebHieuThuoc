@@ -19,17 +19,16 @@
 
     .mega-inner {
         display: grid;
-        grid-template-columns: 220px 1fr; /* trái 280px, phải chiếm phần còn lại */
+        grid-template-columns: 220px 1fr;
         align-items: stretch;
         min-height: 250px;
-        border: 2px solid #ff4fa4;
+        border: 2px solid #28a745;
     }
 
     .left-col {
         border-right: 1px solid #eee;
         background: #fafafa;
         padding: 6px 0;
-        border: 2px solid #ff4fa4;
     }
 
         .left-col ul {
@@ -45,7 +44,7 @@
 
         .main-category:hover,
         .main-category.active {
-            background: #ff4fa4;
+            background: #28a745;
             color: #fff;
             font-weight: 600;
         }
@@ -54,7 +53,7 @@
         padding: 16px 20px;
         min-width: 600px;
         background: #fff;
-        border: 2px solid #ff4fa4;
+        border: 2px solid #28a745;
     }
 
     .sub-category-content {
@@ -86,7 +85,7 @@
             }
 
                 .sub-category-content h6 a:hover {
-                    color: #ff4fa4;
+                    color: #28a745;
                 }
 
     @@media (max-width: 991.98px) {
@@ -129,27 +128,31 @@
                         </div>
 
                         <!-- Cột phải -->
+                        <!-- Cột phải -->
                         <div class="right-col">
-                            @if (ViewBag.Categories != null && ViewBag.ProductCategory != null)
+                            @if (ViewBag.Categories != null && ViewBag.ProductCategories != null)
                             {
                                 foreach (var parentCategory in ViewBag.Categories)
                                 {
                                     <div id="category-@parentCategory.ID" class="sub-category-content">
-                                        <div class="grid">
-                                            @foreach (var productCategory in ((List<Models.ProductCategory>)ViewBag.ProductCategory)
-                                                                               .Where(pc => pc.CategoryId == parentCategory.ID))
+                                        <div class="row">
+                                            @foreach (var productCategory in ((List<Models.ProductCategory>)ViewBag.ProductCategories)
+                                                .Where(pc => pc.Category_ID == parentCategory.ID))
                                             {
-                                                <h6>
-                                                    <a href="@Url.Action("Index", "Products", new { ProductCategoryId = productCategory.Id })">
-                                                        @productCategory.Name
-                                                    </a>
-                                                </h6>
+                                                <div class="col-4">
+                                                    <h6>
+                                                        <a href="@Url.Action("Index", "Products", new { ProductCategoryId = productCategory.DanhMucId })">
+                                                            @productCategory.TenDanhMuc
+                                                        </a>
+                                                    </h6>
+                                                </div>
                                             }
                                         </div>
                                     </div>
                                 }
                             }
                         </div>
+
                     </div>
                 </div>
 
@@ -185,7 +188,6 @@
 
         showFirst();
 
-        // Ẩn tất cả khi rời dropdown rồi mở lại sẽ lại mặc định mục đầu
         $('.mega-dropdown-menu').on('mouseleave', showFirst);
     });
 </script>

@@ -16,7 +16,6 @@ function LoadForm() {
     })
 }
 function handleFormUpdateDanhMuc(id) {
-    debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
         return;
@@ -49,7 +48,6 @@ function loadDanhMuc() {
 }
 
 function SaveDanhMuc() {
-    debugger
     var form = $('#form-addDanhmuc')[0];
     var formData = new FormData(form);
     var id = $('#ID').val();
@@ -69,10 +67,8 @@ function SaveDanhMuc() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalDanhMuc').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-                //loadDanhMuc(); 
+                
+                loadDanhMuc();
             } else if (typeof res === 'string') {
                 $('#modalDanhMuc .modal-body').html(res);
             } else {
@@ -90,11 +86,11 @@ function handleDelete(id) {
             data: { ID: id },
             success: function (res) {
                 if (res.code === 200) {
-                    alert(res.msg);
-                    location.reload();
-                    //loadDanhmuc();
+                    toastr.success(res.msg || "Xoá thành công");
+                    //location.reload();
+                    loadDanhMuc();
                 } else {
-                    alert(res.msg);
+                    toastr.error(res.msg || "Xoá thất bại");
                 }
             }
         });

@@ -1,7 +1,7 @@
 ﻿@model Models.ProductViewModel
 
 @{
-    ViewBag.Title = Model.Product.Name;
+    ViewBag.Title = Model.Product.TenThuoc;
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="~/Content/assets/css/ProductDetail.css" rel="stylesheet" />
@@ -13,17 +13,17 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home1")">Trang chủ</a></li>
                     <li class="breadcrumb-item"><a href="#">@Model.Product.ProductCategoryName</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">@Model.Product.Name</li>
+                    <li class="breadcrumb-item active" aria-current="page">@Model.Product.TenThuoc</li>
                 </ol>
             </nav>
 
             <div class="row main-product-section">
                 <div class="col-md-5 product-image-wrapper">
-                    <img src="https://localhost:44310/@Model.Product.Image" alt="@Model.Product.Name" class="img-fluid main-product-image">
+                    <img src="https://localhost:44310/@Model.Product.HinhAnh" alt="@Model.Product.TenThuoc" class="img-fluid main-product-image">
                 </div>
 
                 <div class="col-md-7 product-info-wrapper">
-                    <h1 class="product-name">@Model.Product.Name</h1>
+                    <h1 class="product-name">@Model.Product.TenThuoc</h1>
                     <div class="product-ratings d-flex align-items-center mb-3">
                         <span>23 đánh giá | 60 Hỏi đáp | Mã sản phẩm: 422208871</span>
                     </div>
@@ -42,36 +42,20 @@
                         <span class="ms-2">(@Model.TotalReviews đánh giá)</span>
                     </div>
 
-                    
+
                     @*<div class="flash-deal-section mb-3">
-                        <div class="flash-deal-badge">FLASH DEAL</div>
-                        <div class="flash-deal-timer">KẾT THÚC TRONG <span>01</span>:<span>14</span>:<span>47</span></div>
-                    </div>*@
+                            <div class="flash-deal-badge">FLASH DEAL</div>
+                            <div class="flash-deal-timer">KẾT THÚC TRONG <span>01</span>:<span>14</span>:<span>47</span></div>
+                        </div>*@
                     <div class="product-price-info mt-3">
                         <span id="productSalePrice" class="current-price">
-                            @(Model.Product.SalePrice.HasValue ? Model.Product.SalePrice.Value.ToString("N0") + " đ" : "")
+                            @(Model.Product.GiaBan.HasValue ? Model.Product.GiaBan.Value.ToString("N0") + " đ" : "")/@Model.Product.DonViTinh
                         </span>
-                        @if (Model.Product.Price.HasValue)
+                        @if (Model.Product.GiaGoc.HasValue)
                         {
-                            <span id="productPrice" class="original-price">@Model.Product.Price.Value.ToString("N0") đ</span>
+                            <span id="productPrice" class="original-price">@Model.Product.GiaGoc.Value.ToString("N0") đ/@Model.Product.DonViTinh</span>
                         }
 
-                    </div>
-
-                    <div class="product-variants mt-4">
-                        <p class="mb-2 fw-bold">Dung tích</p>
-                        <div class="d-flex gap-2">
-                            @foreach (var v in Model.dungTichSanPhams)
-                            {
-                                <button class="btn btn-outline-secondary variant-btn"
-                                        data-price="@v.Gia"
-                                        data-sale="@v.SalePrice"
-                                        data-volume="@v.DungTichValue"
-                                        data-id="@v.Id">
-                                    @v.DungTichValue
-                                </button>
-                            }
-                        </div>
                     </div>
 
 
@@ -96,7 +80,7 @@
             <div class="product-description-section mt-5 p-4 rounded bg-white shadow-sm">
                 <h4 class="section-title">Mô tả sản phẩm</h4>
                 <p>
-                    @Html.Raw(Model.Product.Description)
+                    @Html.Raw(Model.Product.QuyCach)
                 </p>
 
                 <ul class="nav nav-tabs mt-4" id="productTabs" role="tablist">
@@ -116,26 +100,17 @@
                             <table class="table table-bordered">
                                 <tbody>
                                     <tr>
-                                        <td>Thương Hiệu</td>
-                                        <td>@Model.Product.BrandName</td>
+                                        <td>Nhà cung cấp</td>
+                                        <td>@Model.Product.TenNhaCungCap</td>
                                     </tr>
                                     <tr>
-                                        <td>Xuất xứ thương hiệu</td>
-                                        <td>@Model.Product.XuatXu</td>
+                                        <td>Hoá chất</td>
+                                        <td>@Model.Product.HoatChat</td>
                                     </tr>
-                                    <tr>
-                                        <td>Nơi sản xuất</td>
-                                        <td>@Model.Product.NoiSX</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Dung Tích</td>
-                                        <td>
-                                            @foreach (var v in Model.dungTichSanPhams)
-                                            {
-                                                <span>@v.DungTichValue </span>
-                                            }
-                                        </td>
-                                    </tr>
+                                    @* <tr>
+                                            <td>Dung Tích</td>
+                                            <td>@Model.Product.NoiSX</td>
+                                        </tr>*@
                                 </tbody>
                             </table>
                         </div>
@@ -186,14 +161,14 @@
                 {
                     foreach (var relatedProduct in Model.RelatedProducts)
                     {
-                        <a href="@Url.Action("Details", new { id = relatedProduct.Id })" class="related-product-card d-block mb-3">
+                        <a href="@Url.Action("Details", new { id = relatedProduct.ThuocId })" class="related-product-card d-block mb-3">
                             <div class="row g-0">
                                 <div class="col-4">
-                                    <img src="https://localhost:44310/@relatedProduct.Image" class="img-fluid rounded-start" alt="@relatedProduct.Name">
+                                    <img src="https://localhost:44310/@relatedProduct.HinhAnh" class="img-fluid rounded-start" alt="@relatedProduct.TenThuoc">
                                 </div>
                                 <div class="col-8">
                                     <div class="card-body">
-                                        <h6 class="card-title">@relatedProduct.Name</h6>
+                                        <h6 class="card-title">@relatedProduct.TenThuoc</h6>
                                         <div class="stars me-2">
                                             @for (int i = 1; i <= 5; i++)
                                             {
@@ -208,13 +183,13 @@
                                             }
                                             <span class="ms-2">(@Model.TotalReviews đánh giá)</span>
                                         </div>
-                                        @if (relatedProduct.SalePrice.HasValue)
+                                        @if (relatedProduct.GiaBan.HasValue)
                                         {
-                                            <p class="card-price mb-0">@relatedProduct.SalePrice.Value.ToString("N0") đ</p>
+                                            <p class="card-price mb-0">@relatedProduct.GiaBan.Value.ToString("N0") đ</p>
                                         }
                                         else
                                         {
-                                            <p class="card-price mb-0">@relatedProduct.Price.Value.ToString("N0") đ</p>
+                                            <p class="card-price mb-0">@relatedProduct.GiaGoc.Value.ToString("N0") đ</p>
                                         }
                                     </div>
                                 </div>
@@ -233,7 +208,7 @@
 <script>
     $(document).ready(function () {
         $('.btn-add-to-cart').on('click', function () {
-        var productId = '@Model.Product.Id';
+        var productId = '@Model.Product.ThuocId';
         var quantity = $('.quantity-selector input').val();
 
         $.ajax({
@@ -245,14 +220,28 @@
             },
             success: function (res) {
                 if (res.success) {
-                    alert('Sản phẩm đã được thêm vào giỏ hàng');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Sản phẩm đã được thêm vào giỏ hàng.',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
                     updateCartCount();
                 } else {
-                    alert(res.message || 'Thêm giỏ hàng thất bại');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại!',
+                        text: res?.message || 'Thêm sản phẩm thất bại.'
+                    });
                 }
             },
             error: function () {
-                alert('Có lỗi xảy ra');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không kết nối được server.'
+                });
             }
         });
     });
@@ -282,6 +271,13 @@
                 $('#productSalePrice').hide();
             }
         });
+
+        $('.btn-buy-now').on('click', function () {
+        var productId = '@Model.Product.ThuocId';
+        var quantity = $('.quantity-selector input').val() || 1;
+
+        window.location.href = '/Cart/BuyNow?productId=' + productId + '&quantity=' + quantity;
+    });
 });
 </script>
 

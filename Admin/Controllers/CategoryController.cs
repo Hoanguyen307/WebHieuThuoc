@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
-    [Authorize(Roles = "Admin, Employee")]
+    //[Authorize(Roles = "Admin, Employee")]
     public class CategoryController : Controller
     {
         private DBConnect db = new DBConnect();
@@ -51,7 +51,6 @@ namespace Admin.Controllers
 
                 model.CreatedDate = DateTime.Now;
                 model.CreatedBy = User?.Identity?.Name ?? "Unknown";
-                model.IsDeleted = false;
 
                 var result = new Category_DAL().Insert(model);
                 if (result > 0)
@@ -87,7 +86,6 @@ namespace Admin.Controllers
             {
                 model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
-                model.IsDeleted = false;
 
                 /*if (ImageFile != null && ImageFile.ContentLength > 0)
                 {

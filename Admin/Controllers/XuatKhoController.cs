@@ -58,7 +58,7 @@ namespace Admin.Controllers
         public ActionResult Add(int? id)
         {
             var products = db.Products
-                    .Select(p => new { p.Id, p.Name })
+                    .Select(p => new { p.ThuocId, p.TenThuoc })
                     .ToList();
 
             ViewBag.Products = JsonConvert.SerializeObject(products);
@@ -116,7 +116,7 @@ namespace Admin.Controllers
                 return HttpNotFound();
             }
             var products = db.Products
-                    .Select(p => new { p.Id, p.Name })
+                    .Select(p => new { p.ThuocId, p.TenThuoc })
                     .ToList();
 
             ViewBag.Products = JsonConvert.SerializeObject(products);
@@ -192,7 +192,7 @@ namespace Admin.Controllers
                 return HttpNotFound();
             }
             var products = db.Products
-                    .Select(p => new { p.Id, p.Name })
+                    .Select(p => new { p.ThuocId, p.TenThuoc })
                     .ToList();
 
             ViewBag.Products = JsonConvert.SerializeObject(products);

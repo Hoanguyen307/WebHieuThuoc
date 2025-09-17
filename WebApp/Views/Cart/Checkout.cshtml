@@ -101,6 +101,14 @@
                                 <label class="form-check-label">@pm.Name</label>
                             </div>
                         }
+
+                        <div class="form-group mt-3" id="load_form_payment" style="display:none;">
+                            <h6><label>Chọn phương thức thanh toán VNPAY:</label><br /></h6>
+                            <label><input type="radio" name="VnPayType" value="0" checked /> Cổng thanh toán VNPAYQR </label><br />
+                            <label><input type="radio" name="VnPayType" value="1" /> Thanh toán qua ứng dụng hỗ trợ VNPAYQR </label><br />
+                            <label><input type="radio" name="VnPayType" value="2" /> ATM-Tài khoản ngân hàng nội địa </label><br />
+                            <label><input type="radio" name="VnPayType" value="3" /> Thanh toán qua thẻ quốc tế </label><br />
+                        </div>
                     </div>
                 </div>
 
@@ -162,7 +170,7 @@
                             <span class="tong-tien">@Model.SubTotal.ToString("N0") ₫</span>
                         </div>
 
-                        <button id="btnPlaceOrder" type="submit" class="btn btn-danger w-100 mt-3">
+                        <button id="btnPlaceOrder" type="submit" class="btn btn-success w-100 mt-3">
                             <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
                             <span class="btn-text">Đặt hàng</span>
                         </button>
@@ -190,27 +198,35 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        @if (ViewBag.OrderSuccess != null && (bool)ViewBag.OrderSuccess == true)
+{
+    <text>
+        Swal.fire({
+            title: "🎉 Đặt hàng thành công!",
+            text: "Cảm ơn bạn đã mua sắm 💖",
+            icon: "success",
+            showConfirmButton: false,
+            timer: 5000
+        });
+
+        setTimeout(function () {
+            window.location.href = '@Url.Action("Index", "Home1")';
+        }, 5000);
+    </text>
+}
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("checkoutForm");
         const btn = document.getElementById("btnPlaceOrder");
         const spinner = btn.querySelector(".spinner-border");
         const btnText = btn.querySelector(".btn-text");
 
-        btn.addEventListener("click", function (e) {
-            // Nếu form submit bình thường thì giữ nguyên
-            // Nếu dùng Ajax thì uncomment dòng e.preventDefault()
-            // e.preventDefault();
-
-            // Ẩn chữ, hiện loading
+        form.addEventListener("submit", function (e) {
             btn.disabled = true;
             spinner.classList.remove("d-none");
             btnText.textContent = "Đang xử lý...";
-
-            // Timeout 3s (có thể chỉnh theo ý bạn)
-            setTimeout(function () {
-                spinner.classList.add("d-none");
-                btnText.textContent = "Đặt hàng";
-                btn.disabled = false;
-            }, 3000);
         });
+
     });
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
@@ -368,80 +384,25 @@ $(document).on("change", "input[name='SelectedAddressId']", function () {
         // gọi 1 lần ban đầu để sync giá trị
         calculateTotal();
     });
-    /*document.addEventListener("DOMContentLoaded", function () {
-        const addAddressBtn = document.querySelector('button[data-bs-target="#addAddressModal"]');
-        const modalBody = document.querySelector('#addAddressModal .modal-body');
-        const addressListContainer = document.getElementById('address-list-container');
-        const saveAddressBtn = document.querySelector('#addAddressModal .btn-primary');
-        const modal = new bootstrap.Modal(addAddressModal);
+    // JavaScript để xử lý logic hiển thị tùy chọn VNPay
+    document.addEventListener("DOMContentLoaded", function () {
+        const paymentRadios = document.querySelectorAll("input[name='SelectedPaymentMethod']");
+        const vnpayOptionsDiv = document.getElementById("load_form_payment");
 
-        // Bước 1: Tải form thêm địa chỉ vào modal khi nút được nhấn
-        addAddressBtn.addEventListener('click', function () {
-            modalBody.innerHTML = '<div class="text-center py-5">Đang tải...</div>';
-
-            fetch('/DiaChiGiaoHang/Create')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Lỗi mạng hoặc server không phản hồi.');
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    modalBody.innerHTML = html;
-                })
-                .catch(error => {
-                    console.error('Lỗi AJAX:', error);
-                    modalBody.innerHTML = '<div class="text-danger py-5">Có lỗi xảy ra khi tải form. Vui lòng thử lại.</div>';
-                });
-        });
-
-        // Bước 2: Xử lý sự kiện khi form trong modal được submit
-        saveAddressBtn.addEventListener('click', function (e) {
-            const form = document.getElementById('formDiaChi');
-
-            if (!form) {
-                console.error('Form không tồn tại.');
-                return;
-            }
-
-            e.preventDefault();
-
-            const formData = new FormData(form);
-
-            fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.code === 200) {
-                    alert(data.msg);
-                    modal.hide();
-
-                    // Tạo một phần tử HTML mới cho địa chỉ vừa thêm
-                    const newAddressHtml = `
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="ShippingAddressId" value="${data.addressId}" checked />
-                            <label class="form-check-label">
-                                <strong>${formData.get('TenNguoiNhan')}</strong> - ${formData.get('DiaChiChiTiet')} <br />
-                            </label>
-                        </div>
-                    `;
-
-                    // Thêm địa chỉ mới vào danh sách và chọn nó
-                    addressListContainer.insertAdjacentHTML('afterbegin', newAddressHtml);
-
+        paymentRadios.forEach(radio => {
+            radio.addEventListener("change", function () {
+                if (this.value === "VNPAY") {
+                    vnpayOptionsDiv.style.display = "block";
                 } else {
-                    alert('Lỗi: ' + data.msg);
+                    vnpayOptionsDiv.style.display = "none";
                 }
-            })
-            .catch(error => {
-                console.error('Lỗi:', error);
-                alert('Có lỗi xảy ra trong quá trình thêm địa chỉ.');
             });
         });
-    });*/
+
+        // Kiểm tra trạng thái ban đầu khi tải trang
+        const initialSelectedMethod = document.querySelector("input[name='SelectedPaymentMethod']:checked");
+        if (initialSelectedMethod && initialSelectedMethod.value === "VNPAY") {
+            vnpayOptionsDiv.style.display = "block";
+        }
+    });
 </script>

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
+    [Table("XuatKhoChiTiet")]
     public class ChiTietXuatKho : BaseModel
     {
         [Key]

@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    [Table("Customers")]
+    [Table("KhachHang")]
     public class KhachHang : BaseModel
     {
         public int Id { get; set; }
 
-        [Required]
         public string FullName { get; set; }
 
         public bool Gender { get; set; }

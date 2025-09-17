@@ -96,13 +96,12 @@ namespace DAL
                 throw;
             }
         }
-        public bool ToggleStatus(int ID, string TenNguoiThucHien)
+        public bool ToggleStatus(int ID)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Id", ID);
-                param.Add("@LockBy", TenNguoiThucHien);
 
                 Connection.getConnection().Execute("sp_BaiViet_ToggleStatus", param, commandType: System.Data.CommandType.StoredProcedure);
                 return true;

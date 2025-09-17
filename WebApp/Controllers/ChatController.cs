@@ -89,12 +89,12 @@ namespace WebApp.Controllers
                 // 4. Format sản phẩm cho frontend với đầy đủ thông tin
                 var formattedProducts = products.Select(p => new
                 {
-                    Id = p.Id,
-                    ProductId = p.Id,
-                    Name = p.Name,
-                    Image = !string.IsNullOrEmpty(p.Image) ? p.Image : "/Content/assets/images/no-image.png",
-                    Price = p.Price,
-                    Description = p.Description ?? ""
+                    Id = p.ThuocId,
+                    ProductId = p.ThuocId,
+                    Name = p.TenThuoc,
+                    Image = !string.IsNullOrEmpty(p.HinhAnh) ? p.HinhAnh : "/Content/assets/images/no-image.png",
+                    Price = p.GiaGoc,
+                    Description = p.QuyCach ?? ""
                 }).ToList();
 
                 return Json(new
@@ -248,7 +248,7 @@ Ví dụ phân tích:
             {
                 var topProducts = products.Take(3).ToList();
                 string productInfo = string.Join("<br>", topProducts.Select(p =>
-                    $"• <b>{p.Name}</b> - {p.Price:N0}đ"));
+                    $"• <b>{p.TenThuoc}</b> - {p.GiaGoc:N0}đ"));
 
                 return $"Bạn đang quan tâm đến <b>\"{keywords}\"</b>?<br>" +
                $"Mình gợi ý một vài sản phẩm tiêu biểu:<br>{productInfo}<br><br>" +

@@ -16,7 +16,6 @@ function LoadForm() {
     })
 }
 function handleFormUpdateBaiViet(id) {
-    debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
         return;
@@ -31,7 +30,6 @@ function handleFormUpdateBaiViet(id) {
             $('#modalBaiViet').modal('show');
         },
         error: function (xhr, status, error) {
-            console.error('Lỗi khi load form:', error);
             alert('Có lỗi xảy ra khi tải form. Vui lòng thử lại!');
         }
     });
@@ -108,8 +106,7 @@ function loadBaiViet(page = 1) {
 
             res.items.forEach(item => {
                 const row = `
-                <tr id="trow_${item.Id}" onclick="loadLichSuChucVu(${item.Id})" style="cursor:pointer;">
-            <td></td>
+                <tr>
             <td>${i}</td>
             <td>${item.TieuDe}</td>
             <td>${item.NoiDung}</td>
@@ -158,13 +155,11 @@ $(document).ready(function () {
 });
 
 function SaveBaiViet() {
-    debugger
     var form = $('#form-addBaiViet')[0];
     var formData = new FormData(form);
-    var id = $('#Id').val();
+    var id = $('#form-addBaiViet #Id').val();
 
     var url = (id != null && parseInt(id) > 0) ? '/BaiViet/Update' : '/BaiViet/Add';
-    console.log([...formData.entries()]);
 
     $.ajax({
         url: url,
@@ -176,10 +171,10 @@ function SaveBaiViet() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalBaiViet').modal('hide');
-                setTimeout(function () {
-                    location.reload(); 
-                }, 1500);
-                //loadDanhMuc(); 
+                //setTimeout(function () {
+                //    location.reload(); 
+                //}, 1500);
+                loadBaiViet(1);
             } else if (typeof res === 'string') {
                 $('#modalBaiViet .modal-body').html(res);
             } else {
@@ -189,25 +184,24 @@ function SaveBaiViet() {
     });
 }
 function handleDelete(id) {
-    if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
         $.ajax({
             url: '/BaiViet/DeleteAccount',
             type: 'POST',
             data: { Id: id },
             success: function (res) {
                 if (res.code === 200) {
-                    alert(res.msg);
-                    location.reload();
-                    //loadKhachHang();
+                    toastr.success(res.msg || "Xoá thành công");
+                    //location.reload();
+                    loadBaiViet(1);
                 } else {
-                    alert(res.msg);
+                    toastr.error(res.msg || "Xoá thất bại");
                 }
             }
         });
     }
 }
 function toggleStatus(id) {
-    debugger
 
     $.ajax({
         url: '/BaiViet/ToggleStatus',
@@ -215,14 +209,15 @@ function toggleStatus(id) {
         data: { Id: id },
         success: function (res) {
             if (res.code === 200) {
-                alert(res.msg);
-                location.reload();
+                toastr.success(res.msg || "Cập nhật trạng thái thành công");
+               // location.reload();
+                loadBaiViet(1);
             } else {
-                alert(res.msg);
+                toastr.error(res.msg || "Cập nhật trạng thái thất bại");
             }
         },
         error: function () {
-            alert("Có lỗi xảy ra khi gọi API.");
+            toastr.warring(res.msg || "Có lỗi xảy ra");
         }
     });
 }

@@ -1,33 +1,592 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Điều Khiển - Mỹ Phẩm</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
-    </section>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
-            </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @@keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            color: #ef4444;
+            padding: 16px;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            .header h1 {
+                font-size: 24px;
+                font-weight: 600;
+                color: #1e293b;
+            }
+
+        .header-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .container {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-left: 200px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 12px 0;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-progress {
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+
+        .stat-progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.8s ease;
+            width: 0%;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+
+        /* Card specific colors */
+        .profit .stat-progress-bar {
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+        }
+
+        .orders .stat-progress-bar {
+            background: linear-gradient(90deg, #ef4444, #f87171);
+        }
+
+        .users .stat-progress-bar {
+            background: linear-gradient(90deg, #10b981, #34d399);
+        }
+
+
+        /* Charts */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .chart-tabs {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 6px;
+            padding: 4px;
+        }
+
+        .chart-tab {
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: none;
+            background: transparent;
+            color: #64748b;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+            .chart-tab.active {
+                background: white;
+                color: #1e293b;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+
+        /* Summary table */
+        .summary-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+            .summary-item:last-child {
+                border-bottom: none;
+            }
+
+        .summary-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .summary-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            min-width: 80px;
+            text-align: right;
+        }
+
+
+        /* Regional table */
+        .regional-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+            .table th {
+                background: #f8fafc;
+                padding: 16px 24px;
+                text-align: left;
+                font-size: 12px;
+                font-weight: 600;
+                color: #64748b;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .table td {
+                padding: 16px 24px;
+                border-bottom: 1px solid #f1f5f9;
+            }
+
+            .table tr:hover {
+                background: #f8fafc;
+            }
+
+        .trend-chart {
+            width: 60px;
+            height: 30px;
+        }
+
+        .country-flag {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 12px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .turkey {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .argentina {
+            background: linear-gradient(135deg, #74b9ff, #0984e3);
+        }
+
+        .china {
+            background: linear-gradient(135deg, #fd79a8, #e84393);
+        }
+
+        .spain {
+            background: linear-gradient(135deg, #fdcb6e, #e17055);
+        }
+
+        .vietnam {
+            background: linear-gradient(135deg, #e74c3c, #f1c40f);
+        }
+
+        .usa {
+            background: linear-gradient(135deg, #3498db, #e74c3c);
+        }
+
+        .table-loading {
+            text-align: center;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header" style="padding: 10px 10px 0 260px;">
+        <div>
+            <h1>Bảng Điều Khiển</h1>
+            <div class="header-subtitle">Thống kê và báo cáo tổng hợp</div>
+        </div>
+
     </div>
-</main>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card profit">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Tổng Lợi Nhuận</div>
+                        <div class="stat-subtitle">Tổng giá trị đơn hàng</div>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalProfit">0</div>
+                <div class="stat-progress">
+                    <div class="stat-progress-bar" id="profitProgress"></div>
+                </div>
+                <div class="stat-change" id="profitChange">Thay đổi: 0%</div>
+            </div>
+
+            <div class="stat-card orders">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Đơn Hàng Mới</div>
+                        <div class="stat-subtitle">Số lượng đơn hàng mới</div>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalOrders">0</div>
+                <div class="stat-progress">
+                    <div class="stat-progress-bar" id="ordersProgress"></div>
+                </div>
+                <div class="stat-change" id="ordersChange">Thay đổi: 0%</div>
+            </div>
+
+            <div class="stat-card users">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title">Người Dùng Mới</div>
+                        <div class="stat-subtitle">Số người dùng mới tham gia</div>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalUsers">0</div>
+                <div class="stat-progress">
+                    <div class="stat-progress-bar" id="usersProgress"></div>
+                </div>
+                <div class="stat-change" id="usersChange">Thay đổi: 0%</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Tổng Quan Bán Hàng</div>
+                    <div class="chart-tabs">
+                        <button class="chart-tab active" onclick="chuyenTab(event, 'ngay')">Hàng Ngày</button>
+                        <button class="chart-tab" onclick="chuyenTab(event, 'tuan')">Hàng Tuần</button>
+                        <button class="chart-tab" onclick="chuyenTab(event, 'thang')">Hàng Tháng</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="salesChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Tóm Tắt Tài Chính</div>
+                </div>
+                <div class="summary-stats" id="financialSummary">
+                    <div class="summary-item">
+                        <span class="summary-label">Tổng Bán Hàng</span>
+                        <span class="summary-value" id="financialTotalSales"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Doanh Thu</span>
+                        <span class="summary-value" id="financialRevenue"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Chi Phí</span>
+                        <span class="summary-value" id="financialExpenses"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Tăng Trưởng</span>
+                        <span class="summary-value" id="financialGrowth"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    @if (ViewBag.AntiForgeryToken != null)
+    {
+        <input type="hidden" id="antiForgeryToken" value="@ViewBag.AntiForgeryToken" />
+    }
+
+    <script>
+        let salesChart;
+        let currentPeriod = 'ngay';
+
+        function layTokenChongGiaMao() {
+            const tokenElement = document.getElementById('antiForgeryToken');
+            return tokenElement ? tokenElement.value : '';
+        }
+
+        async function guiYeuCauAjax(url, phuongThuc = 'GET', duLieu = null) {
+            const headers = { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+            if (phuongThuc === 'POST') {
+                headers['RequestVerificationToken'] = layTokenChongGiaMao();
+            }
+
+            const options = { method: phuongThuc, headers: headers };
+            if (duLieu) {
+                options.body = JSON.stringify(duLieu);
+            }
+
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                throw new Error(`Lỗi HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            if (result.code !== 200) {
+                throw new Error(result.msg || 'Phản hồi không thành công');
+            }
+            return result.data;
+        }
+
+        async function taiThongKeTongQuan() {
+            try {
+                const stats = await guiYeuCauAjax('/Home/LayThongKeTongQuan');
+                document.getElementById('totalProfit').textContent = dinhDangTienTe(stats.TongLoiNhuan);
+                document.getElementById('profitProgress').style.width = `${stats.PhanTramThayDoiLoiNhuan}%`;
+                document.getElementById('profitChange').textContent = `Thay đổi: ${stats.PhanTramThayDoiLoiNhuan}%`;
+
+                document.getElementById('totalOrders').textContent = dinhDangSo(stats.TongDonHang);
+                document.getElementById('ordersProgress').style.width = `${stats.PhanTramThayDoiDonHang}%`;
+                document.getElementById('ordersChange').textContent = `Thay đổi: ${stats.PhanTramThayDoiDonHang}%`;
+
+                document.getElementById('totalUsers').textContent = dinhDangSo(stats.TongNguoiDung);
+                document.getElementById('usersProgress').style.width = `${stats.PhanTramThayDoiNguoiDung}%`;
+                document.getElementById('usersChange').textContent = `Thay đổi: ${stats.PhanTramThayDoiNguoiDung}%`;
+            } catch (error) {
+                hienThiLoi(`Không thể tải thống kê: ${error.message}`);
+            }
+        }
+
+        async function taiDuLieuBanHang(thoiGian) {
+            try {
+                const salesData = await guiYeuCauAjax(`/Home/LayDuLieuBanHang?kyHan=${thoiGian}`);
+                if (salesChart) { salesChart.destroy(); }
+                const ctx = document.getElementById('salesChart').getContext('2d');
+                salesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: salesData.NhanThoiGian,
+                        datasets: [{
+                            label: 'Doanh số',
+                            data: salesData.BanHang,
+                            backgroundColor: 'rgba(16, 185, 129, 0.8)', borderColor: 'rgba(16, 185, 129, 1)',
+                            fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 6
+                        }, {
+                            label: 'Lợi nhuận',
+                            data: salesData.LoiNhuan,
+                            backgroundColor: 'rgba(16, 185, 129, 0.4)', borderColor: 'rgba(16, 185, 129, 0.6)',
+                            fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 6
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { color: '#64748b', callback: (val) => dinhDangTienTe(val) } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } } }
+                });
+            } catch (error) {
+                hienThiLoi(`Không thể tải dữ liệu bán hàng: ${error.message}`);
+            }
+        }
+
+        async function taiTongKetTaiChinh() {
+            try {
+                const financial = await guiYeuCauAjax('/Home/LayTongKetTaiChinh');
+                document.getElementById('financialTotalSales').textContent = dinhDangTienTe(financial.TongBanHang);
+                document.getElementById('financialRevenue').textContent = dinhDangTienTe(financial.DoanhThu);
+                document.getElementById('financialExpenses').textContent = dinhDangTienTe(financial.ChiPhi);
+                document.getElementById('financialGrowth').textContent = dinhDangTienTe(financial.TangTruong);
+            } catch (error) {
+                hienThiLoi(`Không thể tải tóm tắt tài chính: ${error.message}`);
+            }
+        }
+
+
+        function chuyenTab(event, thoiGian) {
+            document.querySelectorAll('.chart-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            currentPeriod = thoiGian;
+            taiDuLieuBanHang(thoiGian);
+        }
+
+
+        function dinhDangSo(so) { return new Intl.NumberFormat('vi-VN').format(so); }
+        /*function dinhDangTienTe(soTien) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(soTien); }*/
+        function dinhDangTienTe(soTien) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(soTien);
+        }
+        function taoDuongXuHuong(duLieuXuHuong) {
+            if (!duLieuXuHuong || duLieuXuHuong.length === 0) return 'M5,15 L55,15';
+            const chieuRong = 50, chieuCao = 20, buoc = chieuRong / (duLieuXuHuong.length - 1);
+            let duongDi = `M5,${15 - (duLieuXuHuong[0] * 10)}`;
+            for (let i = 1; i < duLieuXuHuong.length; i++) {
+                duongDi += ` L${5 + (i * buoc)},${15 - (duLieuXuHuong[i] * 10)}`;
+            }
+            return duongDi;
+        }
+
+        function layMauXuHuong(huong) {
+            switch (huong) {
+                case 'up': return '#10b981';
+                case 'down': return '#ef4444';
+                default: return '#f59e0b';
+            }
+        }
+
+        function hienThiLoi(thongDiep, loai = 'error') {
+            const container = document.querySelector('.container');
+            const existingError = document.querySelector('.error-message');
+            if (existingError) existingError.remove();
+
+            const errorDiv = document.createElement('div');
+            errorDiv.className = `error-message ${loai}`;
+            errorDiv.textContent = thongDiep;
+            container.prepend(errorDiv);
+
+            setTimeout(() => { errorDiv.remove(); }, 5000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            taiThongKeTongQuan();
+            taiDuLieuBanHang(currentPeriod);
+            taiTongKetTaiChinh();
+        });
+
+    </script>
+</body>
+</html>

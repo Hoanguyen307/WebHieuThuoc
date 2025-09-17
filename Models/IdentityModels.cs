@@ -47,25 +47,30 @@ namespace Models
         {
         }
 
-        public DbSet<Category> Categories { get; set; }
-        //public DbSet<Adv> Advs { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        //public DbSet<News> News { get; set; }
-        //public DbSet<SystemSetting> SystemSettings { get; set; }
-        //public DbSet<ProductCategory> ProductCategories { get; set; }
-        public DbSet<Product> Products { get; set; }
-        //public DbSet<ProductImage> ProductImages { get; set; }
-        //public DbSet<Contact> Contacts { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-        //public DbSet<Subscribe> Subscribes { get; set; }
-        //public DbSet<ThongKe> ThongKes { get; set; }
-        //public DbSet<ReviewProduct> Reviews { get; set; }
-        //public DbSet<Wishlist> Wishlists { get; set; }
+            // User/Role có sẵn từ IdentityDbContext
+            public DbSet<Category> Categories { get; set; }
+            public DbSet<Product> Products { get; set; }
+            public DbSet<ProductImage> ProductImages { get; set; }
+            public DbSet<ProductCategory> ProductCategories { get; set; }
+            public DbSet<Post> Posts { get; set; }
+            public DbSet<Order> Orders { get; set; }
+            public DbSet<OrderDetail> OrderDetails { get; set; }
+            public DbSet<CaLam> CaLams { get; set; }
+            public DbSet<NhanVien> NhanViens { get; set; }
+            public DbSet<KhachHang> KhachHangs { get; set; }
+            public DbSet<LichLamViec> LichLamViecs { get; set; }
+            public DbSet<Voucher> Vouchers { get; set; }
+            public DbSet<VoucherCustomer> VoucherCustomers { get; set; }
+            public DbSet<DungTich> DungTiches { get; set; }
+            public DbSet<DungTichSanPham> DungTichSanPhams { get; set; }
+            public DbSet<NhapKho> NhapKhos { get; set; }
+            public DbSet<XuatKho> XuatKhos { get; set; }
+            public DbSet<ChiTietNhapKho> ChiTietNhapKhos { get; set; }
+            public DbSet<ChiTietXuatKho> ChiTietXuatKhos { get; set; }
+            public DbSet<NhaCungCap> NhaCungCaps { get; set; }
+            public DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
 
-
-
-        public static ApplicationDbContext Create()
+            public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
         }

@@ -68,7 +68,6 @@ function LoadForm() {
     })
 }
 function handleFormUpdateNhanVien(id) {
-    debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
         return;
@@ -171,10 +170,7 @@ function SaveNhanVien() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalNhanVien').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-                //loadNhanVien();
+                loadNhanVien(1);
             } else {
                 toastr.error(res.msg || "Cập nhật thất bại");
             }
@@ -239,9 +235,7 @@ function SaveLichLamViec() {
             if (res.code === 200) {
                 toastr.success(res.msg);
                 $('#modalXepLich').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
+                loadNhanVien(1);
             } else {
                 toastr.error(res.msg || "Xếp lịch thất bại");
             }
@@ -261,10 +255,7 @@ function handleDelete(id) {
             success: function (res) {
                 if (res.code === 200) {
                     toastr.success(res.msg || "Xoá thành công");
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1500);
-                    //loadNhanVien();
+                        loadNhanVien(1);
                 } else {
                     toastr.success(res.msg || "Xoá thất bại");
                 }
@@ -273,7 +264,6 @@ function handleDelete(id) {
     }
 }
 function loadLichSuChucVu(nhanVienId) {
-    debugger
     $.ajax({
         url: '/NhanVien/LichSuChucVu',
         type: 'GET',

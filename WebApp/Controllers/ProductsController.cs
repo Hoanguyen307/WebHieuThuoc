@@ -13,23 +13,26 @@ namespace WebApp.Controllers
     public class ProductsController : Controller
     {
         // GET: Products
-        public ActionResult Index(int? ProductCategoryId, int? BrandId, string sortOrder = "newest", int pageSize = 40)
+        public ActionResult Index(int? ProductCategoryId, int? NhaCungCapId, string sortOrder = "newest", int pageSize = 40)
         {
             var filter = new ProductFilter
             {
                 ProductCategoryId = ProductCategoryId,
-                BrandId = BrandId
+                NhaCungCapId = NhaCungCapId
             };
 
             var product = new Product_DAL().Select_Published(filter, sortOrder).Take(pageSize).ToList();
+
             var category = new Category_DAL().Select_Category_All();
             ViewBag.Categories = category;
-            var listBrands = new Product_DAL().Select_Brands_All();
-            ViewBag.Brands = listBrands; 
+
+            var listNhaCungCap = new Product_DAL().Select_NhaCungCap_All();
+            ViewBag.NhaCungCaps = listNhaCungCap; 
+
             var listproductCategory = new ProductCategory_DAL().Select_Category_All();
             ViewBag.ProductCategory = listproductCategory; 
 
-            ViewBag.SelectedBrandId = BrandId;
+            ViewBag.SelectedBrandId = NhaCungCapId;
             ViewBag.SortOrder = sortOrder;
             ViewBag.SelectedCategoryId = ProductCategoryId;
             return View(product);
@@ -41,17 +44,15 @@ namespace WebApp.Controllers
             {
                 return HttpNotFound();
             }
-            var relatedProducts = new Product_DAL().Select_Published(new ProductFilter { ProductCategoryId = product.ProductCategoryId }, null)
-                                     .Where(p => p.Id != product.Id)
+            var relatedProducts = new Product_DAL().Select_Published(new ProductFilter { ProductCategoryId = product.DanhMucId }, null)
+                                     .Where(p => p.ThuocId != product.ThuocId)
                                      .Take(4)
                                      .ToList();
-            var dungtich = new DungTich_DAL().SelectByProductId(id.Value);
             var reviews = new ProductReview_DAL().ReviewGetByProduct(id.Value);
             var viewModel = new ProductViewModel
             {
                 Product = product,
                 RelatedProducts = relatedProducts,
-                dungTichSanPhams = dungtich,
                 productReviews = reviews
             };
 
@@ -66,8 +67,10 @@ namespace WebApp.Controllers
             products = productDAL.Search(searchString);
             var category = new Category_DAL().Select_Category_All();
             ViewBag.Categories = category;
-            var listBrands = new Product_DAL().Select_Brands_All();
-            ViewBag.Brands = listBrands;
+
+            var listNhaCungCap = new Product_DAL().Select_NhaCungCap_All();
+            ViewBag.NhaCungCaps = listNhaCungCap;
+
             var listproductCategory = new ProductCategory_DAL().Select_Category_All();
             ViewBag.ProductCategory = listproductCategory;
 

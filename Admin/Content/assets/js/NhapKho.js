@@ -238,7 +238,6 @@ function renderProductTable(page = 1) {
         tbody.append(`<tr><td colspan="5" class="text-center">Không tìm thấy sản phẩm</td></tr>`);
     } else {
         paged.forEach(p => {
-            // tìm sản phẩm trong selectedProducts
             let existing = selectedProducts.find(x => x.productId === p.Id);
 
             let soLuong = existing ? existing.soLuong : 1;
@@ -335,7 +334,6 @@ function removeProduct(index) {
 }
 
 function loadEditData() {
-    // 1. Parse tất cả sản phẩm từ ViewBag
     const productsDataString = $('#ProductsData').val();
     try {
         allProducts = JSON.parse(productsDataString);
@@ -344,7 +342,6 @@ function loadEditData() {
         allProducts = [];
     }
 
-    // 2. Parse chi tiết phiếu nhập (nếu có)
     const selectedProductsString = $('#SelectedProductsJson').val();
     try {
         const detailedProducts = JSON.parse(selectedProductsString);
@@ -363,12 +360,10 @@ function loadEditData() {
         selectedProducts = [];
     }
 
-    // 3. Render lại UI
     renderProductTable();
     renderSelectedProducts();
     updatePreview();
 
-    // 4. Gắn sự kiện input live-update preview
     $("#MaPhieu, #NguoiNhap, #NhaCungCap, #GhiChu").on("input", updatePreview);
 }
 
@@ -396,7 +391,6 @@ function SavePhieuNhap() {
         formData.append(`ChiTietNhapKho[${index}].SoLuong`, p.soLuong);
         formData.append(`ChiTietNhapKho[${index}].DonGiaNhap`, p.donGia);
         formData.append(`ChiTietNhapKho[${index}].HanSuDung`, p.hanSuDung);
-        // Có thể thêm GhiChu nếu cần
     });
     console.log(formData);
     const isEdit = $('#Id').length > 0 && $('#Id').val() > 0;
@@ -412,9 +406,7 @@ function SavePhieuNhap() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalNhapKho').modal('hide');
-                setTimeout(function () {
-                    loadPhieuNhap();
-                }, 1500);
+                    loadPhieuNhap(1);
             } else {
                 toastr.error(res.msg || "Cập nhật thất bại");
             }
@@ -437,11 +429,10 @@ function handleDelete(id) {
             data: { Id: id },
             success: function (res) {
                 if (res.code === 200) {
-                    alert(res.msg);
-                    location.reload();
-                    //loadKhachHang();
+                    toastr.success(res.msg || "Xoá thành công");
+                    loadPhieuNhap(1);
                 } else {
-                    alert(res.msg);
+                    toastr.error(res.msg || "Xoá thất bại");
                 }
             }
         });

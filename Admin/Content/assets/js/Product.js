@@ -1,6 +1,5 @@
 ﻿function closeModal() {
     $('#modalProduct').modal('hide');
-    $('#modalDungTich').modal('hide');
 
 }
 function renderPagination(totalPages, currentPage) {
@@ -93,54 +92,6 @@ function handleFormUpdateProduct(id) {
     });
 }
 
-function openDungTichModal(id) {
-    if (!id || id <= 0) {
-        alert('ID không hợp lệ!');
-        return;
-    }
-
-    $.ajax({
-        url: '/Products/DungTich',
-        type: 'GET',
-        data: { Id: id },
-        success: function (res) {
-            $('#modalDungTich .modal-body').html(res);
-            $('#modalDungTich').modal('show');
-        },
-        error: function (xhr, status, error) {
-            console.error('Lỗi khi load form:', error);
-            alert('Có lỗi xảy ra khi tải form. Vui lòng thử lại!');
-        }
-    });
-}
-function SaveDungTich() {
-    debugger
-    var form = $('#form-addDungTich')[0];
-    var formData = new FormData(form);
-    var id = $('#Id').val();
-
-    $.ajax({
-        url: '/Products/AddDungTich',
-        type: 'POST',
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (res) {
-            if (res.code === 200) {
-                toastr.success(res.msg || "Cập nhật thành công");
-                $('#modalDungTich').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-                //loadDanhMuc();
-            } else if (typeof res === 'string') {
-                $('#modalDungTich .modal-body').html(res);
-            } else {
-                toastr.error(res.msg || "Cập nhật thất bại");
-            }
-        }
-    });
-}
 function loadData(page = 1) {
     $("#loadingOverlay").show();
     const month = $('#month').val();
@@ -171,37 +122,28 @@ function loadData(page = 1) {
             res.items.forEach(item => {
                 index++;
                 const row = `
-                    <tr id="trow_${item.Id}">
+                    <tr id="trow_${item.ThuocId}">
             <td>${index}</td>
-            <td><img src="${item.Image}" alt="Ảnh" style="height:50px" /></td>
-            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.Name}</td>
+            <td><img src="${item.HinhAnh}" alt="Ảnh" style="height:50px" /></td>
+            <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.TenThuoc}</td>
+            <td>${item.DonViTinh}</td>
+            <td class="${item.CanhBaoHetHang ? 'text-danger' : ''}">${item.SoLuong}</td>
+            <td>${item.TenNhaCungCap || ""}</td>
+            <td>${formatCurrency(item.GiaGoc)}</td>
+            <td>${formatCurrency(item.GiaBan)}</td>
             <td>${item.ProductCategoryName || ''}</td>
-            <td class="${item.CanhBaoHetHang ? 'text-danger' : ''}">${item.Quantity}</td>
-            <td>${item.Sold}</td>
-            <td>${formatCurrency(item.Price)}</td>
-            <td>${formatCurrency(item.SalePrice)}</td>
             <td>
                 <label class="switch">
-                    <input type="checkbox" class="toggle-status" data-id="${item.Id}" ${item.IsActive ? "checked" : ""}>
+                    <input type="checkbox" class="toggle-status" data-id="${item.ThuocId}" ${item.KichHoat ? "checked" : ""}>
                     <span class="slider round"></span>
                 </label>
-
-            </td>
-            
-            <td>
-                <span class="badge ${item.IsFeatured ? 'bg-warning text-dark' : 'bg-secondary'}">
-                    ${item.IsFeatured ? 'Nổi bật' : '-'}
-                </span>
             </td>
             <td>
-                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateProduct('${item.Id}')">
+                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateProduct('${item.ThuocId}')">
                     <i class="fas fa-edit"></i>
                 </button>
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}')">
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.ThuocId}')">
                     <i class="fas fa-trash-alt"></i>
-                </button>
-                <button type="button" class="btn btn-outline-warning btn-sm" onclick="openDungTichModal(${item.Id})">
-                    <i class="fas fa-flask"></i> Dung tích
                 </button>
 
             </td>
@@ -245,14 +187,11 @@ function loadData(page = 1) {
 }
 
 function SaveProduct() {
-    debugger
     var form = $('#form-addProduct')[0];
     var formData = new FormData(form);
-    var id = $('#Id').val();
-    formData.delete("IsActive");
-    formData.delete("IsFeatured");
-    formData.append("IsActive", $('#IsActive').is(':checked'));
-    formData.append("IsFeatured", $('#IsFeatured').is(':checked'));
+    var id = $('#ThuocId').val();
+    formData.delete("KichHoat");
+    formData.append("KichHoat", $('#KichHoat').is(':checked'));
 
     var url = (id != null && parseInt(id) > 0) ? '/Products/Update' : '/Products/Add';
     $.ajax({
@@ -265,10 +204,7 @@ function SaveProduct() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalProduct').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-                //loadDanhMuc();
+                loadData(1);
             } else if (typeof res === 'string') {
                 $('#modalProduct .modal-body').html(res);
             } else {
@@ -279,7 +215,7 @@ function SaveProduct() {
 }
 
 function handleDelete(id) {
-    if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
         $.ajax({
             url: '/Products/DeleteAccount',
             type: 'POST',
@@ -287,8 +223,7 @@ function handleDelete(id) {
             success: function (res) {
                 if (res.code === 200) {
                     toastr.success(res.msg || "Xoá thành công");
-                    location.reload();
-                    //loadProduct();
+                    loadData(1);
                 } else {
                     toastr.error(res.msg || "Xoá thất bại");
                 }

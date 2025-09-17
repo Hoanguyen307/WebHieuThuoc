@@ -18,26 +18,26 @@ namespace Models
         //public virtual DbSet<User> User { get; set; }
         //public virtual DbSet<Role> Role { get; set; }
         //public virtual DbSet<UserRole> UserRole { get; set; }
-        public virtual DbSet<Category> Categories { get; set; }
-        public virtual DbSet<Product> Products { get; set; }
-        public virtual DbSet<CaLam> CaLams { get; set; }
-        public virtual DbSet<NhanVien> NhanViens { get; set; }
-        public virtual DbSet<KhachHang> KhachHangs { get; set; }
-        public virtual DbSet<Post> BaiViets { get; set; }
-        public virtual DbSet<Process> Processes { get; set; }
-        public virtual DbSet<LichLamViec> LichLamViecs { get; set; }
-        public virtual DbSet<ThuongHieu> Brands { get; set; }
-        public virtual DbSet<ProductCategory> ProductCategories { get; set; }
-        public virtual DbSet<Voucher> Vouchers { get; set; }
-        public virtual DbSet<VoucherCustomer> VoucherCustomers { get; set; }
-        public virtual DbSet<DungTich> DungTiches { get; set; }
-        public virtual DbSet<DungTichSanPham> DungTichSanPhams { get; set; }
-        public virtual DbSet<NhapKho> NhapKhos { get; set; }
-        public virtual DbSet<XuatKho> XuatKhos { get; set; }
-        public virtual DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
-        public virtual DbSet<DichVuPhongKham> DichVuPhongKhams { get; set; }
-        public virtual DbSet<BacSi> BacSis { get; set; }
-        public virtual DbSet<DatLichPhongKham> DatLichPhongKhams { get; set; }
-        public virtual DbSet<DichVu> DichVus { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<ProductCategory> ProductCategories { get; set; }
+        public DbSet<Post> BaiViets { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<CaLam> CaLams { get; set; }
+        public DbSet<NhanVien> NhanViens { get; set; }
+        public DbSet<KhachHang> KhachHangs { get; set; }
+        public DbSet<LichLamViec> LichLamViecs { get; set; }
+        public DbSet<Voucher> Vouchers { get; set; }
+        public DbSet<VoucherCustomer> VoucherCustomers { get; set; }
+        public DbSet<DungTich> DungTiches { get; set; }
+        public DbSet<DungTichSanPham> DungTichSanPhams { get; set; }
+        public DbSet<NhapKho> NhapKhos { get; set; }
+        public DbSet<XuatKho> XuatKhos { get; set; }
+        public DbSet<ChiTietNhapKho> ChiTietNhapKhos { get; set; }
+        public DbSet<ChiTietXuatKho> ChiTietXuatKhos { get; set; }
+        public DbSet<NhaCungCap> NhaCungCaps { get; set; }
+        public DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
     }
 }

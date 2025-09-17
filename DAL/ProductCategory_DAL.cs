@@ -46,11 +46,11 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@Name", obj.Name);
-                param.Add("@Slug", obj.Slug);
-                param.Add("@Description", obj.Description);
-                param.Add("@IsActive", obj.IsActive);
-                param.Add("@CategoryId", obj.CategoryId);
+                param.Add("@Name", obj.TenDanhMuc);
+                param.Add("@Slug", obj.SeoSlug);
+                param.Add("@Description", obj.MoTa);
+                param.Add("@IsActive", obj.KichHoat);
+                param.Add("@CategoryId", obj.Category_ID);
                 param.Add("@CreatedBy", obj.CreatedBy);
                 return Connection.getConnection().Execute("sp_ProductCategories_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
             }
@@ -64,12 +64,12 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@Id", obj.Id);
-                param.Add("@Name", obj.Name);
-                param.Add("@Slug", obj.Slug);
-                param.Add("@Description", obj.Description);
-                param.Add("@IsActive", obj.IsActive);
-                param.Add("@CategoryId", obj.CategoryId);
+                param.Add("@Id", obj.DanhMucId);
+                param.Add("@Name", obj.TenDanhMuc);
+                param.Add("@Slug", obj.SeoSlug);
+                param.Add("@Description", obj.MoTa);
+                param.Add("@IsActive", obj.KichHoat);
+                param.Add("@CategoryId", obj.Category_ID);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
                 return Connection.getConnection().Execute("sp_ProductCategories_Update", param, commandType: System.Data.CommandType.StoredProcedure);
             }
@@ -94,5 +94,6 @@ namespace DAL
                 throw;
             }
         }
+
     }
 }

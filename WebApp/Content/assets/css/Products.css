@@ -1,4 +1,6 @@
-﻿.product-list-page {
+﻿
+
+.product-list-page {
 	max-width: 1200px;
 	margin: 40px auto;
 	padding: 0 15px;
@@ -36,14 +38,6 @@
 		transition: color 0.2s ease;
 	}
 
-		.filter-section li a:hover {
-			color: #ff66b2;
-		}
-
-	.filter-section li.active a {
-		font-weight: bold;
-		color: #ff66b2;
-	}
 
 .price-range input {
 	width: 70px;
@@ -58,7 +52,7 @@
 	justify-content: space-between;
 	align-items: center;
 	margin-bottom: 20px;
-	background-color: #f8f9fa;
+	background-color: #fff;
 	padding: 15px;
 	border-radius: 8px;
 	box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -69,30 +63,30 @@
 }
 
 	.sort-options .btn-outline-secondary {
-		border-color: #ced4da;
-		color: #495057;
+		border-color: #999;
+		color: #28a745;
 	}
 
 		.sort-options .btn-outline-secondary:hover,
 		.sort-options .btn-outline-secondary:focus {
-			border-color: #ff66b2;
+			border-color: #007bff;
 			background-color: #f8f9fa;
-			color: #ff66b2;
+			color: #28a745;
 		}
 
 	.sort-options .dropdown-item {
-		color: #495057;
+		color: #28a745;
 		transition: background-color 0.2s ease;
 	}
 
 		.sort-options .dropdown-item:hover,
 		.sort-options .dropdown-item:focus {
 			background-color: #e9ecef;
-			color: #ff4fa4;
+			color: #28a745;
 		}
 
 		.sort-options .dropdown-item.active {
-			background-color: #ff4fa4;
+			background-color: #28a745;
 			color: white;
 		}
 
@@ -188,7 +182,7 @@
 }
 
 	.product-name-vertical:hover {
-		color: #ff4fa4;
+		color: #28a745;
 	}
 
 .product-price-vertical {
@@ -197,7 +191,7 @@
 }
 
 .flash-price-vertical {
-	color: #ff66b2;
+	color: #28a745;
 	font-weight: bold;
 	margin-right: 8px;
 }
@@ -217,13 +211,13 @@
 }
 
 	.filter-section ul li a:hover {
-		background-color: #ffe6f0;
-		color: #ff4fa4;
+		background-color: #ced4da;
+		color: #28a745;
 	}
 
 	.filter-section ul li a.active {
-		background-color: #f8d7da;
-		color: #ff4fa4;
+		background-color: #fff;
+		color: #28a745 !important;
 		font-weight: bold;
 	}
 .product-card-has-image {
@@ -260,7 +254,7 @@
 	position: absolute;
 	top: 8px;
 	left: 8px;
-	background-color: #ff4d4f;
+	background-color: #28a745;
 	color: #fff;
 	padding: 4px 6px;
 	font-size: 13px;
@@ -274,7 +268,7 @@
 }
 
 .product-brand {
-	color: #ff6600;
+	color: #28a745;
 	font-weight: bold;
 	font-size: 14px;
 	text-decoration: none; /* Bỏ gạch chân */
@@ -295,7 +289,7 @@
 
 
 	.product-title:hover {
-		color: #ff4fa4;
+		color: #28a745;
 	}
 
 .product-prices {
@@ -303,7 +297,7 @@
 }
 
 .product-price-sale {
-	color: #ff4d4f;
+	color: #28a745;
 	font-size: 16px;
 	font-weight: bold;
 	margin-right: 5px;
@@ -349,7 +343,7 @@
 
 	.product-category-sublist li a.active {
 		font-weight: bold;
-		color: #ff4fa4;
+		color: #007bff;
 	}
 #pageSize {
 	width: 120px;

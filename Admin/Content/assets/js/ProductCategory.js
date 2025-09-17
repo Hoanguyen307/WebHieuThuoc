@@ -13,14 +13,13 @@ function LoadForm() {
             if ($('#formAdd').length > 0) {
                 $('#formAdd')[0].reset();
             }
-            $('#Id').val('');
+            $('#loadDanhMuc').val('');
             $('#modalDanhMuc .modal-body').html(res);
             $('#modalDanhMuc').modal('show');
         }
     })
 }
 function handleFormUpdateDanhMuc(id) {
-    debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
         return;
@@ -29,7 +28,7 @@ function handleFormUpdateDanhMuc(id) {
     $.ajax({
         url: '/ProductCategory/Edit',
         type: 'GET',
-        data: { ID: id },
+        data: { DanhMucId: id },
         success: function (res) {
             $('#modalDanhMuc .modal-body').html(res);
             $('#modalDanhMuc').modal('show');
@@ -87,7 +86,7 @@ function loadDanhMuc(page = 1) {
         type: 'GET',
         data: {
             page: page,
-            pageSize: 10
+            pageSize: 13
         },
         success: function (res) {
             const tbody = $('#danhmuc-body');
@@ -100,14 +99,14 @@ function loadDanhMuc(page = 1) {
                 const row = `
                     <tr>
                         <td>${i}</td>
-                        <td>${item.Name}</td>
-                        <td>${item.Description ?? ''}</td>
+                        <td>${item.TenDanhMuc}</td>
+                        <td>${item.MoTa ?? ''}</td>
                         <td>${item.CategoryName ?? ''}</td>
                         <td>
-                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateDanhMuc('${item.Id}')">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateDanhMuc('${item.DanhMucId}')">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}')">
+                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.DanhMucId}')">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         </td>
@@ -131,12 +130,11 @@ function loadDanhMuc(page = 1) {
     });
 }
 function SaveDanhMuc() {
-    debugger
     var form = $('#form-addDanhmuc')[0];
     var formData = new FormData(form);
-    var id = $('#Id').val();
-    formData.delete("IsActive");
-    formData.append("IsActive", $('#IsActive').is(':checked'));
+    var id = $('#DanhMucId').val();
+    formData.delete("KichHoat");
+    formData.append("KichHoat", $('#KichHoat').is(':checked'));
 
     var url = (id != null && parseInt(id) > 0) ? '/ProductCategory/Update' : '/ProductCategory/Add';
 
@@ -150,10 +148,8 @@ function SaveDanhMuc() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalDanhMuc').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
-                //loadDanhMuc(); 
+                
+                loadDanhMuc(1); 
             } else if (typeof res === 'string') {
                 $('#modalDanhMuc .modal-body').html(res);
             } else {
@@ -168,14 +164,13 @@ function handleDelete(id) {
         $.ajax({
             url: '/ProductCategory/DeleteAccount',
             type: 'POST',
-            data: { ID: id },
+            data: { Id: id },
             success: function (res) {
                 if (res.code === 200) {
-                    alert(res.msg);
-                    location.reload();
-                    //loadDanhmuc();
+                    toastr.success(res.msg || "Xoá thành công");
+                    loadDanhMuc(1);
                 } else {
-                    alert(res.msg);
+                    toastr.error(res.msg || "Xoá thất bại");
                 }
             }
         });

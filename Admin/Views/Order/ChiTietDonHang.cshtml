@@ -1,0 +1,52 @@
+﻿@model Models.OrderDetail
+
+<div class="modal-header">
+    <h5 class="modal-title">Chi tiết đơn hàng: @Model.OrderCode</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+<div class="modal-body">
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <p><strong>Khách hàng:</strong> @Model.FullName</p>
+            <p><strong>Ngày tạo:</strong> @Model.CreatedDate</p>
+        </div>
+        <div class="col-md-6">
+            <p><strong>Trạng thái:</strong> @Model.Status</p>
+            <p><strong>Tổng tiền:</strong> @string.Format("{0:N0} đ", Model.LineTotal)</p>
+            <p><strong>Ghi chú:</strong> @Model.Note</p>
+        </div>
+    </div>
+    <hr />
+    <h6 class="fw-bold mb-2">Danh sách sản phẩm</h6>
+    <div class="list-group">
+        <div class="list-group-item d-flex align-items-center">
+            <img src="@Model.Image" alt="Ảnh" class="rounded me-3"
+                 style="width:60px;height:60px;object-fit:cover;" />
+            <div class="flex-grow-1">
+                <div class="fw-bold">@Model.ProductName</div>
+                <small class="text-muted">Số lượng: @Model.Quantity</small>
+            </div>
+        </div>
+        @if (Model.listProduct != null && Model.listProduct.Any())
+        {
+            foreach (var p in Model.listProduct)
+            {
+                <div class="list-group-item d-flex align-items-center">
+                    <img src="@p.Image" alt="Ảnh" class="rounded me-3"
+                         style="width:60px;height:60px;object-fit:cover;" />
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">@p.Name</div>
+                        <small class="text-muted">Số lượng: @p.Quantity</small>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center text-muted p-3">Không có sản phẩm nào</div>
+        }
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+</div>

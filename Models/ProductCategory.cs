@@ -8,19 +8,23 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    [Table("ProductCategories")]
+    [Table("ProductCategory")]
     public class ProductCategory : BaseModel
     {
-        public int Id { get; set; }
-        [Required(ErrorMessage = "Tên danh mục không được để trống")]
-        [StringLength(150)]
-        public string Name { get; set; }
-        public string Slug { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
+        [Key]
+        public int DanhMucId { get; set; }
+        public string TenDanhMuc { get; set; } = "";
+        public int? ParentId { get; set; } // null = root
+        public string MoTa { get; set; } = "";
+        public string SeoSlug { get; set; } = "";
         public string CategoryName { get; set; }
-        public int CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
-        public virtual Category category { get; set; }
+        public int ThuTuHienThi { get; set; } = 0;
+        public int Category_ID { get; set; } 
+        public bool KichHoat { get; set; } = true;
+
+        // Navigation
+        public virtual Category Parent { get; set; }
+        public virtual ICollection<ProductCategory> Children { get; set; } = new List<ProductCategory>();
+        public virtual ICollection<Product> Thuocs { get; set; } = new List<Product>();
     }
 }

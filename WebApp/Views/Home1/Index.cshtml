@@ -3,25 +3,53 @@
     ViewBag.Title = "Trang chủ";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <link href="~/Content/assets/css/TrangChu.css" rel="stylesheet" />
-<!-- Banner Slider -->
-<div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000" style="min-width: 1596px; margin-left: -155px;">
+
+<style>
+    #mainCarousel .carousel-item img {
+        width: 100%;
+        height: 390px;
+        object-fit: cover;
+    }
+
+    @@media (max-width: 992px) {
+        #mainCarousel .carousel-item img {
+            height: 350px;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        #mainCarousel .carousel-item img {
+            height: 220px;
+        }
+    }
+
+    .product-card, .product-card-has-image {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+        .product-card.visible, .product-card-has-image.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+</style>
+
+<div id="mainCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
     <div class="carousel-inner rounded">
-        <!-- Banner 1 -->
         <div class="carousel-item active">
-            <img src="~/Content/assets/images/Logo/banner3.png" class="d-block w-100" alt="Banner 1">
+            <img src="~/Content/assets/images/Logo/banner1.png" class="d-block w-100" alt="Banner 1">
         </div>
-        <!-- Banner 2 -->
         <div class="carousel-item">
-            <img src="~/Content/assets/images/Logo/banner1.png" class="d-block w-100" alt="Banner 2">
+            <img src="~/Content/assets/images/Logo/banner2.png" class="d-block w-100" alt="Banner 2">
         </div>
-        <!-- Banner 3 -->
-        <div class="carousel-item">
+        @*<div class="carousel-item">
             <img src="~/Content/assets/images/Logo/banner2.png" class="d-block w-100" alt="Banner 3">
-        </div>
+        </div>*@
     </div>
 
-    <!-- Nút điều hướng -->
     <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
         <span class="carousel-control-prev-icon"></span>
     </button>
@@ -29,14 +57,12 @@
         <span class="carousel-control-next-icon"></span>
     </button>
 
-    <!-- Chấm tròn điều hướng -->
     <div class="carousel-indicators">
         <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"></button>
         <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
+        @*<button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>*@
     </div>
 </div>
-
 
 <!-- Sản phẩm bán chạy -->
 <h4 class="mt-5 mb-3 fw-bold">TOP SẢN PHẨM BÁN CHẠY</h4>
@@ -51,13 +77,9 @@
                     <div class="product-card">
                         @{
                             decimal? discount = 0;
-                            if (product.Price > 0 && product.SalePrice < product.Price)
+                            if (product.GiaGoc > 0 && product.GiaBan < product.GiaGoc)
                             {
-                                discount = ((product.Price - product.SalePrice) / product.Price) * 100;
-                            }
-                            else
-                            {
-                                discount = 0;
+                                discount = ((product.GiaGoc - product.GiaBan) / product.GiaGoc) * 100;
                             }
                         }
                         @if (discount > 0)
@@ -67,16 +89,20 @@
 
                         <a href="#">
                             <div class="product-image">
-                                <img src="https://localhost:44310/@product.Image" alt="@product.Name">
+                                <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
+                                    <img src="https://localhost:44310/@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
+                                </a>
                             </div>
                         </a>
 
-                        <a href="#" class="product-name">@product.Name</a>
+                        <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
+                            @product.TenThuoc
+                        </a>
                         <div class="product-price">
-                            <span class="flash-price">@product.SalePrice.Value.ToString("N0") đ</span>
+                            <span class="flash-price">@product.GiaBan.Value.ToString("N0") đ/@product.DonViTinh</span>
                             @if (discount > 0)
                             {
-                                <span class="original-price">@product.Price.Value.ToString("N0") đ</span>
+                                <span class="original-price">@product.GiaGoc.Value.ToString("N0") đ</span>
                             }
                         </div>
                     </div>
@@ -91,6 +117,7 @@
     </div>
 </div>
 
+<!-- Sản phẩm gợi ý -->
 <div class="flash-deals-section mt-5">
     <div class="section-header">
         <h4 class="section-title">Gợi ý cho bạn</h4>
@@ -105,19 +132,15 @@
                 <div class="product-card-has-image">
                     @{
                         decimal? discount = 0;
-                        if (product.Price.HasValue && product.SalePrice.HasValue && product.SalePrice < product.Price)
+                        if (product.GiaGoc.HasValue && product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
                         {
-                            discount = ((product.Price - product.SalePrice) / product.Price) * 100;
-                        }
-                        else
-                        {
-                            discount = 0;
+                            discount = ((product.GiaGoc - product.GiaBan) / product.GiaGoc) * 100;
                         }
                     }
 
                     <div class="product-image-box">
-                        <a href="@Url.Action("Details", "Products", new { id = product.Id })">
-                            <img src="https://localhost:44310/@product.Image" alt="@product.Name" class="product-img" />
+                        <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
+                            <img src="https://localhost:44310/@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
                         </a>
                         @if (discount > 0)
                         {
@@ -126,21 +149,22 @@
                     </div>
 
                     <div class="product-info">
-                        <div class="product-brand">@product.BrandName</div>
-                        <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.Id })">
-                            @product.Name
+                        <div class="product-brand">@product.TenNhaCungCap</div>
+                        <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
+                            @product.TenThuoc
                         </a>
                         <div class="product-prices">
-                            @if (discount > 0)
+                            @if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
                             {
-                                <span class="product-price-sale">@product.SalePrice.Value.ToString("N0") đ</span>
-                                <span class="product-price-original">@product.Price.Value.ToString("N0") đ</span>
+                                <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
+                                <span class="product-price-original">@((product.GiaGoc ?? 0).ToString("N0")) đ</span>
                             }
                             else
                             {
-                                <span class="product-price-sale">@product.Price.Value.ToString("N0") đ</span>
+                                <span class="product-price-sale">@((product.GiaGoc ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
                             }
                         </div>
+
 
                         <div class="product-rating">
                             <span class="stars">★★★★★</span>
@@ -158,96 +182,36 @@
     </div>
 </div>
 
-<div class="clinic-section mt-5">
-    <ul class="nav nav-tabs" id="clinicTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="services-tab" data-bs-toggle="tab" data-bs-target="#services" type="button" role="tab">Dịch vụ phòng khám</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="prices-tab" data-bs-toggle="tab" data-bs-target="#prices" type="button" role="tab">Bảng giá</button>
-        </li>
-    </ul>
-
-    <div class="tab-content" id="clinicTabContent">
-        <!-- Tab Dịch vụ -->
-        <div class="tab-pane fade show active" id="services" role="tabpanel">
-            <div class="service-grid mt-3">
-                @if (Model.DichVus != null && Model.DichVus.Any())
-                {
-                    foreach (var item in Model.DichVus)
-                    {
-                        <div class="service-card">
-                            <img src="@item.HinhAnh" alt="@item.TenDichVu" class="service-img" />
-                            <div class="service-body">
-                                <h5 class="price">@string.Format("{0:N0} đ", item.Gia)</h5>
-                                <p class="name">@item.TenDichVu</p>
-                                <div class="rating">
-                                    ⭐ 4.8 | 200 lượt
-                                </div>
-                                <div class="info">
-                                    @item.ThoiGian phút
-                                </div>
-                            </div>
-                        </div>
-                    }
-                }
-                else
-                {
-                    <p>Hiện chưa có dịch vụ nào.</p>
-                }
-            </div>
-        </div>
-
-        <!-- Tab Bảng giá -->
-        <div class="tab-pane fade" id="prices" role="tabpanel">
-            <div class="price-list-container mt-3">
-                <!-- Banner bên trái -->
-                <div class="price-banner">
-                    <img src="~/Content/assets/images/Logo/clinic-banner.png" alt="Clinic Promo" />
-                </div>
-
-                <!-- Danh sách dịch vụ bên phải -->
-                <div class="price-list">
-                    <h5 class="price-category" style="text-align:center">ĐIỀU TRỊ MỤN</h5>
-                    <ul>
-                        @foreach (var item in Model.DichVus.Take(8))
-                        {
-                            <li class="price-item">
-                                <span class="service-name">@item.TenDichVu</span>
-                                <span class="service-price">@string.Format("{0:N0} đ", item.Gia)</span>
-                            </li>
-                        }
-                    </ul>
-                    <div class="view-all">
-                        <a href="@Url.Action("Index", "DichVu")" class="btn-view-all">Xem tất cả</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Intersection Observer cho hiệu ứng sản phẩm
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    } else {
+                        entry.target.classList.remove('visible');
+                    }
+                });
+            }, { threshold: 0.2 });
+
+            document.querySelectorAll('.product-card, .product-card-has-image').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Carousel scroll
             const carousel = document.getElementById('topSellingProductsCarousel');
             const prevButton = document.querySelector('.carousel-nav-btn.prev');
             const nextButton = document.querySelector('.carousel-nav-btn.next');
             const scrollDistance = 240;
 
             prevButton.addEventListener('click', function () {
-                carousel.scrollBy({
-                    left: -scrollDistance,
-                    behavior: 'smooth'
-                });
+                carousel.scrollBy({ left: -scrollDistance, behavior: 'smooth' });
             });
 
             nextButton.addEventListener('click', function () {
-                carousel.scrollBy({
-                    left: scrollDistance,
-                    behavior: 'smooth'
-                });
+                carousel.scrollBy({ left: scrollDistance, behavior: 'smooth' });
             });
         });
     </script>

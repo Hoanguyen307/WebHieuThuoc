@@ -16,7 +16,7 @@
 
     <style>
         body {
-            background-color: #f5f5f5;
+            background-color: #eafaf1;
             font-family: 'Segoe UI', sans-serif;
         }
 
@@ -47,12 +47,9 @@
 
         .form-control {
             border-radius: 8px;
-            text-align: center;
-            font-size: 20px;
-            letter-spacing: 5px;
         }
 
-        .btn-otp {
+        .btn-login {
             background-color: black;
             color: white;
             border-radius: 30px;
@@ -77,53 +74,60 @@
                 border-radius: 12px;
             }
 
-            .login-right h4 {
-                font-weight: bold;
-            }
-
-        a {
-            color: #007bff;
-            text-decoration: none;
+        .btn-register {
+            margin-top: 20px;
+            border: 2px solid white;
+            background-color: transparent;
+            color: white;
+            border-radius: 30px;
+            padding: 8px 30px;
+            font-weight: bold;
         }
-
-            a:hover {
-                text-decoration: underline;
-            }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <!-- Left: OTP Form -->
-        <div class="login-left text-center">
-            <h2>Xác nhận OTP</h2>
-            <p>Nhập mã OTP đã gửi tới email của bạn</p>
-
-            <form method="post" action="@Url.Action("ConfirmOTP", "Account")">
-                @Html.AntiForgeryToken()
-                <div class="form-group">
-                    <input type="text" class="form-control" name="otp_input" maxlength="6" placeholder="------" required />
-                </div>
-
-                <button type="submit" id="btnConfirmOtp" class="btn btn-otp">
-                    <span class="spinner-border spinner-border-sm mr-2 d-none" id="otpLoading"></span>
-                    Xác nhận
-                </button>
-
-            </form>
-
-            <div class="mt-3">
-                <a href="@Url.Action("Register", "Account")">Quay lại đăng ký</a>
-            </div>
+    <div class="login-container d-flex flex-column">
+        <!-- Logo header -->
+        <div class="text-center py-4 border-bottom">
+            <img src="~/Content/assets/images/Logo/Logo4.png"
+                 alt="Hiệu thuốc"
+                 style="height: 100px;">
         </div>
 
-        <!-- Right: Banner -->
-        <div class="login-right">
-            <div class="overlay">
-                <h4>BẢO MẬT TÀI KHOẢN</h4>
-                <p>
-                    Mã OTP giúp đảm bảo an toàn cho tài khoản của bạn.<br />
-                    Vui lòng không chia sẻ OTP với bất kỳ ai.
-                </p>
+        <!-- Nội dung dưới chia 2 cột -->
+        <div class="d-flex w-100">
+            <!-- Left: OTP Form -->
+            <div class="login-left text-center">
+                <h2>Xác nhận OTP</h2>
+                <p>Nhập mã OTP đã gửi tới email của bạn</p>
+
+                <form method="post" action="@Url.Action("ConfirmOTP", "Account")">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="otp_input" maxlength="6" placeholder="------" required />
+                    </div>
+
+                    <button type="submit" id="btnConfirmOtp" class="btn btn-otp">
+                        <span class="spinner-border spinner-border-sm mr-2 d-none" id="otpLoading"></span>
+                        Xác nhận
+                    </button>
+
+                </form>
+
+                <div class="mt-3">
+                    <a href="@Url.Action("Register", "Account")">Quay lại đăng ký</a>
+                </div>
+            </div>
+
+            <!-- Right: Banner -->
+            <div class="login-right">
+                <div class="overlay">
+                    <h4>BẢO MẬT TÀI KHOẢN</h4>
+                    <p>
+                        Mã OTP giúp đảm bảo an toàn cho tài khoản của bạn.<br />
+                        Vui lòng không chia sẻ OTP với bất kỳ ai.
+                    </p>
+                </div>
             </div>
         </div>
     </div>

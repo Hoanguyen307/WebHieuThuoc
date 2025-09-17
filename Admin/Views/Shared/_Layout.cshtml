@@ -1,76 +1,198 @@
 ﻿<!doctype html>
-<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg">
-
-
-<!-- Mirrored from themesbrand.com/velzon/html/default/index.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 25 May 2022 13:13:54 GMT -->
+<html lang="vi" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg">
 <head>
-
     <meta charset="utf-8" />
-    <title>QUẢN LÝ MỸ PHẨM</title>
+    <title>QUẢN LÝ HIỆU THUỐC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
-    <meta content="Themesbrand" name="author" />
-    <!-- App favicon -->
+    <meta content="Quản lý hiệu thuốc" name="description" />
+    <meta content="Your Name" name="author" />
+
     <link rel="shortcut icon" href="~/Content/assets/images/Logo/Logo2.png">
 
-    <!-- jsvectormap css -->
-    <link href="~/Content/assets/libs/jsvectormap/css/jsvectormap.min.css" rel="stylesheet" type="text/css" />
-
-    <!--Swiper slider css-->
-    <link href="~/Content/assets/libs/swiper/swiper-bundle.min.css" rel="stylesheet" type="text/css" />
-
-    <!-- Layout config Js -->
-    <script src="~/Content/assets/js/layout.js"></script>
-    <!-- Bootstrap Css -->
-    <link href="~/Content/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-    <!-- Icons Css -->
-    <link href="~/Content/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
-    <!-- App Css-->
-    <link href="~/Content/assets/css/app.min.css" rel="stylesheet" type="text/css" />
-    <!-- custom Css-->
-    <link href="~/Content/assets/css/custom.min.css" rel="stylesheet" type="text/css" />
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <!-- jQuery (cần thiết cho DataTables) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <link href="~/Content/Site.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <!--Bootstrap-->
-    <!-- Bootstrap 5 -->
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <!--ajax-->
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/customParseFormat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        dayjs.extend(dayjs_plugin_customParseFormat);
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <style>
-        body.vertical-collapsed .app-menu {
-            width: 70px !important;
-            overflow: hidden;
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --success-color: #198754;
+            --info-color: #0dcaf0;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+            --sidebar-width: 250px;
+            --topbar-height: 60px;
+        }
+        /* ... (Phần CSS giữ nguyên) ... */
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-bg);
+            margin: 0;
+            padding-top: var(--topbar-height);
         }
 
-            body.vertical-collapsed .app-menu .menu-title,
-            body.vertical-collapsed .app-menu .nav-item span {
-                display: none !important;
+        #layout-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Topbar - Header */
+        #page-topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: var(--topbar-height);
+            z-index: 1001;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 0 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand-box {
+            display: flex;
+            align-items: center;
+        }
+
+        #navbarDropdown {
+            color: #212529d4 !important;
+        }
+
+        #navbarDropdown :hover{
+            color: dodgerblue !important;
+        }
+
+        /* Sidebar - Menu */
+        #layoutSidenav {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        #layoutSidenav_nav {
+            position: fixed;
+            top: var(--topbar-height);
+            bottom: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            z-index: 1000;
+            background-color: #2c3e50;
+            color: #ecf0f1;
+            transition: width 0.3s ease;
+        }
+
+        .sb-sidenav-menu {
+            padding-top: 20px;
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+            color: #ecf0f1;
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+            .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: #fff !important;
             }
+
+            .nav-link.active {
+                background-color: #34495e;
+                color: #fff !important;
+                font-weight: bold;
+            }
+
+        .sb-nav-link-icon {
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        .sb-sidenav-menu-heading {
+            font-size: 0.75rem;
+            color: #bdc3c7;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 1rem 1.5rem;
+        }
+
+        /* Main Content */
+        #layoutSidenav_content {
+            flex-grow: 1;
+            margin-left: var(--sidebar-width);
+            padding: 2rem 1.5rem;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Dashboard Cards */
+        .card-dashboard {
+            border-radius: 15px;
+            color: #fff;
+            font-weight: 500;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .card-dashboard:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            }
+
+        /* Toggles */
+        @@media (max-width: 768px) {
+            #layoutSidenav_nav {
+                width: 70px;
+            }
+
+                #layoutSidenav_nav .sb-sidenav-menu-heading,
+                #layoutSidenav_nav .nav-link span,
+                #layoutSidenav_nav .right-arrow {
+                    display: none;
+                }
+
+                #layoutSidenav_nav .nav-link {
+                    text-align: center;
+                    padding: 10px 0;
+                }
+
+                    #layoutSidenav_nav .nav-link .sb-nav-link-icon {
+                        margin-right: 0;
+                    }
+
+            #layoutSidenav_content {
+                margin-left: 70px;
+            }
+        }
     </style>
-
 </head>
-
-<body>
+<body class="sb-nav-fixed">
     @RenderSection("naviheader", required: false)
     @RenderBody()
     @RenderSection("scripts", required: false)
@@ -78,165 +200,92 @@
 
     <div id="layout-wrapper">
         <header id="page-topbar">
-            <div class="layout-width">
-                <div class="navbar-header">
-                    <div class="d-flex">
-                        <!-- LOGO -->
-                        <div class="navbar-brand-box horizontal-logo">
-                            <a href="@Url.Action("Index", "Admin")" class="logo logo-dark">
-                                <span class="logo-sm">
-                                    <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="100">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="70">
-                                </span>
-                            </a>
+            <div class="navbar-header">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-link btn-sm me-3 d-md-none" id="sidebarToggle" href="#!">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <a class="navbar-brand fw-bold fs-4 text-success" href="@Url.Action("Index", "Admin")">
+                        <i class="fas fa-prescription-bottle-alt me-2"></i>QUẢN LÝ HIỆU THUỐC
+                    </a>
+                </div>
 
-                            <a href="@Url.Action("Index", "Admin")" class="logo logo-light">
-                                <span class="logo-sm">
-                                    <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="100">
-                                </span>
-                                <span class="logo-lg">
-                                    <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="70" />
-                                </span>
-                            </a>
-                        </div>
-
-                        <div class="d-flex align-items-center" style="margin-bottom: 15px">
-                            @*<button type="button" class="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
-                                    id="topnav-hamburger-icon">
-                                <span class="hamburger-icon">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </span>
-                            </button>*@
-                            <form class="app-search d-none d-md-block">
-                                <div class="position-relative">
-                                    <input type="text" class="form-control" placeholder="Tìm kiếm..." autocomplete="off"
-                                           id="search-options">
-                                    <span class="mdi mdi-magnify search-widget-icon"></span>
-                                    <span class="mdi mdi-close-circle search-widget-icon search-widget-icon-close d-none"
-                                          id="search-close-options"></span>
-                                </div>
-                            </form>
-
-                            <div class="app-title ms-2">
-                                <h3 class="fw-bold mb-0">QUẢN LÝ MỸ PHẨM</h3>
-                            </div>
-                        </div>
-
-
+                <div class="d-flex align-items-center">
+                    <div class="input-group d-none d-lg-flex me-3 search-bar">
+                        <input class="form-control" type="text" placeholder="Tìm kiếm..." aria-label="Tìm kiếm..." />
+                        <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
                     </div>
 
-                    <div class="d-flex align-items-center">
-
-                        <div class="ms-1 header-item d-none d-sm-flex">
-                            <button type="button" class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
-                                    data-toggle="fullscreen">
-                                <i class='bx bx-fullscreen fs-22'></i>
-                            </button>
+                    <div class="dropdown ms-sm-3 topbar-user-dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-2x header-avatar-icon me-2 d-none d-sm-inline-block"></i>
+                            @*@if (User.Identity.IsAuthenticated)
+                            {
+                                <span class="d-none d-md-inline-block">@User.Identity.Name</span>
+                            }
+                            else
+                            {
+                                <span class="d-none d-md-inline-block">Khách</span>
+                            }*@
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <h6 class="dropdown-header">Xin chào, @User.Identity.Name!</h6>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-cog me-2"></i> Cài đặt
+                                </a>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fas fa-key me-2"></i> Thay đổi mật khẩu
+                                </a>
+                                <div class="dropdown-divider"></div>
+                                <form action="@Url.Action("LogOff", "Account")" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item text-danger" style="background:none;border:none;">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Đăng xuất
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <h6 class="dropdown-header">Chào mừng bạn!</h6>
+                                <a class="dropdown-item" href="@Url.Action("Login", "Account")">
+                                    <i class="fas fa-sign-in-alt me-2"></i> Đăng nhập
+                                </a>
+                                <a class="dropdown-item" href="@Url.Action("Register", "Account")">
+                                    <i class="fas fa-user-plus me-2"></i> Đăng ký
+                                </a>
+                            }
                         </div>
-
-                        <div class="ms-1 header-item d-none d-sm-flex">
-                            <button type="button"
-                                    class="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle light-dark-mode">
-                                <i class='bx bx-moon fs-22'></i>
-                            </button>
-                        </div>
-
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <div class="dropdown ms-sm-3 header-item topbar-user">
-                                <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown">
-                                    <span class="d-flex align-items-center">
-                                        <img src="~/Content/assets/images/Logo/Logo4.png" class="rounded-circle" style="width: 40px; height: 40px;" />
-                                        <span class="ms-2">@User.Identity.Name</span>
-                                    </span>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="#">
-                                        <i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> Thay đổi mật khẩu
-                                    </a>
-                                    <form action="@Url.Action("LogOff", "Account")" method="post" style="display:inline;">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="dropdown-item" style="background:none;border:none;">
-                                            <i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> Đăng xuất
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="ms-sm-3">
-                                <a class="btn btn-primary" href="@Url.Action("Login", "Account")">Đăng nhập</a>
-                            </div>
-                        }
-
-
                     </div>
                 </div>
             </div>
-        </header>
+    </header>
 
-        <div class="app-menu navbar-menu" id="sidebar">
-            <!-- LOGO -->
-            <div class="navbar-brand-box">
-                <!-- Dark Logo-->
-                <a href="@Url.Action("Index", "Home")" class="logo logo-dark">
-                    <span class="logo-sm">
-                        <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="100">
-                    </span>
-                    <span class="logo-lg">
-                        <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="70">
-                    </span>
-                </a>
-                <!-- Light Logo-->
-                <a href="@Url.Action("Index", "Home")" class="logo logo-light">
-                    <span class="logo-sm">
-                        <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="100">
-                    </span>
-                    <span class="logo-lg">
-                        <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="70">
-                    </span>
-                </a>
-                <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
-                    <i class="ri-record-circle-line"></i>
-                </button>
-            </div>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
             @Html.Partial("_PartiaSideBar")
         </div>
+
+    </div>
     </div>
 
-    <!-- JAVASCRIPT -->
     <script src="~/Content/assets/libs/simplebar/simplebar.min.js"></script>
     <script src="~/Content/assets/libs/node-waves/waves.min.js"></script>
     <script src="~/Content/assets/libs/feather-icons/feather.min.js"></script>
     <script src="~/Content/assets/js/pages/plugins/lord-icon-2.1.0.js"></script>
     <script src="~/Content/assets/js/plugins.js"></script>
 
-    <!-- apexcharts -->
     <script src="~/Content/assets/libs/apexcharts/apexcharts.min.js"></script>
 
-    <!-- Vector map-->
     <script src="~/Content/assets/libs/jsvectormap/js/jsvectormap.min.js"></script>
     <script src="~/Content/assets/libs/jsvectormap/maps/world-merc.js"></script>
 
-    <!--Swiper slider js-->
     <script src="~/Content/assets/libs/swiper/swiper-bundle.min.js"></script>
 
-    <!-- Dashboard init -->
     <script src="~/Content/assets/js/pages/dashboard-ecommerce.init.js"></script>
-
-    <!-- App js -->
-    <script src="~/Content/assets/js/app.js"></script>
-    <script src="~/Content/ckeditor/ckeditor.js"></script>
-    <script src="~/Content/ckfinder/ckfinder.js"></script>
-    @section scripts{
-        <script src="~/Content/assets/js/QUANLY.js?v=@(DateTime.Now.Ticks)"></script>
-    }
     <script>
+        // JavaScript logic goes here, after jQuery is loaded
         document.addEventListener("DOMContentLoaded", function () {
             const collapseToggles = document.querySelectorAll('[data-bs-toggle="collapse"]');
 
@@ -261,10 +310,65 @@
                 });
             });
         });
-    </script>
 
+        let lastOrderIdGlobal = 0; // lưu ID đơn hàng mới nhất đã biết
+
+        // Hàm lấy ID đơn hàng mới nhất hiện tại từ server
+        function initLastOrderId() {
+            $.ajax({
+                url: '/Order/GetLatestOrderId', // server trả về { latestOrderId: 8 }
+                type: 'GET',
+                success: function (res) {
+                    lastOrderIdGlobal = res.latestOrderId || 0;
+                    // Sau khi khởi tạo xong, check đơn mới
+                    checkNewOrdersGlobal();
+                },
+                error: function () {
+                    console.error("Lỗi khi lấy ID đơn hàng mới nhất");
+                }
+            });
+        }
+
+        function checkNewOrdersGlobal() {
+            $.ajax({
+                url: '/Order/GetNewOrders',
+                type: 'GET',
+                data: { lastOrderId: lastOrderIdGlobal },
+                success: function (res) {
+                    if (res.hasNew) {
+                        const viewedOrderId = localStorage.getItem('lastViewedOrderId');
+                        if (viewedOrderId && parseInt(viewedOrderId) >= res.newestOrderId) {
+                            return; // đã xem rồi
+                        }
+
+                        lastOrderIdGlobal = res.newestOrderId; // cập nhật ID mới nhất
+
+                        Swal.fire({
+                            title: 'Có đơn hàng mới!',
+                            text: `Có ${res.newCount} đơn hàng mới cần xử lý`,
+                            icon: 'info',
+                            confirmButtonText: 'Xem ngay'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                localStorage.setItem('lastViewedOrderId', res.newestOrderId);
+                                window.location.href = '/Order/Index';
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    console.error("Lỗi khi kiểm tra đơn hàng mới");
+                }
+            });
+        }
+
+        // Kiểm tra mỗi 10 giây
+        setInterval(checkNewOrdersGlobal, 10000);
+
+        // Khi load trang lần đầu: khởi tạo lastOrderIdGlobal
+        $(document).ready(function () {
+            initLastOrderId();
+        });
+    </script>
 </body>
 </html>
-
-
-

@@ -24,7 +24,7 @@ body {
 .sidebar {
     width: 250px;
     min-height: 100vh;
-    background-color: #324c8b; /* màu xanh cải tiến */
+    background-color: #e9edf1 !important;
     transition: all 0.3s;
 }
 
@@ -33,7 +33,7 @@ body {
     }
 
 .sidebar-menu .nav-link {
-    color: #e0e0e0;
+    color: #5e6278 !important;
     padding: 12px 10px;
     border-radius: 5px;
     transition: 0.2s ease;
@@ -42,7 +42,7 @@ body {
     .sidebar-menu .nav-link:hover,
     .sidebar-menu .nav-link.active {
         background-color: #3f5cc2;
-        color: #ffffff;
+        color: #009ef7;
     }
 
     .sidebar-menu .nav-link i {

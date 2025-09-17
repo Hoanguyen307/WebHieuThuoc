@@ -3,7 +3,7 @@
 	width: 100%;
 	margin: 20px auto;
 	padding: 15px;
-	background-color: #fcebe5;
+	background-color: #f1eeee;
 	border-radius: 8px;
 	box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
@@ -54,9 +54,9 @@
 	}
 
 	.carousel-nav-btn:hover {
-		background-color: #ff66b2;
+		background-color: #28a745;
 		color: white;
-		border-color: #ff66b2;
+		border-color: #28a745;
 	}
 
 .product-card {
@@ -118,7 +118,7 @@
 }
 
 	.product-name:hover {
-		color: #ff4fa4;
+		color: #28a745;
 	}
 
 .product-price {
@@ -127,7 +127,7 @@
 }
 
 .flash-price {
-	color: #ff66b2;
+	color: #28a745;
 	font-weight: bold;
 	margin-right: 8px;
 }
@@ -168,7 +168,7 @@ h4.fw-bold {
 
 .view-all-link {
 	font-size: 1rem;
-	color: #ff66b2;
+	color: #28a745;
 	font-weight: bold;
 	text-decoration: none;
 }
@@ -203,7 +203,7 @@ h4.fw-bold {
 	position: absolute;
 	top: 10px;
 	left: 10px;
-	background-color: #e74c3c;
+	background-color: #28a745;
 	color: white;
 	padding: 5px 8px;
 	border-radius: 4px;
@@ -243,7 +243,7 @@ h4.fw-bold {
 }
 
 	.product-name-vertical:hover {
-		color: #ff66b2;
+		color: #28a745;
 	}
 
 .product-price-vertical {
@@ -252,7 +252,7 @@ h4.fw-bold {
 }
 
 .flash-price-vertical {
-	color: #ff66b2;
+	color: #28a745;
 	font-weight: bold;
 	margin-right: 8px;
 }
@@ -297,7 +297,7 @@ h4.fw-bold {
 	position: absolute;
 	top: 8px;
 	left: 8px;
-	background-color: #ff4d4f;
+	background-color: #28a745;
 	color: #fff;
 	padding: 4px 6px;
 	font-size: 13px;
@@ -310,7 +310,7 @@ h4.fw-bold {
 }
 
 .product-brand {
-	color: #ff6600;
+	color: #28a745;
 	font-weight: bold;
 	font-size: 14px;
 	text-decoration: none; /* Bỏ gạch chân */
@@ -331,7 +331,7 @@ h4.fw-bold {
 
 
 	.product-title:hover {
-		color: #007bff;
+		color: #28a745;
 	}
 
 .product-prices {

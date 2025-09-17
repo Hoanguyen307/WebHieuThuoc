@@ -144,9 +144,7 @@ function SaveKhachHang() {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
                 $('#modalKhachHang').modal('hide');
-                setTimeout(function () {
-                    location.reload();
-                }, 1500);
+                loadKhachHang(1);
             } else {
                 toastr.error(res.msg || "Cập nhật thất bại");
             }
@@ -173,8 +171,7 @@ function handleDelete(id) {
             success: function (res) {
                 if (res.code === 200) {
                     toastr.success(res.msg || "Xoá thành công");
-                    location.reload();
-                    //loadKhachHang();
+                    loadKhachHang(1);
                 } else {
                     toastr.error(res.msg || "Xoá thất bại");
                 }
@@ -201,7 +198,7 @@ function toggleStatus(id) {
         success: function (res) {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
-                location.reload(); 
+                loadKhachHang(1);
             } else {
                 toastr.error(res.msg || "Cập nhật thành công");
             }

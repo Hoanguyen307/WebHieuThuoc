@@ -17,7 +17,6 @@ namespace WebApp.Controllers
 
             viewModel.TopSellingProducts = new Product_DAL().Select_TopSelling(8);
             viewModel.LatestProducts = new Product_DAL().Select_GetLatest(8);
-            viewModel.DichVus = new DichVu_DAL().Select_GetLatest(8);
             return View(viewModel);
         }
 
@@ -30,7 +29,7 @@ namespace WebApp.Controllers
             var productCategories = productCategoryDAL.Select_Category_All();
 
             ViewBag.Categories = categories;
-            ViewBag.ProductCategory = productCategories;
+            ViewBag.ProductCategories = productCategories;
 
             return PartialView("_MainMenuPartial");
         }

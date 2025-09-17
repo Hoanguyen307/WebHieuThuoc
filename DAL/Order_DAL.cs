@@ -30,28 +30,49 @@ namespace DAL
                 throw new Exception("Error retrieving all orders", ex);
             }
         }
-        public Order GetOrderDetails(int ID)
+        public OrderDetail GetOrderDetails(int orderId)
         {
-            try
+            using (var conn = Connection.getConnection())
             {
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@OrderId", ID);
-                var model = SqlMapper.Query<Order>(Connection.getConnection(), "sp_GetOrderDetails", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
-                return model;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error retrieving order with ID {ID}", ex);
+                var lookup = new Dictionary<string, OrderDetail>();
+
+                var result = conn.Query<OrderDetail, Product, OrderDetail>(
+                    "sp_GetOrderDetails",
+                    (order, product) =>
+                    {
+                        OrderDetail orderEntry;
+
+                        if (!lookup.TryGetValue(order.OrderCode, out orderEntry))
+                        {
+                            orderEntry = order;
+                            orderEntry.listProduct = new List<Product>();
+                            lookup.Add(order.OrderCode, orderEntry);
+                        }
+
+                        if (product != null)
+                        {
+                            orderEntry.listProduct.Add(product);
+                        }
+
+                        return orderEntry;
+                    },
+                    new { OrderId = orderId },
+                    commandType: CommandType.StoredProcedure,
+                    splitOn: "ProductId" // cột đầu tiên thuộc về Product
+                );
+
+                return result.FirstOrDefault();
             }
         }
-        public Order GetOrderDetails_ByCustomer(int OrderId, int CustomerId)
+
+        public OrderDetail GetOrderDetails_ByCustomer(int OrderId, int CustomerId)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@OrderId", OrderId);
                 param.Add("@CustomerId", CustomerId);
-                var model = SqlMapper.Query<Order>(Connection.getConnection(), "sp_GetOrderDetails_ByCustomer", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+                var model = SqlMapper.Query<OrderDetail>(Connection.getConnection(), "sp_GetOrderDetails_ByCustomer", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
                 return model;
             }
             catch (Exception)
@@ -81,7 +102,9 @@ namespace DAL
                 param.Add("@CustomerId", obj.CustomerId);
                 param.Add("@Status", obj.Status);
                 param.Add("@Note", obj.Note);
+                param.Add("@DiaChiId", obj.DiaChiId);
                 param.Add("@CreatedBy", obj.CreatedBy);
+                param.Add("@PaymentMethod", obj.PaymentMethod ?? "COD");
 
                 // Tạo DataTable tương ứng OrderDetailType (ProductId, Quantity, UnitPrice, Discount)
                 var dt = new DataTable();

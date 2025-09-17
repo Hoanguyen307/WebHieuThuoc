@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewBag.Title - Mỹ phẩm chính hãng</title>
+    <title>@ViewBag.Title - Hiệu thuốc</title>
     <link rel="shortcut icon" href="~/Content/assets/images/Logo/Logo2.png">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- CSS -->
@@ -19,7 +19,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .header-item span,
         .header-item a,
@@ -31,7 +31,7 @@
         .header-item:hover span,
         .header-item:hover a,
         .header-item:hover .fas {
-            color: #ff4fa4 !important;
+            color: #28a745 !important;
         }
 
         .main-menu-container {
@@ -68,7 +68,7 @@
             }
 
                 .menu-item a:hover {
-                    color: #ff4fa4;
+                    color: #28a745;
                 }
 
         .dropdown-menu-custom {
@@ -104,8 +104,9 @@
                     background-color: #f7f7f7;
                     color: #ff4fa4;
                 }
+
         .footer-custom {
-            background-color: #ff4fa4;
+            background-color: #28a745;
             color: #fff;
         }
 
@@ -206,97 +207,111 @@
             }
 
 
-           /* Chatbox Button */
-.chatbox-btn {
-    position: fixed;
-    bottom: 105px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-    z-index: 10000;
-    transition: all 0.3s ease;
-    border: none;
-}
+        /* Chatbox Button */
+        .chatbox-btn {
+            position: fixed;
+            bottom: 105px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+            z-index: 10000;
+            transition: all 0.3s ease;
+            border: none;
+        }
 
-.chatbox-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
-}
+            .chatbox-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
+            }
 
-.chatbox-btn.active {
-    background: linear-gradient(135deg, #f44336, #e53935);
-}
+            .chatbox-btn.active {
+                background: linear-gradient(135deg, #f44336, #e53935);
+            }
 
-.chatbox-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: #ff4444;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: pulse 2s infinite;
-}
+        .chatbox-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
 
-@@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
-}
+        @@keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
 
-.chatbox-btn.new-message {
-    animation: shake 0.5s ease-in-out infinite alternate;
-}
+            50% {
+                transform: scale(1.2);
+            }
 
-@@keyframes shake {
-    0% { transform: rotate(-2deg); }
-    100% { transform: rotate(2deg); }
-}
+            100% {
+                transform: scale(1);
+            }
+        }
 
-/* Chatbox Container */
-.hoaCosmetics-chatbox-container {
-    position: fixed;
-    bottom: 100px;
-    right: 30px;
-    width: 380px;
-    height: 500px;
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 9999;
-    animation: slideUp 0.3s ease-out;
-}
+        .chatbox-btn.new-message {
+            animation: shake 0.5s ease-in-out infinite alternate;
+        }
 
-@@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+        @@keyframes shake {
+            0% {
+                transform: rotate(-2deg);
+            }
 
-/* Chat Header */
+            100% {
+                transform: rotate(2deg);
+            }
+        }
+
+        /* Chatbox Container */
+        .hoaCosmetics-chatbox-container {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 380px;
+            height: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 9999;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @@keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Chat Header */
         .hoaCosmetics-chat-header {
             background: linear-gradient(135deg, #ff66b2, #ff66b2);
             color: white;
@@ -308,117 +323,117 @@
             flex-shrink: 0; /* Prevent header from shrinking */
         }
 
-.hoaCosmetics-chat-header-left {
-    display: flex;
-    align-items: center;
-}
+        .hoaCosmetics-chat-header-left {
+            display: flex;
+            align-items: center;
+        }
 
-.hoaCosmetics-chat-avatar {
-    width: 40px;
-    height: 40px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 12px;
-    color: #4CAF50;
-    font-size: 20px;
-    position: relative;
-}
+        .hoaCosmetics-chat-avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: #4CAF50;
+            font-size: 20px;
+            position: relative;
+        }
 
-.hoaCosmetics-status-indicator {
-    width: 10px;
-    height: 10px;
-    background: #4CAF50;
-    border-radius: 50%;
-    position: absolute;
-    top: -2px;
-    right: -2px;
-    border: 2px solid white;
-}
+        .hoaCosmetics-status-indicator {
+            width: 10px;
+            height: 10px;
+            background: #4CAF50;
+            border-radius: 50%;
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            border: 2px solid white;
+        }
 
-.hoaCosmetics-chat-info h6 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-}
+        .hoaCosmetics-chat-info h6 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
 
-.hoaCosmetics-chat-info p {
-    margin: 0;
-    font-size: 12px;
-    opacity: 0.9;
-}
+        .hoaCosmetics-chat-info p {
+            margin: 0;
+            font-size: 12px;
+            opacity: 0.9;
+        }
 
-.hoaCosmetics-close-btn {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background 0.3s ease;
-}
+        .hoaCosmetics-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
 
-.hoaCosmetics-close-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
+            .hoaCosmetics-close-btn:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
 
-/* Chat Body - Improved scrolling */
-.hoaCosmetics-chat-body {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    background: #f9f9f9;
-    max-height: calc(500px - 140px); /* Adjust based on header and input height */
-    min-height: 200px;
-}
+        /* Chat Body - Improved scrolling */
+        .hoaCosmetics-chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: #f9f9f9;
+            max-height: calc(500px - 140px); /* Adjust based on header and input height */
+            min-height: 200px;
+        }
 
-.hoaCosmetics-chat-body::-webkit-scrollbar {
-    width: 6px;
-}
+            .hoaCosmetics-chat-body::-webkit-scrollbar {
+                width: 6px;
+            }
 
-.hoaCosmetics-chat-body::-webkit-scrollbar-track {
-    background: transparent;
-}
+            .hoaCosmetics-chat-body::-webkit-scrollbar-track {
+                background: transparent;
+            }
 
-.hoaCosmetics-chat-body::-webkit-scrollbar-thumb {
-    background: #ddd;
-    border-radius: 3px;
-}
+            .hoaCosmetics-chat-body::-webkit-scrollbar-thumb {
+                background: #ddd;
+                border-radius: 3px;
+            }
 
-.hoaCosmetics-chat-body::-webkit-scrollbar-thumb:hover {
-    background: #ccc;
-}
+                .hoaCosmetics-chat-body::-webkit-scrollbar-thumb:hover {
+                    background: #ccc;
+                }
 
-/* Message Styles */
-.hoaCosmetics-message {
-    margin-bottom: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
+        /* Message Styles */
+        .hoaCosmetics-message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
 
-.hoaCosmetics-message.user {
-    align-items: flex-end;
-}
+            .hoaCosmetics-message.user {
+                align-items: flex-end;
+            }
 
-.hoaCosmetics-message.bot {
-    align-items: flex-start;
-}
+            .hoaCosmetics-message.bot {
+                align-items: flex-start;
+            }
 
-.hoaCosmetics-message-content {
-    max-width: 85%;
-    padding: 12px 16px;
-    border-radius: 18px;
-    font-size: 14px;
-    line-height: 1.4;
-    position: relative;
-    word-wrap: break-word;
-    word-break: break-word; /* Handle long words */
-}
+        .hoaCosmetics-message-content {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 14px;
+            line-height: 1.4;
+            position: relative;
+            word-wrap: break-word;
+            word-break: break-word; /* Handle long words */
+        }
 
         .hoaCosmetics-message.user .hoaCosmetics-message-content {
             background: linear-gradient(135deg, #ff66b2, #ff66b2);
@@ -426,124 +441,124 @@
             border-bottom-right-radius: 6px;
         }
 
-.hoaCosmetics-message.bot .hoaCosmetics-message-content {
-    background: white;
-    color: #333;
-    border: 1px solid #e1e1e1;
-    border-bottom-left-radius: 6px;
-}
+        .hoaCosmetics-message.bot .hoaCosmetics-message-content {
+            background: white;
+            color: #333;
+            border: 1px solid #e1e1e1;
+            border-bottom-left-radius: 6px;
+        }
 
-.hoaCosmetics-message-time {
-    font-size: 11px;
-    color: #999;
-    margin-top: 5px;
-    align-self: flex-end;
-}
+        .hoaCosmetics-message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+            align-self: flex-end;
+        }
 
-.hoaCosmetics-message.bot .hoaCosmetics-message-time {
-    align-self: flex-start;
-}
+        .hoaCosmetics-message.bot .hoaCosmetics-message-time {
+            align-self: flex-start;
+        }
 
-/* Product Suggestion - Enhanced */
-.hoaCosmetics-product-suggestion {
-    background: white;
-    border: 1px solid #e1e1e1;
-    border-radius: 12px;
-    padding: 12px;
-    margin: 10px 0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    max-width: 100%;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
+        /* Product Suggestion - Enhanced */
+        .hoaCosmetics-product-suggestion {
+            background: white;
+            border: 1px solid #e1e1e1;
+            border-radius: 12px;
+            padding: 12px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            max-width: 100%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
-.hoaCosmetics-product-suggestion:hover {
-    border-color: #4CAF50;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
+            .hoaCosmetics-product-suggestion:hover {
+                border-color: #4CAF50;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
 
-.hoaCosmetics-product-image {
-    width: 60px;
-    height: 60px;
-    border-radius: 8px;
-    object-fit: cover;
-    background: #f0f0f0;
-    flex-shrink: 0;
-}
+        .hoaCosmetics-product-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #f0f0f0;
+            flex-shrink: 0;
+        }
 
-.hoaCosmetics-product-info {
-    flex: 1;
-    min-width: 0; /* Allow text to wrap */
-}
+        .hoaCosmetics-product-info {
+            flex: 1;
+            min-width: 0; /* Allow text to wrap */
+        }
 
-.hoaCosmetics-product-info h6 {
-    margin: 0 0 4px 0;
-    font-size: 13px;
-    font-weight: 600;
-    color: #333;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
+            .hoaCosmetics-product-info h6 {
+                margin: 0 0 4px 0;
+                font-size: 13px;
+                font-weight: 600;
+                color: #333;
+                line-height: 1.3;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
 
-.hoaCosmetics-product-price {
-    color: #f44336;
-    font-weight: 600;
-    font-size: 14px;
-    margin: 4px 0;
-}
+        .hoaCosmetics-product-price {
+            color: #f44336;
+            font-weight: 600;
+            font-size: 14px;
+            margin: 4px 0;
+        }
 
-.hoaCosmetics-product-link {
-    color: #4CAF50;
-    font-size: 12px;
-    text-decoration: none;
-    margin-top: 4px;
-    display: inline-block;
-    transition: color 0.3s ease;
-}
+        .hoaCosmetics-product-link {
+            color: #4CAF50;
+            font-size: 12px;
+            text-decoration: none;
+            margin-top: 4px;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
 
-.hoaCosmetics-product-link:hover {
-    color: #45a049;
-    text-decoration: underline;
-}
+            .hoaCosmetics-product-link:hover {
+                color: #45a049;
+                text-decoration: underline;
+            }
 
-/* Chat Input */
-.hoaCosmetics-chat-input {
-    padding: 20px;
-    background: white;
-    border-top: 1px solid #e1e1e1;
-    flex-shrink: 0; /* Prevent input from shrinking */
-}
+        /* Chat Input */
+        .hoaCosmetics-chat-input {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e1e1e1;
+            flex-shrink: 0; /* Prevent input from shrinking */
+        }
 
-.hoaCosmetics-input-group {
-    display: flex;
-    align-items: center;
-    background: #f5f5f5;
-    border-radius: 25px;
-    padding: 5px;
-    gap: 10px;
-}
+        .hoaCosmetics-input-group {
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 25px;
+            padding: 5px;
+            gap: 10px;
+        }
 
-.hoaCosmetics-chat-input-field {
-    flex: 1;
-    border: none;
-    outline: none;
-    padding: 12px 15px;
-    background: transparent;
-    font-size: 14px;
-    resize: none;
-    min-height: 20px;
-}
+        .hoaCosmetics-chat-input-field {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 12px 15px;
+            background: transparent;
+            font-size: 14px;
+            resize: none;
+            min-height: 20px;
+        }
 
-.hoaCosmetics-chat-input-field::placeholder {
-    color: #999;
-}
+            .hoaCosmetics-chat-input-field::placeholder {
+                color: #999;
+            }
 
         .hoaCosmetics-send-btn {
             width: 35px;
@@ -560,54 +575,67 @@
             flex-shrink: 0;
         }
 
-.hoaCosmetics-send-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
-}
+            .hoaCosmetics-send-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+            }
 
-.hoaCosmetics-send-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
+            .hoaCosmetics-send-btn:disabled {
+                background: #ccc;
+                cursor: not-allowed;
+                transform: none;
+            }
 
-/* Typing Indicator */
-.hoaCosmetics-typing-indicator {
-    display: flex;
-    align-items: center;
-    padding: 10px 15px;
-    margin-bottom: 10px;
-}
+        /* Typing Indicator */
+        .hoaCosmetics-typing-indicator {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+        }
 
-.hoaCosmetics-typing-dots {
-    display: flex;
-    gap: 3px;
-}
+        .hoaCosmetics-typing-dots {
+            display: flex;
+            gap: 3px;
+        }
 
-.hoaCosmetics-typing-dots span {
-    width: 6px;
-    height: 6px;
-    background: #999;
-    border-radius: 50%;
-    animation: typing 1.4s infinite ease-in-out;
-}
+            .hoaCosmetics-typing-dots span {
+                width: 6px;
+                height: 6px;
+                background: #999;
+                border-radius: 50%;
+                animation: typing 1.4s infinite ease-in-out;
+            }
 
-.hoaCosmetics-typing-dots span:nth-child(1) { animation-delay: -0.32s; }
-.hoaCosmetics-typing-dots span:nth-child(2) { animation-delay: -0.16s; }
-.hoaCosmetics-typing-dots span:nth-child(3) { animation-delay: 0; }
+                .hoaCosmetics-typing-dots span:nth-child(1) {
+                    animation-delay: -0.32s;
+                }
 
-@@keyframes typing {
-    0%, 80%, 100% { opacity: 0.3; }
-    40% { opacity: 1; }
-}
+                .hoaCosmetics-typing-dots span:nth-child(2) {
+                    animation-delay: -0.16s;
+                }
 
-/* Quick Replies */
-.hoaCosmetics-quick-replies {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 10px;
-}
+                .hoaCosmetics-typing-dots span:nth-child(3) {
+                    animation-delay: 0;
+                }
+
+        @@keyframes typing {
+            0%, 80%, 100% {
+                opacity: 0.3;
+            }
+
+            40% {
+                opacity: 1;
+            }
+        }
+
+        /* Quick Replies */
+        .hoaCosmetics-quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
 
         .hoaCosmetics-quick-reply-btn {
             background: white;
@@ -626,57 +654,54 @@
                 color: white;
             }
 
-/* Welcome Message */
-.hoaCosmetics-welcome-message {
-    text-align: center;
-    padding: 30px 20px;
-    color: #666;
-}
+        /* Welcome Message */
+        .hoaCosmetics-welcome-message {
+            text-align: center;
+            padding: 30px 20px;
+            color: #666;
+        }
 
-.hoaCosmetics-welcome-message i {
-    font-size: 48px;
-    color: #4CAF50;
-    margin-bottom: 15px;
-}
+            .hoaCosmetics-welcome-message i {
+                font-size: 48px;
+                color: #4CAF50;
+                margin-bottom: 15px;
+            }
 
-/* Responsive */
-@@media (max-width: 480px) {
-    .hoaCosmetics-chatbox-container {
-        width: calc(100vw - 20px);
-        right: 10px;
-        left: 10px;
-        height: 80vh;
-        bottom: 90px;
-    }
+        /* Responsive */
+        @@media (max-width: 480px) {
+            .hoaCosmetics-chatbox-container {
+                width: calc(100vw - 20px);
+                right: 10px;
+                left: 10px;
+                height: 80vh;
+                bottom: 90px;
+            }
 
-    .chatbox-btn {
-        right: 20px;
-        bottom: 20px;
-    }
+            .chatbox-btn {
+                right: 20px;
+                bottom: 20px;
+            }
 
-    .hoaCosmetics-product-suggestion {
-        flex-direction: column;
-        text-align: center;
-    }
+            .hoaCosmetics-product-suggestion {
+                flex-direction: column;
+                text-align: center;
+            }
 
-    .hoaCosmetics-product-image {
-        width: 80px;
-        height: 80px;
-    }
-}
+            .hoaCosmetics-product-image {
+                width: 80px;
+                height: 80px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="bg-pink text-white text-center py-1 small">
-        Freeship 15K mọi đơn hàng &nbsp; • &nbsp; Quà tặng cho đơn từ 499K &nbsp; • &nbsp; Giao hàng 24H
-    </div>
 
     <header class="header">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
                 <a href="@Url.Action("Index", "Home1")" class="logo logo-dark" style="margin-left: 190px;">
                     <span class="logo-sm">
-                        <img src="~/Content/assets/images/Logo/Logo3.png" alt="" height="100">
+                        <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="100">
                     </span>
                     @*<span class="logo-lg">
                             <img src="~/Content/assets/images/Logo/Logo2.png" alt="" height="70">
@@ -692,15 +717,15 @@
                     <div class="search-box">
                         @using (Html.BeginForm("Search", "Products", FormMethod.Get))
                         {
-                            <input type="text" name="searchString" placeholder="Mua 1 Tặng 1 Kem Chống Nắng" value="@ViewBag.SearchString" />
+                            <input type="text" name="searchString" placeholder="Bạn đang tìm gì hôm nay..." value="@ViewBag.SearchString" />
                             <button type="submit" class="btn btn-link p-0"><i class="fas fa-search"></i></button>
                         }
                     </div>
 
-                    <div class="header-item">
-                        <i class="fas fa-newspaper"></i>
-                        <span>Tạp chí làm đẹp</span>
-                    </div>
+                    @*<div class="header-item">
+                            <i class="fas fa-newspaper"></i>
+                            <span>Tạp chí làm đẹp</span>
+                        </div>*@
                     <div class="header-item">
                         <i class="fas fa-ellipsis-h"></i>
                     </div>
@@ -721,17 +746,17 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="/Order/History">
+                                    <a class="dropdown-item" href="@Url.Action("DonHang", "KhachHang")">
                                         <i class="fas fa-box me-2"></i> Quản lý đơn hàng
                                     </a>
                                 </li>
-                                <li>
+                                @*<li>
                                     <a class="dropdown-item" href="@Url.Action("Wishlist", "KhachHang")">
                                         <i class="fas fa-heart me-2"></i> Sản phẩm yêu thích
                                     </a>
-                                </li>
+                                </li>*@
                                 <li>
-                                    <a class="dropdown-item" href="@Url.Action("Address", "KhachHang")">
+                                    <a class="dropdown-item" href="@Url.Action("Index", "DiaChiGiaoHang")">
                                         <i class="fas fa-map-marker-alt me-2"></i> Địa chỉ giao hàng
                                     </a>
                                 </li>
@@ -803,48 +828,50 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <h5 style="font-size:22px;">HỖ TRỢ KHÁCH HÀNG</h5>
                     <ul class="list-unstyled">
-                        <li><a href="#">Hotline: 0979.310.351</a></li>
+                        <li><a href="tel:0979310351">📞 Hotline tư vấn: 0979.310.351</a></li>
                         <li><a href="/Page/FAQ">Các câu hỏi thường gặp</a></li>
-                        <li><a href="/Page/OrderGuide">Hướng dẫn đặt hàng</a></li>
-                        <li><a href="/Page/Shipping">Phương thức vận chuyển</a></li>
-                        <li><a href="/Page/ReturnPolicy">Chính sách đổi trả</a></li>
+                        <li><a href="/Page/OrderGuide">Hướng dẫn mua thuốc</a></li>
+                        <li><a href="/Page/Shipping">Phương thức giao hàng</a></li>
+                        <li><a href="/Page/ReturnPolicy">Chính sách đổi trả thuốc</a></li>
                     </ul>
                 </div>
                 <div class="col-md-6 col-lg-3 mb-4">
-                    <h5 style="font-size:22px;">VỀ HOÀ COSMETICS</h5>
+                    <h5 style="font-size:20px;">VỀ NHÀ THUỐC HOÀ</h5>
                     <ul class="list-unstyled">
-                        <li><a href="/Page/About">Giới thiệu Hoà Cosmetics</a></li>
+                        <li><a href="/Page/About">Giới thiệu Nhà thuốc Hoà</a></li>
+                        <li><a href="/Page/License">Giấy phép kinh doanh</a></li>
                         <li><a href="/Page/Privacy">Chính sách bảo mật</a></li>
                         <li><a href="/Page/Terms">Điều khoản sử dụng</a></li>
-                        <li><a href="/Page/Blog" class="text-light">Cẩm nang làm đẹp</a></li>
-                        <li><a href="/Page/Contact">Liên hệ</a></li>
+                        <li><a href="/Page/Contact">Liên hệ & phản hồi</a></li>
                     </ul>
                 </div>
                 <div class="col-md-6 col-lg-3 mb-4">
-                    <h5 style="font-size:22px;">HỢP TÁC & LIÊN KẾT</h5>
-                    <div class="social-icons-wrapper mt-3">
-                        <a href="#" class="social-icon facebook">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="social-icon tiktok">
-                            <i class="fab fa-tiktok"></i>
-                        </a>
-                        <a href="#" class="social-icon instagram">
-                            <i class="fab fa-instagram"></i>
-                        </a>
+                    <h5 style="font-size:20px;">KẾT NỐI VỚI CHÚNG TÔI</h5>
+                    <p class="small">Theo dõi để nhận tin tức y tế & tư vấn sức khỏe miễn phí:</p>
+                    <div class="social-icons-wrapper mt-2">
+                        <a href="#" class="social-icon facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon tiktok"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="social-icon instagram"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 <div class="col-md-6 col-lg-3 mb-4">
-                    <h5 style="font-size:22px;">CẬP NHẬT THÔNG TIN KHUYẾN MÃI</h5>
+                    <h5 style="font-size:20px;">ĐĂNG KÝ NHẬN TIN</h5>
                     <div class="input-group mb-3">
                         <input type="email" class="form-control" placeholder="Email của bạn">
-                        <button class="btn btn-warning" type="button">Đăng ký</button>
+                        <button class="btn btn-success" type="button">Đăng ký</button>
                     </div>
-                    <div class="map-container rounded overflow-hidden shadow-sm">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d59579.28369527994!2d105.76809293460677!3d21.044477287593775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab000cd4640d%3A0x59d331367be8b615!2sTHU%20HO%C3%80%20COSMETIC!5e0!3m2!1svi!2sus!4v1757039305913!5m2!1svi!2sus"
-                                width="100%" height="250" style="border:0;" allowfullscreen="" loading="lazy">
+                    <p class="small">Nhận thông tin sức khỏe & khuyến mãi thuốc mới nhất.</p>
+
+                    <div class="map-container rounded overflow-hidden shadow-sm mt-3">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18..."
+                                width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy">
                         </iframe>
                     </div>
+                </div>
+            </div>
+            <div class="row mt-4 pt-3 border-top">
+                <div class="col text-center text-muted small">
+                    © 2025 Nhà Thuốc Hoà - Uy tín & An toàn vì sức khỏe cộng đồng
                 </div>
             </div>
         </div>
@@ -895,7 +922,7 @@
     </div>
 
     @RenderSection("Scripts", required: false)
-<script>
+    <script>
     var currentUserName = "@(Session["CustomerName"] ?? "Khách")";
     let hoaCosmeticsSessionId = 0;
     let hoaCosmeticsLastMessageCount = 0;
@@ -903,7 +930,15 @@
     let isMessageSending = false;
     let messagePollingInterval = null;
 
-    $(document).ready(function() {
+    $(document).ready(function () {
+        function updateCartCount() {
+            $.get("/Cart/GetCartCount", function (res) {
+                $("#cart-count").text(res.count); // đúng ID
+            });
+        }
+
+        updateCartCount();
+
         // ========== CHATBOX FUNCTIONALITY ==========
         const $chatboxBtn = $('#chatbox-btn');
         const $chatboxContainer = $('#hoaCosmeticsChatboxContainer');
@@ -1227,13 +1262,6 @@
                 clearInterval(messagePollingInterval);
             }
         });
-        function updateCartCount() {
-            $.get("/Cart/GetCartCount", function (res) {
-                $("#cart-count").text(res.count); // đúng ID
-            });
-        }
-
-        updateCartCount();
 
         const $miniCart = $('#mini-cart');
         const $overlay = $('#mini-cart-overlay');
@@ -1460,7 +1488,7 @@
             });
         });
     });
-</script>
+    </script>
 
 </body>
 </html>

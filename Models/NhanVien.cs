@@ -8,14 +8,12 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    [Table("Employees")]
+    [Table("NhanVien")]
     public class NhanVien : BaseModel
     {
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Họ tên không được để trống")]
-        [StringLength(255)]
         public string FullName { get; set; }
 
         [StringLength(50)]

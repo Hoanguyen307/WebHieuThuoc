@@ -8,25 +8,31 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    [Table("tb_OrderDetail")]
+    [Table("DonHangChiTiet")]
     public class OrderDetail : BaseModel
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         //OrderID
-        [ForeignKey("Order")]
-        public int OrderId { get; set; }
+        public string OrderCode { get; set; }
         //productID
-        [ForeignKey("Product")]
         public int ProductId { get; set; }
         public string Image { get; set; }
         public string ProductName { get; set; }
+
+        public string FullName { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Discount { get; set; }
+        public decimal LineTotal { get; set; }
+        public int TypePayment { get; set; }
+        public decimal TotalAmount { get; set; }
 
+        public string Note { get; set; }
+        public string Status { get; set; }
         public int Quantity { get; set; }
-        public virtual Order Order { get; set; }
-        public virtual Product Product { get; set; }
+        public List<Product> listProduct { get; set; }
+
+
     }
+
 }

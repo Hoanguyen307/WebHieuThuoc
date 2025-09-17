@@ -8,15 +8,15 @@
 }
 <div class="container-wrapper" style=" display: flex; flex-direction: column; overflow: auto;">
     <input type="hidden" id="Id" name="Id" />
-    <div class="d-flex justify-content-between mb-3" style="padding: 81px 10px 0 260px;">
+    <div class="d-flex justify-content-between mb-3" style="padding: 10px 10px 0 260px;">
         <h4>Danh sách nhân viên</h4>
         <div>
-            <a href="~/Files/Template_ImportNhanVien.xlsx" class="btn btn-outline-secondary ms-2">
+            @*<a href="~/Files/Template_ImportNhanVien.xlsx" class="btn btn-outline-secondary ms-2">
                 <i class="fas fa-download"></i> Tải file mẫu
             </a>
             <button type="button" class="btn btn-outline-success ms-2" data-bs-toggle="modal" data-bs-target="#modalImportExcel">
                 <i class="fa fa-upload"></i> Import Excel
-            </button>
+            </button>*@
             <button type="button" class="btn btn-primary" onclick="LoadForm()">
                 <i class="fas fa-plus"></i>
                 Thêm mới
@@ -93,13 +93,13 @@
     <div class="history-fixed">
         <ul class="nav nav-tabs" id="tabNhanVien" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="lichsu-tab" data-toggle="tab" href="#lichsu" role="tab">Lịch sử chức vụ</a>
+                <a class="nav-link active" style="color: black !important;" id="lichsu-tab" data-toggle="tab" href="#lichsu" role="tab">Lịch sử chức vụ</a>
             </li>
             @*<li class="nav-item">
                     <a class="nav-link active" id="lichsu-tab" data-toggle="tab" href="#chitiet" role="tab">Thông tin chi tiết</a>
                 </li>*@
             <li class="nav-item">
-                <a class="nav-link" id="khac-tab" data-toggle="tab" href="#khac" role="tab">Thông tin khác</a>
+                <a class="nav-link" style="color: black !important;" id="khac-tab" data-toggle="tab" href="#khac" role="tab">Thông tin khác</a>
             </li>
         </ul>
 

@@ -54,23 +54,22 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@ProductCategoryId", obj.ProductCategoryId);
-                param.Add("@Name", obj.Name);
-                param.Add("@Slug", obj.Slug);
-                param.Add("@Description", obj.Description);
-                param.Add("@Price", obj.Price);
-                param.Add("@SalePrice", obj.SalePrice);
-                param.Add("@Image", obj.Image);
-                param.Add("@IsActive", obj.IsActive);
-                param.Add("@IsFeatured", obj.IsFeatured);
-                param.Add("@Tag", obj.Tags);
-                param.Add("@BrandId", obj.BrandId);
+                param.Add("@DanhMucId", obj.DanhMucId);
+                param.Add("@TenThuoc", obj.TenThuoc);
+                param.Add("@DonViTinh", obj.DonViTinh);
+                param.Add("@QuyCach", obj.QuyCach);
+                param.Add("@HoatChat", obj.HoatChat);
+                param.Add("@GiaGoc", obj.GiaGoc);
+                param.Add("@GiaBan", obj.GiaBan);
+                param.Add("@HinhAnh", obj.HinhAnh);
+                param.Add("@KichHoat", obj.KichHoat);
+                param.Add("@SoLuong", obj.SoLuong);
+                param.Add("@NhaCungCapId", obj.NhaCungCapId);
                 param.Add("@CreatedBy", obj.CreatedBy);
                 return Connection.getConnection().Execute("sp_Product_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
             {
-                return 0;
                 throw;
             }
         }
@@ -79,18 +78,18 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@Id", obj.Id);
-                param.Add("@ProductCategoryId", obj.ProductCategoryId);
-                param.Add("@Name", obj.Name);
-                param.Add("@Slug", obj.Slug);
-                param.Add("@Description", obj.Description);
-                param.Add("@Price", obj.Price);
-                param.Add("@SalePrice", obj.SalePrice);
-                param.Add("@Image", obj.Image);
-                param.Add("@IsActive", obj.IsActive);
-                param.Add("@IsFeatured", obj.IsFeatured);
-                param.Add("@Tag", obj.Tags);
-                param.Add("@BrandId", obj.BrandId);
+                param.Add("@ThuocId", obj.ThuocId);
+                param.Add("@DanhMucId", obj.DanhMucId);
+                param.Add("@TenThuoc", obj.TenThuoc);
+                param.Add("@DonViTinh", obj.DonViTinh);
+                param.Add("@QuyCach", obj.QuyCach);
+                param.Add("@HoatChat", obj.HoatChat);
+                param.Add("@GiaGoc", obj.GiaGoc);
+                param.Add("@GiaBan", obj.GiaBan);
+                param.Add("@HinhAnh", obj.HinhAnh);
+                param.Add("@KichHoat", obj.KichHoat);
+                param.Add("@SoLuong", obj.SoLuong);
+                param.Add("@NhaCungCapId", obj.NhaCungCapId);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
                 return Connection.getConnection().Execute("sp_Product_Update", param, commandType: System.Data.CommandType.StoredProcedure);
             }
@@ -105,7 +104,7 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@Id", Id);
+                param.Add("@ThuocId", Id);
                 param.Add("@IsActive", isActive);
                 Connection.getConnection().Execute("sp_Product_Update_IsActive", param, commandType: System.Data.CommandType.StoredProcedure);
                 return true;
@@ -139,7 +138,6 @@ namespace DAL
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@ProductCategoryId", filter.ProductCategoryId);
-                param.Add("@BrandId", filter.BrandId);
                 param.Add("@SortOrder", SortOrder);
 
                 var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_GetPublished",
@@ -199,12 +197,12 @@ namespace DAL
                 return new List<Product>();
             }
         }
-        public List<ThuongHieu> Select_Brands_All()
+        public List<NhaCungCap> Select_NhaCungCap_All()
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                var result = SqlMapper.Query<ThuongHieu>(Connection.getConnection(), "sp_GetBrands",
+                var result = SqlMapper.Query<NhaCungCap>(Connection.getConnection(), "sp_NhaCungCap_GetAll",
                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
                 return result;
             }

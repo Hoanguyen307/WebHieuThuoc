@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DAL;
+using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -6,25 +8,85 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
+    /*[Authorize(Roles = "Admin, Employee")]*/
     public class HomeController : Controller
     {
+        private readonly DBConnect db = new DBConnect();
         public ActionResult Index()
         {
             return View();
         }
 
-        public ActionResult About()
+        [HttpGet]
+        public JsonResult LayThongKeTongQuan()
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
+            try
+            {
+                var thongKe = new Dashboard_DAL().LayThongKeTongQuan();
+                if (thongKe != null)
+                {
+                    return Json(new
+                    {
+                        code = 200,
+                        data = thongKe
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Không có dữ liệu" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        public ActionResult Contact()
+        [HttpGet]
+        public JsonResult LayDuLieuBanHang(string kyHan = "ngay")
         {
-            ViewBag.Message = "Your contact page.";
+            try
+            {
+                var duLieu = new Dashboard_DAL().LayDuLieuBanHang(kyHan);
+                if (duLieu != null)
+                {
+                    return Json(new
+                    {
+                        code = 200,
+                        data = duLieu
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Không có dữ liệu bán hàng" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
 
-            return View();
+        [HttpGet]
+        public JsonResult LayTongKetTaiChinh()
+        {
+            try
+            {
+                var taiChinh = new Dashboard_DAL().LayTongKetTaiChinh();
+                if (taiChinh != null)
+                {
+                    return Json(new
+                    {
+                        code = 200,
+                        data = taiChinh
+                    }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Không có dữ liệu tài chính" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
         }
     }
 }

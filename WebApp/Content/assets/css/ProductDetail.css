@@ -72,7 +72,7 @@ body {
 .flash-deal-section {
 	display: flex;
 	align-items: center;
-	background-color: #ff66b2;
+	background-color: #28a745;
 	padding: 8px 15px;
 	border-radius: 4px;
 	color: white;
@@ -163,27 +163,27 @@ body {
 
 .btn-action-minimal.btn-add-to-cart {
 	background-color: #fff1f8;
-	border: 1px solid #ff66b2;
-	color: #ff66b2;
+	border: 1px solid #28a745;
+	color: #28a745;
 	font-weight: bold;
 	padding: 10px 20px;
 }
 
 	.btn-action-minimal.btn-add-to-cart:hover {
-		background-color: #ff66b2;
+		background-color: #28a745;
 		color: white;
 	}
 
 .btn-action-minimal.btn-buy-now {
-	background-color: #ff66b2;
-	border: 1px solid #ff66b2;
+	background-color: #28a745;
+	border: 1px solid #28a745;
 	color: white;
 	font-weight: bold;
 	padding: 10px 20px;
 }
 
 	.btn-action-minimal.btn-buy-now:hover {
-		background-color: #e652a6;
+		background-color: #28a745;
 	}
 
 .sidebar-title {

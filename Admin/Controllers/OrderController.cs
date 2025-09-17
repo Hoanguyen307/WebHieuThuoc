@@ -17,8 +17,20 @@ namespace Admin.Controllers
     public class OrderController : Controller
     {
         private DBConnect db = new DBConnect();
+        public string CurrentUserName
+        {
+            get
+            {
+                var kh = Session["Login"] as Models.LoginViewModel;
+                if (kh == null)
+                {
+                    return null;
+                }
+                return kh.UserName;
+            }
+        }
         // GET: Order
-        public ActionResult Index(string searchString, int? Month, int? Year)
+        public ActionResult Index(string searchString, int? Month, int? Year, string Status, int page = 1, int pageSize = 10)
         {
             var currentYear = DateTime.Now.Year;
             var currentMonth = DateTime.Now.Month;
@@ -32,10 +44,12 @@ namespace Admin.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetDonHang(string searchString, int? Month, int? Year, string Keyword, string Status, int page = 1, int pageSize = 10)
+        public JsonResult GetDonHang(string searchString, int? Month, int? Year, string Status, int page = 1, int pageSize = 10)
         {
             if (Month == 0) Month = null;
             if (Year == 0) Year = null;
+            searchString = string.IsNullOrWhiteSpace(searchString) ? null : searchString;
+            Status = string.IsNullOrWhiteSpace(Status) ? null : Status;
 
             OrderFilter filter = new OrderFilter
             {
@@ -84,24 +98,14 @@ namespace Admin.Controllers
             }
         }*/
 
-        public JsonResult ChiTietDonHang(int id)
+        public ActionResult ChiTietDonHang(int id)
         {
-            try
+            var order = new Order_DAL().GetOrderDetails(id);
+            if (order == null)
             {
-                var order = new Order_DAL().GetOrderDetails(id);
-                if (order != null)
-                {
-                    return Json(new { success = true, data = order }, JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Order not found" }, JsonRequestBehavior.AllowGet);
-                }
+                return HttpNotFound();
             }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
-            }
+            return PartialView("ChiTietDonHang", order);
         }
 
         [HttpPost]
@@ -146,5 +150,65 @@ namespace Admin.Controllers
                 throw;
             }
         }
+        [HttpPost]
+        public JsonResult UpdateStatus(int id, string status)
+        {
+            try
+            {
+                var result = new Order_DAL().ToggleStatus(id, CurrentUserName, status);
+                if (result)
+                {
+                    return Json(new { code = 200, msg = "Cập nhật thành công" }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Cập nhật thất bại" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 550, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public JsonResult GetNewOrders(int lastOrderId = 0)
+        {
+            try
+            {
+                // Lấy danh sách đơn mới hơn so với lastOrderId
+                var newOrders = new Order_DAL().Select_Order_All(new OrderFilter())
+                    .Where(o => o.ID > lastOrderId)
+                    .OrderBy(o => o.ID)
+                    .Select(o => new
+                    {
+                        o.ID,
+                        o.OrderCode,
+                        o.CustomerName,
+                        o.TotalAmount,
+                        CreatedDate = o.CreatedDate,
+                        o.Status
+                    })
+                    .ToList();
+
+                var newestId = newOrders.Any() ? newOrders.Max(x => x.ID) : lastOrderId;
+
+                return Json(new
+                {
+                    hasNew = newOrders.Any(),
+                    newCount = newOrders.Count,
+                    newestOrderId = newestId,
+                    orders = newOrders
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { hasNew = false, error = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+        [HttpGet]
+        public JsonResult GetLatestOrderId()
+        {
+            var latestOrderId = db.Orders.Max(o => o.ID); // ID lớn nhất hiện tại
+            return Json(new { latestOrderId = latestOrderId }, JsonRequestBehavior.AllowGet);
+        }
+
     }
 }

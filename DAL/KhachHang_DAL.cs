@@ -50,6 +50,7 @@ namespace DAL
         {
             try
             {
+                //var passwordHash = Common.EncryptionHelper.Hash(matkhau);
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@Identifier", tendangnhap);
                 param.Add("@Password", matkhau);

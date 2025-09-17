@@ -26,21 +26,6 @@ namespace Models
             public DateTime? UpdatedDate { get; set; }
         }
 
-        [Table("CustomerPoints")]
-        public class CustomerPoints
-        {
-            [Key]
-            public int Id { get; set; }
-
-            public int CustomerId { get; set; }
-            public decimal PointsBalance { get; set; } = 0;
-
-            public DateTime CreatedDate { get; set; } = DateTime.Now;
-            public DateTime? UpdatedDate { get; set; }
-            [ForeignKey("CustomerId")]
-            public virtual KhachHang Customer { get; set; }
-        }
-
         [Table("PointsHistory")]
         public class PointsHistory
         {

@@ -17,7 +17,7 @@ using static Models.NhanVien;
 
 namespace Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class NhanVienController : Controller
     {
         // GET: Admin/NhanVien
@@ -232,7 +232,6 @@ namespace Admin.Controllers
 
                 model.CreatedDate = DateTime.Now;
                 model.CreatedBy = User?.Identity?.Name ?? "Unknown";
-                model.IsDeleted = false;
 
                 var result = new NhanVien_DAL().Insert(model);
                 if (result > 0)
@@ -273,7 +272,6 @@ namespace Admin.Controllers
             {
                 model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
-                model.IsDeleted = false;
 
                 var result = new NhanVien_DAL().Update(model);
                 if (result > 0)
@@ -372,10 +370,10 @@ namespace Admin.Controllers
             var item = db.Products.Find(ID);
             if (item != null)
             {
-                item.IsActive = !item.IsActive;
+                item.KichHoat = !item.KichHoat;
                 db.Entry(item).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
-                return Json(new { success = true, isActive = item.IsActive });
+                return Json(new { success = true, isActive = item.KichHoat });
             }
             return Json(new { success = false });
         }

@@ -41,20 +41,6 @@ namespace DAL
             }
 
         }
-        public List<DungTichSanPham> SelectByProductId(int productId)
-        {
-            try
-            {
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@ProductId", productId);
-                var model = SqlMapper.Query<DungTichSanPham>(Connection.getConnection(), "sp_GetProductDungTich_ByProductId", param, commandType: System.Data.CommandType.StoredProcedure).ToList();
-                return model;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
         public DungTichSanPham SelectById(int ID)
         {
             try

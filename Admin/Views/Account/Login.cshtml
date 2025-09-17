@@ -1,50 +1,47 @@
 ﻿@model Models.LoginViewModel
 @{
-    ViewBag.Title = "Đăng Nhập";
+    ViewBag.Title = "Đăng Nhập Hiệu Thuốc";
     Layout = null;
-
-    var savedUserName = Request.Cookies["UserName"] != null ? Request.Cookies["UserName"].Value : "";
-    var savedPassword = Request.Cookies["Password"] != null ? Common.EncryptionHelper.Decode(Request.Cookies["Password"].Value) : "";
-    var rememberMeChecked = !string.IsNullOrEmpty(savedUserName) && !string.IsNullOrEmpty(savedPassword);
 }
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Đăng nhập</title>
+    <title>Đăng nhập - Hiệu thuốc</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <style>
         body {
-            background-color: #f5f5f5;
+            background: #eafaf1;
             font-family: 'Segoe UI', sans-serif;
         }
 
         .login-container {
-            max-width: 900px;
-            margin: 60px auto;
+            max-width: 600px;
+            margin: 70px auto;
             background: #fff;
             display: flex;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
         }
 
-        .login-left, .login-right {
+        .login-left {
             flex: 1;
             padding: 40px;
         }
 
             .login-left h2 {
                 font-weight: bold;
-                margin-bottom: 10px;
+                color: #1b7a3d;
+                margin-bottom: 15px;
             }
 
             .login-left p {
-                color: #555;
-                margin-bottom: 30px;
+                color: #666;
+                margin-bottom: 25px;
             }
 
         .form-control {
@@ -52,17 +49,22 @@
         }
 
         .btn-login {
-            background-color: black;
+            background-color: #1b7a3d;
             color: white;
             border-radius: 30px;
             font-weight: bold;
             width: 100%;
             padding: 10px;
+            transition: 0.3s;
         }
 
+            .btn-login:hover {
+                background-color: #14652f;
+            }
+
         .login-right {
-            background: url('https://file.hstatic.net/200000722513/file/abbw_cua_hang_002_209009d3b9ea42dcbef63c2b0e4108e2.jpg') center center / cover no-repeat;
-            color: white;
+            flex: 1;
+            background: url('https://img.freepik.com/free-photo/pharmacist-arranging-medicines-pharmacy_23-2149353742.jpg') center center / cover no-repeat;
             position: relative;
             display: flex;
             align-items: center;
@@ -71,13 +73,16 @@
         }
 
             .login-right .overlay {
-                background-color: rgba(0, 0, 0, 0.4);
+                background-color: rgba(27, 122, 61, 0.75);
                 padding: 30px;
                 border-radius: 12px;
+                color: #fff;
             }
 
             .login-right h4 {
                 font-weight: bold;
+                font-size: 20px;
+                margin-bottom: 15px;
             }
 
         .btn-register {
@@ -88,10 +93,16 @@
             border-radius: 30px;
             padding: 8px 30px;
             font-weight: bold;
+            transition: 0.3s;
         }
 
+            .btn-register:hover {
+                background: white;
+                color: #1b7a3d;
+            }
+
         a {
-            color: #007bff;
+            color: #1b7a3d;
             text-decoration: none;
         }
 
@@ -104,8 +115,8 @@
     <div class="login-container">
         <!-- Left: Login Form -->
         <div class="login-left">
-            <h2>Đăng nhập</h2>
-            <p>Quý khách đăng nhập tài khoản để xem Điểm & hạng thành viên</p>
+            <h2><i class="fas fa-prescription-bottle-medical"></i> Đăng nhập</h2>
+            <p>Hệ thống quản lý hiệu thuốc - Vui lòng đăng nhập để tiếp tục</p>
 
             <form id="loginForm" method="post" action="@Url.Action("Login", "Account")">
                 @Html.AntiForgeryToken()
@@ -113,7 +124,7 @@
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text bg-white">
-                                <i class="fas fa-user"></i>
+                                <i class="fas fa-user-md"></i>
                             </span>
                         </div>
                         <input type="text" id="tendangnhap" class="form-control" name="UserName" placeholder="Tài khoản" required />
@@ -136,9 +147,9 @@
                     <a href="#">Quên mật khẩu?</a>
                 </div>
 
-                <button type="submit" class="btn btn-primary" id="btnLogin">
+                <button type="submit" class="btn btn-login" id="btnLogin">
                     <span id="btnText">Đăng nhập</span>
-                    <i id="loadingIcon" class="fa fa-spinner fa-spin ms-2" style="display:none;"></i>
+                    <i id="loadingIcon" class="fa fa-spinner fa-spin ml-2" style="display:none;"></i>
                 </button>
             </form>
 
@@ -147,19 +158,11 @@
             </div>
         </div>
 
-        <!-- Right: Register Prompt -->
-        <div class="login-right">
-            <div class="overlay">
-                <h4>KHÁCH HÀNG MỚI</h4>
-                <p>Tạo tài khoản của bạn và tận hưởng những lợi ích trực tuyến độc quyền từ chúng tôi!</p>
-                <a href="@Url.Action("Register", "Account")" class="btn btn-register">ĐĂNG KÝ</a>
-            </div>
-        </div>
+        
     </div>
 </body>
 </html>
 
-
 @section scripts {
-    <script src="~~/Content/assets/js/DangNhap.js?v=@DateTime.Now.Ticks"></script>
+    <script src="~/Content/assets/js/DangNhap.js?v=@DateTime.Now.Ticks"></script>
 }

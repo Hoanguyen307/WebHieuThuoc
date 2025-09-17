@@ -17,6 +17,7 @@ namespace Models
         : 0;
 
         public int TotalReviews => productReviews?.Count ?? 0;
+        public List<ProductCategory> BreadcrumbCategories { get; set; }
 
     }
 }

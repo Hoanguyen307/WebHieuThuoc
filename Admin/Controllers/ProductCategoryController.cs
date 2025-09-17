@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
-    [Authorize(Roles = "Admin, Employee")]
+    //[Authorize(Roles = "Admin, Employee")]
     public class ProductCategoryController : Controller
     {
         private DBConnect db = new DBConnect();
@@ -55,7 +55,6 @@ namespace Admin.Controllers
 
                 model.CreatedDate = DateTime.Now;
                 model.CreatedBy = User?.Identity?.Name ?? "Unknown";
-                model.IsDeleted = false;
 
                 var result = new ProductCategory_DAL().Insert(model);
                 if (result > 0)
@@ -69,13 +68,13 @@ namespace Admin.Controllers
                 return Json(new { code = 500, msg = "Lỗi:" + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-        public ActionResult Edit(int id)
+        public ActionResult Edit(int DanhMucId)
         {
-            if (id <= 0)
+            if (DanhMucId <= 0)
             {
                 return HttpNotFound();
             }
-            ProductCategory lstmodel = new ProductCategory_DAL().SelectById(id);
+            ProductCategory lstmodel = new ProductCategory_DAL().SelectById(DanhMucId);
             if (lstmodel == null)
             {
                 return HttpNotFound();
@@ -92,7 +91,6 @@ namespace Admin.Controllers
             {
                 model.UpdatedBy = User?.Identity?.Name ?? "Unknown";
                 model.UpdatedDate = DateTime.Now;
-                model.IsDeleted = false;
 
                 var result = new ProductCategory_DAL().Update(model);
                 if (result > 0)
