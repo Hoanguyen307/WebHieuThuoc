@@ -1,51 +1,53 @@
-﻿function closeModal() {
+﻿function formatDate(dateStr) {
+    if (!dateStr) return '';
+
+    const match = /\/Date\((\d+)(?:[+-]\d+)?\)\//.exec(dateStr);
+    let d;
+
+    if (match) {
+        const timestamp = parseInt(match[1]);
+        d = dayjs(timestamp);
+    } else {
+        d = dayjs(dateStr);
+    }
+
+    if (!d.isValid()) return '';
+
+    return d.format('YYYY-MM-DD');
+}
+function closeModal() {
     $('#modalNhapKho').modal('hide');
+    $('#productModal').modal('hide');
     $('#modalDetail').modal('hide');
+
 }
 function LoadForm() {
-    debugger
     $.get('/NhapKho/Add', function (res) {
         $('#modalNhapKho .modal-body').html(res);
         $('#modalNhapKho').modal('show');
 
-        const productsDataString = $('#ProductsData').val();
-        try {
-            allProducts = JSON.parse(productsDataString);
-        } catch (e) {
-            console.error("Lỗi khi phân tích dữ liệu sản phẩm:", e);
-            allProducts = [];
-        }
-        // Lấy selectedProducts từ partial view
-        const json = $('#ChiTietNhapKhoJson').val();
-        selectedProducts = json ? JSON.parse(json) : [];
-
-        renderProductTable();
-        // Gắn sự kiện input live update tab preview
-        $("#MaPhieu, #NguoiNhap, #NhaCungCap, #GhiChu").on("input", updatePreview);
-
-        // Hiển thị preview ngay
-        updatePreview();
+        allProducts = parseJsonSafe($('#ProductsData').val(), []);
+        selectedProducts = parseJsonSafe($('#SelectedProductsJson').val(), []);
+        console.log('LoadForm -> allProducts:', allProducts);
+        renderSelectedProducts();
+    }).fail(function (xhr) {
+        console.error('LoadForm error', xhr);
     });
 }
 function handleFormUpdateNhapKho(id) {
     if (!id || id <= 0) {
-        alert('ID không hợp lệ!');
-        return;
+        return toastr.warning('ID không hợp lệ!');
     }
+    $.get('/NhapKho/Edit', { NhapKhoId: id }, function (res) {
+        $('#modalNhapKho .modal-body').html(res);
+        $('#modalNhapKho').modal('show');
 
-    $.ajax({
-        url: '/NhapKho/Edit',
-        type: 'GET',
-        data: { NhapKhoId: id },
-        success: function (res) {
-            $('#modalNhapKho .modal-body').html(res);
-            $('#modalNhapKho').modal('show');
-            loadEditData(); 
-        },
-        error: function (xhr, status, error) {
-            console.error('Lỗi khi load form:', error);
-            alert('Có lỗi xảy ra khi tải form. Vui lòng thử lại!');
-        }
+        allProducts = parseJsonSafe($('#ProductsData').val(), []);
+        selectedProducts = parseJsonSafe($('#SelectedProductsJson').val(), []);
+        console.log('Edit -> allProducts:', allProducts);
+        renderSelectedProducts();
+    }).fail(function (xhr) {
+        console.error('handleFormUpdateNhapKho error', xhr);
     });
 }
 function renderPagination(totalPages, currentPage) {
@@ -86,17 +88,6 @@ function renderPagination(totalPages, currentPage) {
             loadPheuNhap(page);
         }
     });
-}
-function formatDate(dateStr, includeTime = false) {
-    console.log(dateStr);
-    const match = /\/Date\((\d+)\)\//.exec(dateStr);
-    const timestamp = match ? parseInt(match[1], 10) : null;
-
-    const d = timestamp ? dayjs(timestamp) : dayjs(dateStr);
-
-    if (!d.isValid()) return 'Invalid Date';
-
-    return includeTime ? d.format('DD/MM/YYYY HH:mm:ss') : d.format('DD/MM/YYYY');
 }
 function loadPhieuNhap(page = 1) {
     $("#loadingOverlay").show();
@@ -180,148 +171,170 @@ let allProducts = [];
 let selectedProducts = [];
 let currentPage = 1;
 const pageSize = 10;
-function loadAllProducts() {
-    $.get('/Products/GetProduct', function (products) {
-        allProducts = products;
-        renderProductTable();
-    });
-}
-function updatePreview() {
-    // Tab 1: Thông tin phiếu
-    const MaPhieu = $("#MaPhieu").val();
-    const NguoiNhap = $("#NguoiNhap").val();
-    const NhaCungCap = $("#NhaCungCap").val();
-    const GhiChu = $("#GhiChu").val();
 
-    let totalAmount = 0;
-    selectedProducts.forEach(p => {
-        totalAmount += p.soLuong * p.donGia;
-    });
-    const previewPhieu = $("#previewPhieu");
-    previewPhieu.empty();
-    previewPhieu.append(`<li><strong>Mã phiếu:</strong> ${MaPhieu}</li>`);
-    previewPhieu.append(`<li><strong>Người nhập:</strong> ${NguoiNhap}</li>`);
-    previewPhieu.append(`<li><strong>Nhà cung cấp:</strong> ${NhaCungCap}</li>`);
-    previewPhieu.append(`<li><strong>Ghi chú:</strong> ${GhiChu}</li>`);
-    previewPhieu.append(`<li><strong>Tổng tiền:</strong> <span class="text-danger fw-bold">${totalAmount.toLocaleString('vi-VN')}</span></li>`);
-
-    // Tab 2: Chi tiết sản phẩm
-    const tbody = $("#previewChiTiet tbody");
-    tbody.empty();
-    selectedProducts.forEach(p => {
-        const row = `
-            <tr>
-                <td>${p.productName}</td>
-                <td>${p.soLuong}</td>
-                <td>${p.donGia.toLocaleString()}</td>
-                <td>${p.hanSuDung}</td>
-            </tr>
-        `;
-        tbody.append(row);
-    });
+function parseJsonSafe(str, fallback = []) {
+    try {
+        if (typeof str === 'undefined' || str === null) return fallback;
+        if (typeof str === 'object') return str;
+        return JSON.parse(str);
+    } catch (e) {
+        console.error('parseJsonSafe failed', e, str);
+        return fallback;
+    }
 }
+
+function formatDateForInput(dateStr) {
+    if (!dateStr) return '';
+    var d = dayjs(dateStr);
+    if (!d.isValid()) {
+        var m = /\/Date\((\d+)\)\//.exec(dateStr);
+        if (m) d = dayjs(parseInt(m[1], 10));
+    }
+    return d.isValid() ? d.format('YYYY-MM-DD') : '';
+}
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    let d = new Date(dateStr);
+    if (isNaN(d)) return "";
+    let month = (d.getMonth() + 1).toString().padStart(2, '0');
+    let day = d.getDate().toString().padStart(2, '0');
+    return `${d.getFullYear()}-${month}-${day}`;
+}
+
+function formatCurrency(val) {
+    if (val === null || val === undefined || val === '') return '';
+    var n = Number(val);
+    if (isNaN(n)) return '';
+    return n.toLocaleString('vi-VN');
+}
+function parseCurrency(str) {
+    if (str === null || typeof str === 'undefined' || str === '') return 0;
+    var s = String(str).trim().replace(/\./g, '').replace(',', '.');
+    var n = parseFloat(s);
+    return isNaN(n) ? 0 : n;
+}
+
+function openProductModal() {
+    $('#productModal').modal('show');
+    renderProductTable(1);
+}
+
 function renderProductTable(page = 1) {
     currentPage = page;
 
     let keyword = ($("#searchProduct").val() || '').toLowerCase();
+    let filtered = allProducts.filter(p => (p.TenThuoc || '').toLowerCase().includes(keyword));
 
-    // Lọc trên toàn bộ danh sách đã có sẵn
-    let filtered = allProducts.filter(p => (p.Name || '').toLowerCase().includes(keyword));
+    var tbody = $("#tableAllProducts tbody").empty();
+    var paged = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-    let start = (currentPage - 1) * pageSize;
-    let paged = filtered.slice(start, start + pageSize);
-
-    let tbody = $("#tableAllProducts tbody");
-    tbody.empty();
-
-    if (paged.length === 0) {
-        tbody.append(`<tr><td colspan="5" class="text-center">Không tìm thấy sản phẩm</td></tr>`);
-    } else {
-        paged.forEach(p => {
-            let existing = selectedProducts.find(x => x.productId === p.Id);
-
-            let soLuong = existing ? existing.soLuong : 1;
-            let donGia = existing ? existing.donGia : "";
-            let hanSuDung = existing && existing.hanSuDung ? existing.hanSuDung : "";
-
-            let row = `
-                <tr>
-                    <td>${p.Name}</td>
-                    <td><input type="number" id="SoLuong_${p.Id}" class="form-control" min="1" value="${soLuong}" /></td>
-                    <td><input type="number" id="DonGiaNhap_${p.Id}" class="form-control" min="0" step="0.01" value="${donGia}" /></td>
-                    <td><input type="date" id="HanSuDung_${p.Id}" class="form-control" value="${hanSuDung}" /></td>
-                    <td><button type="button" class="btn btn-success btn-sm" onclick="addProductToList(${p.Id}, '${p.Name}')">Chọn</button></td>
-                </tr>`;
-            tbody.append(row);
-        });
+    if (!paged.length) {
+        tbody.html(`<tr><td colspan="6" class="text-center">Không tìm thấy sản phẩm</td></tr>`);
+        renderProductPagination(0);
+        return;
     }
+    paged.forEach(p => {
+        let existing = selectedProducts.find(x => x.ProductId === p.ThuocId);
+        var safeName = JSON.stringify(p.TenThuoc);
 
+        tbody.append(`
+        <tr>
+            <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="${p.TenThuoc}">
+                ${p.TenThuoc}
+            </td>
+            <td><input type="number" id="SoLuong_${p.ThuocId}" value="${existing ? existing.SoLuong : 1}" min="1" class="form-control" /></td>
+            <td><input type="text" id="DonGiaNhap_${p.ThuocId}" value="${existing ? formatCurrency(existing.DonGiaNhap) : ''}" class="form-control" /></td>
+            <td><input type="date" id="NgaySanXuat_${p.ThuocId}" value="${existing ? formatDateForInput(existing.NgaySanXuat) : ''}" class="form-control" /></td>
+            <td><input type="number" id="HanSuDung_${p.ThuocId}" value="${existing ? existing.HanSuDung : ''}" min="0" class="form-control" /></td>
+            <td><button type="button" class="btn btn-success btn-sm" onclick='addProductToList(${p.ThuocId}, ${safeName})'><i class="fas fa-plus"></i></button></td>
+        </tr>
+    `);
+    });
     renderProductPagination(filtered.length);
 }
 
 function renderProductPagination(totalItems) {
-    let totalPages = Math.ceil(totalItems / pageSize);
-    let container = $("#productPagination");
-    container.empty();
-
+    var totalPages = Math.ceil(totalItems / pageSize);
+    var container = $("#productPagination").empty();
     if (totalPages <= 1) return;
-
-    for (let i = 1; i <= totalPages; i++) {
-        let btn = `<button class="btn btn-sm ${i === currentPage ? 'btn-primary' : 'btn-light'}"
-                        onclick="renderProductTable(${i})">${i}</button>`;
-        container.append(btn + " ");
+    for (var i = 1; i <= totalPages; i++) {
+        container.append(`<li class="page-item ${i === currentPage ? 'active' : ''}"><a class="page-link" href="#" onclick="renderProductTable(${i}); return false;">${i}</a></li>`);
     }
 }
 
 function addProductToList(productId, productName) {
     let soLuong = parseInt($("#SoLuong_" + productId).val()) || 0;
-    let donGia = parseFloat($("#DonGiaNhap_" + productId).val()) || 0;
-    let hanSuDung = $("#HanSuDung_" + productId).val();
+    var donGia = parseCurrency($("#DonGiaNhap_" + productId).val());
+    var ngaySanXuat = $("#NgaySanXuat_" + productId).val();
+    var hanSuDung = $("#HanSuDung_" + productId).val();
 
-    if (soLuong <= 0 || donGia <= 0 || !hanSuDung) {
-        toastr.warning("Vui lòng nhập đủ Số lượng, Đơn giá nhập và Hạn sử dụng!");
-        return;
+    if (soLuong <= 0 || donGia <= 0) {
+        return toastr.warning("Nhập số lượng và đơn giá hợp lệ!");
     }
 
-    let existing = selectedProducts.find(p => p.productId === productId);
+    var existing = selectedProducts.find(p => p.ProductId === productId);
     if (existing) {
-        existing.soLuong = soLuong;
-        existing.donGia = donGia;
-        existing.hanSuDung = hanSuDung;
-        toastr.info("Sản phẩm đã được cập nhật!");
+        Object.assign(existing, { SoLuong: soLuong, DonGiaNhap: donGia, NgaySanXuat: ngaySanXuat, HanSuDung: hanSuDung });
     } else {
         selectedProducts.push({
-            productId: parseInt(productId),
-            productName,
-            soLuong,
-            donGia,
-            hanSuDung
+            ProductId: productId,
+            ProductName: productName,
+            SoLuong: soLuong,
+            DonGiaNhap: donGia,
+            NgaySanXuat: ngaySanXuat,
+            HanSuDung: hanSuDung,
+            GhiChu: ""
         });
-        toastr.success("Sản phẩm đã được thêm vào danh sách!");
     }
     renderSelectedProducts();
-    updatePreview();
+    $('#productModal').modal('hide');
 }
 function renderSelectedProducts() {
-    const tbody = $("#productTableBody");
-    tbody.empty();
-
-    if (selectedProducts.length === 0) {
-        tbody.html(`<tr><td colspan="6" class="text-center">Chưa có sản phẩm nào được chọn.</td></tr>`);
-        return;
+    var tbody = $("#selectedProductsTable tbody").empty();
+    if (!selectedProducts || !selectedProducts.length) {
+        return tbody.html(`<tr><td colspan="7" class="text-center">Chưa có sản phẩm nào.</td></tr>`);
     }
 
-    selectedProducts.forEach((item, index) => {
-        const hanSuDungFormatted = item.HanSuDung ? moment(item.HanSuDung).format('DD/MM/YYYY') : '';
-        const row = `
+    var total = 0;
+    selectedProducts.forEach((item, i) => {
+        var thanhTien = (Number(item.SoLuong) || 0) * (Number(item.DonGiaNhap) || 0);
+        total += thanhTien;
+        tbody.append(`
             <tr>
-                <td><input type="hidden" name="ChiTietNhapKho[${index}].ProductId" value="${item.productId}" />${item.ProductName}</td>
-                <td><input type="number" name="ChiTietNhapKho[${index}].SoLuong" value="${item.soLuong}" class="form-control" min="1" required /></td>
-                <td><input type="number" name="ChiTietNhapKho[${index}].DonGiaNhap" value="${item.donGiaNhap}" class="form-control" step="0.01" min="0" required /></td>
-                <td><input type="date" name="ChiTietNhapKho[${index}].HanSuDung" value="${item.hanSuDung}" class="form-control" /></td>
-                <td><input type="text" name="ChiTietNhapKho[${index}].GhiChu" value="${item.ghiChu ?? ''}" class="form-control" /></td>
-            </tr>`;
-        tbody.append(row);
+                <td><input type="hidden" name="ChiTietNhapKho[${i}].ProductId" value="${item.ProductId}" />${item.ProductName}</td>
+                <td><input type="number" class="form-control sp-soluong" data-index="${i}" value="${item.SoLuong}" min="0" /></td>
+                <td><input type="text" class="form-control sp-dongia" data-index="${i}" value="${formatCurrency(item.DonGiaNhap)}" /></td>
+                <td><input type="date" class="form-control sp-nsx" data-index="${i}" value="${item.NgaySanXuat ? formatDateForInput(item.NgaySanXuat) : ''}" /></td>
+                <td><input type="number" class="form-control sp-hsd" data-index="${i}" value="${item.HanSuDung || ''}" min="0" /></td>
+                <td class="text-end">${formatCurrency(thanhTien)}</td>
+                <td><button type="button" class="btn btn-danger btn-sm" onclick="removeProduct(${i})"><i class="fas fa-trash-alt"></i></button></td>
+            </tr>
+        `);
+    });
+
+    $("#previewTotalAmount").text(formatCurrency(total));
+    $("#TotalAmount").val(total);
+
+    $(".sp-soluong").off('input').on('input', function () {
+        var idx = $(this).data('index');
+        selectedProducts[idx].SoLuong = +$(this).val();
+        renderSelectedProducts();
+    });
+
+    $(".sp-dongia").off('input').on('input', function () {
+        var idx = $(this).data('index');
+        selectedProducts[idx].DonGiaNhap = parseCurrency($(this).val());
+        renderSelectedProducts();
+    });
+
+    $(".sp-nsx").off('change').on('change', function () {
+        var idx = $(this).data('index');
+        selectedProducts[idx].NgaySanXuat = $(this).val();
+    });
+
+    $(".sp-hsd").off('input').on('input', function () {
+        var idx = $(this).data('index');
+        selectedProducts[idx].HanSuDung = +$(this).val();
     });
 }
 
@@ -329,7 +342,6 @@ function removeProduct(index) {
     if (confirm("Bạn có chắc muốn xóa sản phẩm này?")) {
         selectedProducts.splice(index, 1);
         renderSelectedProducts();
-        updatePreview();
     }
 }
 
@@ -375,6 +387,10 @@ $("#searchProduct").on("keyup", function () {
 $(document).ready(function () {
     loadPhieuNhap(1);
 
+    $(document).on('input', '#searchProduct', function () {
+        renderProductTable(1);
+    });
+
     $('#filterForm').on('submit', function (e) {
         e.preventDefault();
         loadPhieuNhap(1);
@@ -382,33 +398,32 @@ $(document).ready(function () {
 });
 
 function SavePhieuNhap() {
-    // Thu thập dữ liệu từ form
-    const formData = new FormData($('#form-addNhapKho')[0]);
+    var total = selectedProducts.reduce((acc, it) => acc + ((Number(it.SoLuong) || 0) * (Number(it.DonGiaNhap) || 0)), 0);
+    $("#TotalAmount").val(total);
 
-    // Thêm các chi tiết sản phẩm đã chọn vào formData
-    selectedProducts.forEach((p, index) => {
-        formData.append(`ChiTietNhapKho[${index}].ProductId`, p.productId);
-        formData.append(`ChiTietNhapKho[${index}].SoLuong`, p.soLuong);
-        formData.append(`ChiTietNhapKho[${index}].DonGiaNhap`, p.donGia);
-        formData.append(`ChiTietNhapKho[${index}].HanSuDung`, p.hanSuDung);
-    });
-    console.log(formData);
-    const isEdit = $('#Id').length > 0 && $('#Id').val() > 0;
-    const url = isEdit ? "/NhapKho/Update" : "/NhapKho/Add";
+    var data = {
+        Id: $("#Id").val(),
+        MaPhieu: $("#MaPhieu").val(),
+        NguoiNhap: $("#NguoiNhap").val(),
+        NhaCungCap: $("#NhaCungCap").val(),
+        GhiChu: $("#GhiChu").val(),
+        TotalAmount: total,
+        ChiTietNhapKho: selectedProducts
+    };
 
     $.ajax({
-        url: url,
+        url: $("#Id").val() > 0 ? '/NhapKho/Update' : '/NhapKho/Add',
         type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
+        data: JSON.stringify(data),
+        contentType: "application/json",
         success: function (res) {
-            if (res.code === 200) {
-                toastr.success(res.msg || "Cập nhật thành công");
-                $('#modalNhapKho').modal('hide');
-                    loadPhieuNhap(1);
+            if (res && res.code === 200) {
+                toastr.success(res.msg || 'Lưu thành công');
+                setTimeout(function () {
+                    location.reload();
+                }, 1500);
             } else {
-                toastr.error(res.msg || "Cập nhật thất bại");
+                toastr.error((res && res.msg) || 'Lỗi khi lưu phiếu nhập');
             }
         },
         error: function () {
@@ -416,24 +431,15 @@ function SavePhieuNhap() {
         }
     });
 }
-$(document).on('submit', '#form-addNhapKho', function (e) {
-    e.preventDefault();
-    SavePhieuNhap();
-});
 
 function handleDelete(id) {
-    if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
-        $.ajax({
-            url: '/NhapKho/DeleteAccount',
-            type: 'POST',
-            data: { Id: id },
-            success: function (res) {
-                if (res.code === 200) {
-                    toastr.success(res.msg || "Xoá thành công");
-                    loadPhieuNhap(1);
-                } else {
-                    toastr.error(res.msg || "Xoá thất bại");
-                }
+    if (confirm('Bạn có chắc chắn muốn xóa phiếu nhập này không?')) {
+        $.post('/NhapKho/Delete', { Id: id }, function (res) {
+            if (res.code === 200) {
+                toastr.success(res.msg);
+                location.reload();
+            } else {
+                toastr.error(res.msg);
             }
         });
     }

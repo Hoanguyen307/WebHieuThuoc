@@ -6,6 +6,8 @@
         <div id="two-column-menu">
         </div>
         <ul class="navbar-nav" id="navbar-nav">
+
+            <li><a class="nav-link" href="~/Home/Index"><i class="fa fa-user"></i> Dashboard</a></li>
             @if (User.IsInRole("Admin"))
             {
                 <li class="nav-item">
@@ -15,7 +17,6 @@
                     </a>
                     <div class="collapse" id="menuUser">
                         <ul class="nav flex-column ms-3">
-                            <li class="nav-item"><a class="nav-link" href="~/Role/Index">Vai Trò</a></li>
                             <li class="nav-item"><a class="nav-link" href="~/Account/AssignRole">Phân Quyền</a></li>
                             <li class="nav-item"><a class="nav-link" href="~/Account/Index">Tài Khoản</a></li>
                         </ul>
@@ -39,20 +40,6 @@
                 </div>
             </li>
             <li class="nav-item">
-                <a class="nav-link menu-link" href="#sidebarVoucher" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCategory">
-                    <i class="fa fa-gift"></i> <span data-key="t-dashboards">Quản lý voucher</span>
-                </a>
-                <div class="collapse menu-dropdown" id="sidebarVoucher">
-                    <ul class="nav nav-sm flex-column">
-                        <li class="nav-item">
-                            <a href="~/Voucher/Index" class="nav-link" data-key="t-analytics"> Voucher</a>
-                        <li class="nav-item">
-                            <a href="~/ProductCategory/Index" class="nav-link" data-key="t-crm">Danh mục sản phẩm</a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link menu-link" href="#sidebarProduct" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCategory">
                     <i class="fa fa-box"></i> <span data-key="t-dashboards">Quản lý sản phẩm</span>
                 </a>
@@ -62,7 +49,10 @@
                             <a href="~/Products/Index" class="nav-link" data-key="t-analytics">Sản phẩm</a>
                         </li>
                         <li class="nav-item">
-                            <a href="~/DungTich/Index" class="nav-link" data-key="t-crm">Dung tích sản phẩm</a>
+                            <a href="~/FlashSale/Index" class="nav-link" data-key="t-crm">FlashSale</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="~/Voucher/Index" class="nav-link" data-key="t-analytics"> Voucher</a>
                         </li>
                     </ul>
                 </div>
@@ -89,12 +79,10 @@
             <li><a class="nav-link" href="~/BaiViet/Index"><i class="fa fa-newspaper"></i> Bài viết</a></li>
             <li><a class="nav-link" href="~/ProductReview/Index"><i class="fa fa-comments"></i> Đánh giá </a></li>
             <li><a class="nav-link" href="~/Order/Index"><i class="fa fa-receipt"></i> Quản lý đơn hàng</a></li>
-            <li><a class="nav-link" href="~/ChatAdmin/Index"><i class="fa fa-receipt"></i> ChatBox</a></li>
-            @if (User.IsInRole("Admin"))
+            @*@if (User.IsInRole("Admin"))
             {
-                <li><a class="nav-link" href="~/DoanhThu/Index"><i class="fa fa-chart-line"></i> Báo cáo</a></li>
                 <li><a class="nav-link" href="~/NhanVien/Index1"><i class="fa fa-calendar-check"></i> Lịch làm việc</a></li>
-            }
+            }*@
         </ul>
     </div>
     <!-- Sidebar -->

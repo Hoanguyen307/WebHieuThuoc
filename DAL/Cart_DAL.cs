@@ -11,7 +11,7 @@ namespace DAL
 {
     public class Cart_DAL
     {
-        public int AddToCart(int userId, int productId, int quantity)
+        public int AddToCart(int userId, int productId, int quantity, decimal salePrice = 0)
         {
             try
             {
@@ -19,6 +19,7 @@ namespace DAL
                 param.Add("@UserId", userId);
                 param.Add("@ProductId", productId);
                 param.Add("@Quantity", quantity);
+                param.Add("@Price", salePrice);
 
                 var totalCartCount = SqlMapper.Query<int>(Connection.getConnection(), "sp_AddToCart", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
 

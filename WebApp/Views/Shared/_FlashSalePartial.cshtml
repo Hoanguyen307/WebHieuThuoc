@@ -1,0 +1,102 @@
+﻿@model List<Models.ProductFlashSaleViewModel>
+<style>
+    .flashsale-tabs {
+        background-color: #f1f5f9; 
+        border-radius: 10px; 
+        margin-top: 0px !important;
+    }
+
+    .tab {
+        background-color: transparent; 
+        width: 220px;
+        flex-grow: 0; 
+        flex-shrink: 0;
+    }
+        .tab:first-child { 
+            color: white; 
+            border-top-left-radius: 10px; 
+        }
+        .tab:last-child {
+            border-right: none; 
+        }
+
+        .tab[data-status="Đang diễn ra"] {
+            background: #ffe5e5;
+            color: red;
+            font-weight: bold;
+        }
+
+        .tab[data-status="Sắp diễn ra"] {
+            background: #eef5ff;
+            color: black;
+        }
+
+        .tab.active {
+            background-color: #b3fbb5;
+            border-bottom: 3px solid #07993b;
+        }
+
+    .flash {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+    }
+
+    .flashsale {
+        background-color:#fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin: 10px
+    }
+</style>
+
+<div class="flashsale-container mt-5">
+    <div class="flashsale-header d-flex justify-content-between align-items-center">
+        <h4 class="fw-bold text-danger">FLASH SALE GIÁ GIẢM SỐC</h4>
+    </div>
+    <div class="flash">
+        <div class="flashsale">
+            <div class="flashsale-tabs d-flex mt-3">
+                @if (ViewBag.AllFlashSales != null)
+                {
+                    foreach (var fs in (List<Models.FlashSale>)ViewBag.AllFlashSales)
+                    {
+                        var status = "Sắp diễn ra";
+                        if (DateTime.Now >= fs.StartTime && DateTime.Now < fs.EndTime)
+                        {
+                            status = "Đang diễn ra";
+                        }
+
+                        <div class="tab text-center p-3"
+                             data-id="@fs.Id"
+                             data-start="@fs.StartTime.ToString("s")"
+                             data-end="@fs.EndTime.ToString("s")"
+                             data-status="@status">
+                            <div class="fw-bold">
+                                @fs.StartTime.ToString("HH:mm") - @fs.EndTime.ToString("HH:mm"), @fs.StartTime.ToString("dd/MM")
+                            </div>
+                            <div class="tab-status">@status</div>
+                        </div>
+                    }
+                }
+            </div>
+
+            <!-- Countdown -->
+            <div class="countdown mt-3" style="margin-left:10px; font-size: 18px;">
+                <span class="countdown-label">Bắt đầu sau</span>
+                <span id="hours" style=" border-radius: 5px; background-color: red; color: white; font-weight: bold; padding: 4px;">00</span> :
+                <span id="minutes" style=" border-radius: 5px; background-color: red; color: white; font-weight: bold; padding: 4px;">00</span> :
+                <span id="seconds" style="border-radius: 5px; background-color: red; color: white; font-weight: bold; padding: 4px; ">00</span>
+            </div>
+
+            <div id="flashsale-products"></div>
+        </div>
+    </div>
+</div>@*
+<script>
+    $('.btn-buy-now').on('click', function () {
+        var productId = '@p.ThuocId';
+        var quantity = $('.quantity-selector input').val() || 1;
+
+        window.location.href = '/Cart/BuyNow?productId=' + productId + '&quantity=' + quantity;
+</script>*@

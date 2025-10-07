@@ -1,114 +1,72 @@
 ﻿@model Models.NhapKho
 @using Newtonsoft.Json
 @{
-    ViewBag.Title = "Nhập kho";
     bool isEdit = Model.Id > 0;
     string actionUrl = isEdit ? Url.Action("Update", "NhapKho") : Url.Action("Add", "NhapKho");
     string autoCode = !isEdit && string.IsNullOrEmpty(Model.MaPhieu)
-    ? $"PN-{DateTime.Now:yyyyMMddHHmmss}"
-    : Model.MaPhieu;
+        ? $"PN-{DateTime.Now:yyyyMMddHHmmss}"
+        : Model.MaPhieu;
 }
-<form id="form-addNhapKho" autocomplete="off">
+
+<form id="form-addNhapKho">
     @Html.HiddenFor(m => m.Id)
     <input type="hidden" id="SelectedProductsJson"
            value='@Html.Raw(JsonConvert.SerializeObject(Model.ChiTietNhapKho))' />
-
-    <input type="hidden" id="ProductsData" value="@ViewBag.Products" />
     <input type="hidden" id="TotalAmount" name="TotalAmount" value="@Model.TotalAmount" />
+    <input type="hidden" id="ProductsData" value='@Html.Raw(ViewBag.Products ?? "[]")' />
+
     <div class="modal-body" style="color:black">
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" data-bs-toggle="tab" href="#tabThongTin" role="tab">Thông tin phiếu</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#tabChiTiet" role="tab">Chi tiết sản phẩm</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#tabXemTruoc" role="tab">Xem trước</a>
-            </li>
-        </ul>
-
-        <!-- Tab panes -->
-        <div class="tab-content p-3">
-            <!-- Tab 1: NhậpKho -->
-            <div class="tab-pane active" id="tabThongTin" role="tabpanel">
-                <div class="form-group">
-                    <label for="MaPhieu">Mã phiếu</label>
-                    <input type="text" class="form-control" id="MaPhieu" name="MaPhieu" value="@autoCode" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="NguoiNhap">Người nhập</label>
-                    <input type="text" class="form-control" id="NguoiNhap" name="NguoiNhap" value="@Model.NguoiNhap" required>
-                </div>
-                <div class="form-group">
-                    <label for="NhaCungCap">Nhà cung cấp</label>
-                    <input type="text" class="form-control" id="NhaCungCap" name="NhaCungCap" value="@Model.NhaCungCap" required>
-                </div>
-                <div class="form-group">
-                    <label for="GhiChu">Ghi chú</label>
-                    <textarea class="form-control" id="GhiChu" name="GhiChu">@Model.GhiChu</textarea>
-                </div>
+        <!-- Thông tin phiếu -->
+        <div class="row">
+            <div class="col-md-6 form-group">
+                <label for="MaPhieu">Mã phiếu</label>
+                <input type="text" class="form-control" id="MaPhieu" name="MaPhieu" value="@autoCode" readonly>
             </div>
-
-            <!-- Tab 2: ChiTietNhapKho -->
-            <div class="tab-pane" id="tabChiTiet" role="tabpanel">
-                <div class="form-group row">
-                    <div class="col-sm-6">
-                        <input type="text" id="searchProduct" class="form-control" placeholder="Nhập tên sản phẩm...">
-                    </div>
-                </div>
-                <table class="table table-sm table-bordered" id="tableAllProducts">
-                    <thead>
-                        <tr>
-                            <th>Tên sản phẩm</th>
-                            <th style="width:120px">Số lượng</th>
-                            <th style="width:150px">Đơn giá nhập</th>
-                            <th style="width:170px">Hạn sử dụng</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @*@foreach (var p in ViewBag.Products as List<Models.Product>)
-                            {
-                                <tr>
-                                    <td>@p.Name <input type="hidden" value="@p.Id" class="ProductId" /></td>
-                                    <td><input type="number" class="form-control SoLuong" min="0" /></td>
-                                    <td><input type="number" class="form-control DonGiaNhap" min="0" step="0.01" /></td>
-                                    <td><input type="date" class="form-control HanSuDung" /></td>
-                                </tr>
-                            }*@
-                    </tbody>
-                </table>
-                <nav>
-                    <ul class="pagination justify-content-center" id="productPagination"></ul>
-                </nav>
+            <div class="col-md-6 form-group">
+                <label for="NhaCungCap">Nhà cung cấp</label>
+                <input type="text" class="form-control" id="NhaCungCap" name="NhaCungCap" value="@Model.NhaCungCap" required>
             </div>
-
-            <!-- Tab 3: Preview -->
-            <div class="tab-pane" id="tabXemTruoc" role="tabpanel">
-                <h6>Thông tin phiếu</h6>
-                <ul id="previewPhieu"><li><strong>Tổng tiền:</strong> <span id="previewTotalAmount">0</span></li></ul>
-
-                <h6>Chi tiết sản phẩm</h6>
-                <table class="table table-bordered" id="previewChiTiet">
-                    <thead>
-                        <tr>
-                            <th>Tên sản phẩm</th>
-                            <th>Số lượng</th>
-                            <th>Đơn giá nhập</th>
-                            <th>Hạn sử dụng</th>
-                            <th>Hành động</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+            <div class="col-md-12 form-group">
+                <label for="GhiChu">Ghi chú</label>
+                <textarea class="form-control" id="GhiChu" name="GhiChu">@Model.GhiChu</textarea>
             </div>
+        </div>
+
+        <hr />
+
+        <!-- Danh sách sản phẩm đã chọn -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6>Chi tiết sản phẩm</h6>
+            <button type="button" class="btn btn-success btn-sm" onclick="openProductModal()">
+                <i class="fas fa-plus"></i> Thêm sản phẩm
+            </button>
+        </div>
+
+        <table class="table table-bordered" id="selectedProductsTable">
+            <thead>
+                <tr>
+                    <th>Tên sản phẩm</th>
+                    <th>Số lượng</th>
+                    <th>Đơn giá nhập</th>
+                    <th>Ngày sản xuất</th>
+                    <th>Hạn sử dụng</th>
+                    <th>Thành tiền</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="7" class="text-center">Chưa có sản phẩm nào.</td></tr>
+            </tbody>
+        </table>
+
+        <div class="text-end">
+            <strong>Tổng tiền: <span id="previewTotalAmount">0</span></strong>
         </div>
     </div>
 
     <!-- Footer -->
     <div class="modal-footer">
-        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modal">
+        <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()">
             <i class="fas fa-times"></i> Đóng
         </button>
         <button type="button" onclick="SavePhieuNhap()" class="btn btn-primary">
@@ -117,3 +75,31 @@
     </div>
 </form>
 
+<!-- Modal phụ: chọn sản phẩm -->
+<div class="modal fade" id="productModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Chọn sản phẩm nhập kho</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="searchProduct" class="form-control mb-2" placeholder="Nhập tên sản phẩm...">
+                <table class="table table-sm table-bordered" id="tableAllProducts">
+                    <thead>
+                        <tr>
+                            <th style="width: 200px;">Tên sản phẩm</th>
+                            <th style="width:100px">Số lượng</th>
+                            <th style="width:130px">Đơn giá nhập</th>
+                            <th style="width:160px">Ngày sản xuất</th>
+                            <th style="width:130px">HSD (tháng)</th>
+                            <th style="width:80px">Chọn</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <nav><ul class="pagination justify-content-center" id="productPagination"></ul></nav>
+            </div>
+        </div>
+    </div>
+</div>

@@ -228,6 +228,20 @@ namespace DAL
             }
         }
 
-        
+        public List<ProductFlashSaleViewModel> Select_Product_FlashSale(int flashSaleId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@FlashSaleId", flashSaleId);
+                var result = SqlMapper.Query<ProductFlashSaleViewModel>(Connection.getConnection(), "sp_GetProducts_ByFlashSale",
+                               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                return new List<ProductFlashSaleViewModel>();
+            }
+        }
     }
 }

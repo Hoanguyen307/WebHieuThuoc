@@ -39,5 +39,7 @@ namespace Models
         public DbSet<ChiTietXuatKho> ChiTietXuatKhos { get; set; }
         public DbSet<NhaCungCap> NhaCungCaps { get; set; }
         public DbSet<DiaChiGiaoHang> DiaChiGiaoHangs { get; set; }
+        public DbSet<FlashSale> flashSales { get; set; }
+        public DbSet<FlashSaleProduct> flashSaleProducts { get; set; }
     }
 }

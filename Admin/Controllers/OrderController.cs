@@ -206,7 +206,7 @@ namespace Admin.Controllers
         [HttpGet]
         public JsonResult GetLatestOrderId()
         {
-            var latestOrderId = db.Orders.Max(o => o.ID); // ID lớn nhất hiện tại
+            var latestOrderId = db.Orders.Max(o => o.ID); 
             return Json(new { latestOrderId = latestOrderId }, JsonRequestBehavior.AllowGet);
         }
 

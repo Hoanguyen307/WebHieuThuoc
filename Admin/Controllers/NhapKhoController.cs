@@ -95,6 +95,7 @@ namespace Admin.Controllers
                 model.CreatedDate = DateTime.Now;
                 model.NgayNhap = DateTime.Now;
                 model.CreatedBy = User?.Identity?.Name ?? "Unknown";
+                model.NguoiNhap = User?.Identity?.Name ?? "Unknown";
                 model.IsDeleted = false;
 
                 var result = new NhapKho_DAL().Insert(model);

@@ -25,6 +25,21 @@ namespace DAL
             }
 
         }
+        public List<Menu> Select_Menu_All()
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                var result = SqlMapper.Query<Menu>(Connection.getConnection(), "sp_Menus_GetAll",
+               param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
         public Category SelectById(int ID)
         {
             try
@@ -39,7 +54,20 @@ namespace DAL
                 throw;
             }
         }
-
+        public List<Category> Select_ByMenuId(int menuId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@MenuId", menuId);
+                var model = SqlMapper.Query<Category>(Connection.getConnection(), "sp_Categories_GetByMenuId", param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return model;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public int Insert(Category obj)
         {
             try

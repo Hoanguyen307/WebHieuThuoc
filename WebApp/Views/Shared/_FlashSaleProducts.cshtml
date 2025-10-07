@@ -1,0 +1,60 @@
+﻿@model List<Models.ProductFlashSaleViewModel>
+
+<!-- Danh sách sản phẩm Flash Sale -->
+<div class="flashsale-products d-flex gap-3 mt-4">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var p in Model)
+        {
+            decimal? discount = 0;
+            <div class="product-card" @*style="height: 370px;"*@>
+                <div class="discount-badge">-@p.DiscountPercent%</div>
+                <div class="product-image-box" style="height: 200px;">
+                    <a href="@Url.Action("Details", "Products", new { id = p.ThuocId })">
+                        <img src="https://localhost:44310/@p.HinhAnh" alt="@p.TenThuoc" class="product-img" />
+                    </a>
+                </div>
+                <div class="product-info">
+                    <a class="product-title" href="@Url.Action("Details", "Products", new { id = p.ProductId, flashSalePrice = p.SalePrice })">
+                        @p.TenThuoc
+                    </a>
+                    <div class="price">
+                        <span class="sale-price">
+                            @((p.SalePrice ?? 0).ToString("N0")) đ
+                        </span>
+                        @if (discount > 0)
+                        {
+                            <span class="original-price">@((p.GiaGoc ?? 0).ToString("N0")) đ</span>
+                        }
+                    </div>
+
+                    <button class="btn btn-sm btn-success w-100 mt-2 btn-buy-now-flashsale"
+                            data-product-id="@p.ProductId"
+                            data-sale-price="@p.SalePrice"
+                            @(ViewBag.SaleComing == true ? "disabled" : "")>
+                        @(ViewBag.SaleComing == true ? "Sắp diễn ra" : "Mua ngay")
+                    </button>
+
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>Hiện chưa có sản phẩm Flash Sale.</p>
+    }
+</div>
+<script>
+    $(document).ready(function () {
+
+        $('.btn-buy-now-flashsale').on('click', function () {
+            var productId = $(this).data('product-id');
+            var quantity = $('.quantity-selector input').val() || 1;
+            var salePrice = $(this).data('sale-price');
+
+            window.location.href = '/Cart/BuyNow?productId=' + productId +
+                '&quantity=' + quantity +
+                '&salePrice=' + salePrice;
+        });
+});
+</script>

@@ -3739,6 +3739,9 @@
     <Content Include="Views\Web.config" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Cart\VnpayReturn.cshtml" />
+    <Content Include="Views\Shared\_FlashSalePartial.cshtml" />
+    <Content Include="Views\Shared\_FlashSaleProducts.cshtml" />
+    <Content Include="Views\Shared\_CategoriesByMenuIdPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -20,13 +20,13 @@ namespace Models
         public virtual List<ChiTietNhapKho> ChiTietNhapKho { get; set; } = new List<ChiTietNhapKho>();
     }
 
-    public class ChiTietNhapKhoType
+    public class NhapKhoChiTietType
     {
         public int ProductId { get; set; }
         public int SoLuong { get; set; }
-        public decimal DonGiaNhap { get; set; }
-        public DateTime? HanSuDung { get; set; }
-        public string GhiChu { get; set; }
+        public decimal GiaNhap { get; set; }
+        public DateTime? NSX { get; set; }
+        public int HanSuDung { get; set; }
     }
     public class NhapKhoFilter
     {

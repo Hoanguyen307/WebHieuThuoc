@@ -17,21 +17,76 @@ namespace WebApp.Controllers
 
             viewModel.TopSellingProducts = new Product_DAL().Select_TopSelling(8);
             viewModel.LatestProducts = new Product_DAL().Select_GetLatest(8);
+
+            var allFlashSales = new FlashSale_DAL().Select_ActiveFlashSale();
+
+            if (allFlashSales != null && allFlashSales.Any())
+            {
+                ViewBag.ActiveFlashSaleId = allFlashSales.First().Id;
+                ViewBag.AllFlashSales = allFlashSales;
+            }
+            else
+            {
+                ViewBag.ActiveFlashSaleId = null;
+                ViewBag.AllFlashSales = new List<FlashSale>();
+            }
+
             return View(viewModel);
         }
 
         public ActionResult MainMenu()
         {
             var categoryDAL = new Category_DAL();
+            var menu = categoryDAL.Select_Menu_All();
+            ViewBag.Menus = menu;
+
+            return PartialView("_MainMenuPartial");
+        }
+        [HttpGet]
+        public ActionResult GetCategoriesByMenuId(int menuId)
+        {
+            var categoryDAL = new Category_DAL();
             var productCategoryDAL = new ProductCategory_DAL();
 
-            var categories = categoryDAL.Select_Category_All();
+            var categories = categoryDAL.Select_ByMenuId(menuId);
             var productCategories = productCategoryDAL.Select_Category_All();
 
             ViewBag.Categories = categories;
             ViewBag.ProductCategories = productCategories;
 
-            return PartialView("_MainMenuPartial");
+            return PartialView("_CategoriesByMenuIdPartial");
+        }
+        public ActionResult FlashSalePartial()
+        {
+            var allFlashSales = new FlashSale_DAL().Select_ActiveFlashSale();
+            ViewBag.AllFlashSales = allFlashSales ?? new List<FlashSale>();
+            return PartialView("_FlashSalePartial");
+
+        }
+
+        public ActionResult FlashSaleProducts(int flashSaleId)
+        {
+            var flashSale = new FlashSale_DAL().SelectById(flashSaleId);
+            var products = new Product_DAL().Select_Product_FlashSale(flashSaleId);
+
+            if (flashSale.StartTime > DateTime.Now)
+            {
+                products = new Product_DAL().Select_Product_FlashSale(flashSaleId); 
+                ViewBag.SaleComing = true;
+            }
+            var list = products.Select(p => new ProductFlashSaleViewModel
+            {
+                ThuocId = p.ThuocId,
+                ProductId = p.ProductId,
+                TenThuoc = p.TenThuoc,
+                GiaGoc = p.GiaGoc,
+                DiscountPercent = p.DiscountPercent,
+                HinhAnh = p.HinhAnh,
+                DonViTinh = p.DonViTinh,
+                SalePrice = p.SalePrice
+            }).ToList();
+
+            return PartialView("_FlashSaleProducts", list);
         }
 
 

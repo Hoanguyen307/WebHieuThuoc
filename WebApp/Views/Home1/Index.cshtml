@@ -7,6 +7,56 @@
 <link href="~/Content/assets/css/TrangChu.css" rel="stylesheet" />
 
 <style>
+
+    .flashsale-products {
+        overflow-x: auto;
+    }
+
+        .flashsale-products .product-card {
+            min-width: 180px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 10px;
+            text-align: center;
+            position: relative;
+        }
+
+    .discount-badge {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        background: #ff4d4f;
+        color: #fff;
+        font-size: 12px;
+        padding: 2px 5px;
+        border-radius: 4px;
+    }
+
+    .product-card .product-img {
+        width: 100%;
+        height: 150px;
+        object-fit: contain;
+        margin-bottom: 10px;
+    }
+
+    .price {
+        margin-top: 5px;
+    }
+
+    .sale-price {
+        color: #ff4d4f;
+        font-weight: bold;
+    }
+
+    .original-price {
+        text-decoration: line-through;
+        color: #888;
+        font-size: 14px;
+        margin-left: 5px;
+    }
+
+
     #mainCarousel .carousel-item img {
         width: 100%;
         height: 390px;
@@ -46,8 +96,8 @@
             <img src="~/Content/assets/images/Logo/banner2.png" class="d-block w-100" alt="Banner 2">
         </div>
         @*<div class="carousel-item">
-            <img src="~/Content/assets/images/Logo/banner2.png" class="d-block w-100" alt="Banner 3">
-        </div>*@
+                <img src="~/Content/assets/images/Logo/banner2.png" class="d-block w-100" alt="Banner 3">
+            </div>*@
     </div>
 
     <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
@@ -117,6 +167,15 @@
     </div>
 </div>
 
+<!-- FLASH SALE -->
+<div id="flashsale-container" class="mt-5">
+    @if (ViewBag.AllFlashSales != null && ViewBag.AllFlashSales.Count > 0)
+    {
+        @Html.Action("FlashSalePartial", "Home1")
+    }
+</div>
+
+
 <!-- Sản phẩm gợi ý -->
 <div class="flash-deals-section mt-5">
     <div class="section-header">
@@ -182,10 +241,11 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/duration.js"></script>
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Intersection Observer cho hiệu ứng sản phẩm
+        function observeProducts() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -199,20 +259,89 @@
             document.querySelectorAll('.product-card, .product-card-has-image').forEach(el => {
                 observer.observe(el);
             });
+        }
 
-            // Carousel scroll
+        document.addEventListener('DOMContentLoaded', function () {
+            observeProducts();
             const carousel = document.getElementById('topSellingProductsCarousel');
             const prevButton = document.querySelector('.carousel-nav-btn.prev');
             const nextButton = document.querySelector('.carousel-nav-btn.next');
             const scrollDistance = 240;
 
             prevButton.addEventListener('click', function () {
-                carousel.scrollBy({ left: -scrollDistance, behavior: 'smooth' });
+                carousel.scrollBy({
+                    left: -scrollDistance,
+                    behavior: 'smooth'
+                });
             });
 
             nextButton.addEventListener('click', function () {
-                carousel.scrollBy({ left: scrollDistance, behavior: 'smooth' });
+                carousel.scrollBy({
+                    left: scrollDistance,
+                    behavior: 'smooth'
+                });
             });
         });
+
+        dayjs.extend(dayjs_plugin_duration);
+
+        let activeTab = null;
+        const countdownEl = {
+            h: document.getElementById("hours"),
+            m: document.getElementById("minutes"),
+            s: document.getElementById("seconds"),
+            label: document.querySelector(".countdown-label")
+        };
+
+        function updateCountdown() {
+            if (!activeTab) return;
+
+            const start = dayjs(activeTab.dataset.start);
+            const end = dayjs(activeTab.dataset.end);
+            const now = dayjs();
+
+            let diff;
+            if (now.isBefore(start)) {
+                diff = start.diff(now);
+                countdownEl.label.innerText = "Bắt đầu sau";
+            } else if (now.isAfter(end)) {
+                diff = 0;
+                countdownEl.label.innerText = "Đã kết thúc";
+            } else {
+                diff = end.diff(now);
+                countdownEl.label.innerText = "Kết thúc sau";
+            }
+
+            const duration = dayjs.duration(diff);
+            countdownEl.h.innerText = String(duration.hours()).padStart(2, "0");
+            countdownEl.m.innerText = String(duration.minutes()).padStart(2, "0");
+            countdownEl.s.innerText = String(duration.seconds()).padStart(2, "0");
+        }
+
+        function loadProducts(flashSaleId) {
+            $.get("/Home1/FlashSaleProducts", { flashSaleId }, function (html) {
+                $("#flashsale-products").html(html);
+
+                observeProducts();
+            });
+        }
+
+        $(document).on("click", ".flashsale-tabs .tab", function () {
+            $(".flashsale-tabs .tab").removeClass("active");
+            $(this).addClass("active");
+
+            activeTab = this;
+            loadProducts($(this).data("id"));
+            updateCountdown();
+        });
+
+        const firstTab = document.querySelector(".flashsale-tabs .tab");
+        if (firstTab) {
+            activeTab = firstTab;
+            loadProducts(firstTab.dataset.id);
+            updateCountdown();
+        }
+
+        setInterval(updateCountdown, 1000);
     </script>
 }

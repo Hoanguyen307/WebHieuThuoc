@@ -126,7 +126,7 @@
             }
 
             .nav-link.active {
-                background-color: #34495e;
+                background-color: #1078e0;
                 color: #fff !important;
                 font-weight: bold;
             }
@@ -313,14 +313,12 @@
 
         let lastOrderIdGlobal = 0; // lưu ID đơn hàng mới nhất đã biết
 
-        // Hàm lấy ID đơn hàng mới nhất hiện tại từ server
         function initLastOrderId() {
             $.ajax({
-                url: '/Order/GetLatestOrderId', // server trả về { latestOrderId: 8 }
+                url: '/Order/GetLatestOrderId', 
                 type: 'GET',
                 success: function (res) {
                     lastOrderIdGlobal = res.latestOrderId || 0;
-                    // Sau khi khởi tạo xong, check đơn mới
                     checkNewOrdersGlobal();
                 },
                 error: function () {
@@ -365,7 +363,6 @@
         // Kiểm tra mỗi 10 giây
         setInterval(checkNewOrdersGlobal, 10000);
 
-        // Khi load trang lần đầu: khởi tạo lastOrderIdGlobal
         $(document).ready(function () {
             initLastOrderId();
         });

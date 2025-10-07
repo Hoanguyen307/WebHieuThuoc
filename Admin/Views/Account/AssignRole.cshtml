@@ -1,10 +1,13 @@
-﻿@model List<Models.AssignRoleViewModel>
+﻿@model IEnumerable<Models.AssignRoleViewModel>
 @{
     ViewBag.Title = "Quản lý phân quyền";
     Layout = "~/Views/Shared/_Layout.cshtml";
     var Stt = 1;
 }
 
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
 <div class="main-content">
     <div class="page-content">
         <div class="container-fluid">
@@ -12,37 +15,33 @@
                 <div class="col">
                     <h3>Danh sách phân quyền</h3>
                     <div class="main_content form-row d-flex justify-content-center">
-                        @using (Html.BeginForm())
-                        {
-                            @Html.AntiForgeryToken()
-                            <table class="table table-bordered table-striped">
-                                <thead>
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Tên đăng nhập</th>
+                                    <th>Họ và tên</th>
+                                    <th>Quyền hiện tại</th>
+                                    <th>Chọn quyền mới</th>
+                                    <th>Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
                                     <tr>
-                                        <th>Tên đăng nhập</th>
-                                        <th>Họ và tên</th>
-                                        <th>Quyền hiện tại</th>
-                                        <th>Chọn quyền mới</th>
-                                        <th>Thao tác</th>
+                                        <td>@user.UserName</td>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Role</td>
+                                        <td>
+                                            @Html.DropDownList("Role_" + user.UserId, ViewBag.AllRoles as SelectList, "-- Chọn quyền --", new { @class = "form-control" })
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-primary btn-update-role" data-userid="@user.UserId">Lưu</button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var user in Model)
-                                    {
-                                        <tr>
-                                            <td>@user.UserName</td>
-                                            <td>@user.FullName</td>
-                                            <td>@user.Role</td>
-                                            <td>
-                                                @Html.DropDownList("Role_" + user.UserId, ViewBag.AllRoles as SelectList, "-- Chọn quyền --", new { @class = "form-control" })
-                                            </td>
-                                            <td>
-                                                <button class="btn btn-primary btn-update-role" data-userid="@user.UserId">Lưu</button>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        }
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -70,7 +69,7 @@
                         role: selectedRole,
                         __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
                     },
-                    dataType: 'json', 
+                    dataType: 'json',
                     success: function (res) {
                         if (res.code === 200) {
                             toastr.success(res.msg || "Cập nhật thành công");

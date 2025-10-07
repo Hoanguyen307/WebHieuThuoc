@@ -89,60 +89,6 @@
         </div>
         <div id="pagination" class="d-flex justify-content-end mt-2"></div>
     </div>
-    <!-- Tabs chi tiết -->
-    <div class="history-fixed">
-        <ul class="nav nav-tabs" id="tabNhanVien" role="tablist">
-            <li class="nav-item">
-                <a class="nav-link active" style="color: black !important;" id="lichsu-tab" data-toggle="tab" href="#lichsu" role="tab">Lịch sử chức vụ</a>
-            </li>
-            @*<li class="nav-item">
-                    <a class="nav-link active" id="lichsu-tab" data-toggle="tab" href="#chitiet" role="tab">Thông tin chi tiết</a>
-                </li>*@
-            <li class="nav-item">
-                <a class="nav-link" style="color: black !important;" id="khac-tab" data-toggle="tab" href="#khac" role="tab">Thông tin khác</a>
-            </li>
-        </ul>
-
-        <div class="tab-content mt-3" id="tabContentNhanVien">
-            <div class="tab-pane fade show active" id="lichsu" role="tabpanel">
-                <table class="table table-striped table-bordered">
-                    <thead class="thead-light">
-                        <tr>
-                            <th>STT</th>
-                            <th>Chức vụ</th>
-                            <th>Ngày bắt đầu</th>
-                            <th>Ngày kết thúc</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lichSuBody">
-                        <tr>
-                            <td colspan="9" class="text-center">Vui lòng chọn nhân viên</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            @*<div class="tab-pane fade show active" id="thongtin" role="tabpanel" onclick="showChiTiet()">
-                    <table class="table table-bordered">
-                        <thead >
-                            <tr>
-
-                            </tr>
-                        </thead>
-                        <tbody id="ThongTinBody">
-                            <tr>
-                                <td colspan="4" class="text-center">Vui lòng chọn nhân viên</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>*@
-
-            <!-- Tab khác -->
-            <div class="tab-pane fade" id="khac" role="tabpanel">
-                <p>Thông tin khác...</p>
-            </div>
-        </div>
-    </div>
 
     <!-- Modal -->
     <div class="modal" id="modalNhanVien" style="color:black">

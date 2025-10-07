@@ -281,7 +281,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult BuyNow(int productId, int quantity = 1)
+        public ActionResult BuyNow(int productId, int quantity = 1, decimal salePrice = 0)
         {
             if (CurrentUserId == 0)
             {
@@ -291,7 +291,7 @@ namespace WebApp.Controllers
             try
             {
                 var cartDal = new Cart_DAL();
-                var totalCartCount = cartDal.AddToCart(CurrentUserId, productId, quantity);
+                var totalCartCount = cartDal.AddToCart(CurrentUserId, productId, quantity, salePrice);
 
                 if (totalCartCount > 0)
                 {
@@ -300,7 +300,7 @@ namespace WebApp.Controllers
                 else
                 {
                     TempData["Error"] = "Không thể mua ngay sản phẩm này.";
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", "Home1");
                 }
             }
             catch (Exception ex)

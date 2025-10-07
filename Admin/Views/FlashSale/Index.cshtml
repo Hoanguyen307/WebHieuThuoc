@@ -1,0 +1,151 @@
+﻿@model PagedList.IPagedList<Models.FlashSale>
+@{
+    ViewBag.Title = "Danh mục chương trình FlashSale";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles {
+    <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+}
+<style>
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 24px;
+    }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+    input:checked + .slider {
+        background-color: #4CAF50;
+    }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+</style>
+<div class="container-wrapper" style=" display: flex; flex-direction: column;">
+    <div class="d-flex justify-content-between mb-3" style="padding: 10px 10px 0 260px;">
+        <h4>Danh mục chương trình FlashSale</h4>
+        <div>
+
+            <button type="button" class="btn btn-primary" onclick="LoadForm()">
+                <i class="fas fa-plus"></i>
+                Thêm mới
+            </button>
+        </div>
+    </div>
+    <div class="main-content" style="flex:1; overflow: auto;">
+        <div style=" overflow-x: auto;">
+            <table class="table table-striped table-bordered" style="width: 100%; table-layout: auto; white-space: nowrap;" id="ds-nhanvien">
+                <thead class="thead-light">
+                    <tr>
+                        <th>STT</th>
+                        <th>Tiêu đề</th>
+                        <th>Ngày bắt đầu</th>
+                        <th>Ngày kết thúc</th>
+                        <th>% Giảm</th>
+                        <th>Số tiền giảm</th>
+                        <th>Người tạo</th>
+                        <th>Ngày tạo</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+
+                <tbody id="flashSale-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="pagination" class="d-flex justify-content-end mt-2"></div>
+    </div>
+    <div class="modal" id="modalFlashSale" style="color:black">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modaldanhmucLabel">Thông tin FlashSale</h5>
+                    <button type="button" onclick="closeModal()" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="color: black">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="selectProductsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Chọn sản phẩm cho FlashSale</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" id="searchProduct" class="form-control mb-3" placeholder="Tìm kiếm sản phẩm..." />
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Chọn</th>
+                                <th>Hình ảnh</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá gốc</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productList">
+                            <!-- load bằng Ajax -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="productPagination" class="d-flex justify-content-end mt-2"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" onclick="saveSelectedProducts()">Lưu</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+@section Scripts {
+    <script src="~/Content/assets/js/FlashSale.js?v=(@DateTime.Now.Ticks)"></script>
+}
+

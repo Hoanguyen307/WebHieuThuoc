@@ -19,14 +19,14 @@ namespace DAL
             dataTable.Columns.Add("ProductId", typeof(int));
             dataTable.Columns.Add("SoLuong", typeof(int));
             dataTable.Columns.Add("DonGiaNhap", typeof(decimal));
-            dataTable.Columns.Add("HanSuDung", typeof(DateTime));
-            dataTable.Columns.Add("GhiChu", typeof(string));
+            dataTable.Columns.Add("NgaySanXuat", typeof(DateTime));
+            dataTable.Columns.Add("HanSuDung", typeof(int));
 
             if (chiTietList != null)
             {
                 foreach (var item in chiTietList)
                 {
-                    dataTable.Rows.Add(item.ProductId, item.SoLuong, item.DonGiaNhap, item.HanSuDung, item.GhiChu);
+                    dataTable.Rows.Add(item.ProductId, item.SoLuong, item.DonGiaNhap, item.NgaySanXuat, item.HanSuDung);
                 }
             }
 
@@ -86,10 +86,14 @@ namespace DAL
                     param.Add("@NguoiNhap", obj.NguoiNhap);
                     param.Add("@NhaCungCap", obj.NhaCungCap);
                     param.Add("@GhiChu", obj.GhiChu);
+                    param.Add("@TotalAmount", obj.TotalAmount);
                     param.Add("@CreatedBy", obj.CreatedBy);
-                    
-                    var chiTietTable = CreateChiTietNhapKhoDataTable(obj.ChiTietNhapKho);
-                    param.Add("@ChiTietNhapKho", chiTietTable.AsTableValuedParameter("dbo.ChiTietNhapKhoType"));
+
+                    if (obj.ChiTietNhapKho != null && obj.ChiTietNhapKho.Any())
+                    {
+                        var chiTietTable = CreateChiTietNhapKhoDataTable(obj.ChiTietNhapKho);
+                        param.Add("@ChiTietNhapKho", chiTietTable.AsTableValuedParameter("dbo.NhapKhoChiTietType"));
+                    }
 
                     return connection.Execute("sp_NhapKho_Insert", param, commandType: CommandType.StoredProcedure);
                 }
@@ -117,7 +121,7 @@ namespace DAL
 
                     var chiTietDataTable = CreateChiTietNhapKhoDataTable(obj.ChiTietNhapKho);
 
-                    param.Add("@ChiTietNhapKho", chiTietDataTable.AsTableValuedParameter("dbo.ChiTietNhapKhoType"));
+                    param.Add("@ChiTietNhapKho", chiTietDataTable.AsTableValuedParameter("dbo.NhapKhoChiTietType"));
 
                     return connection.Execute("sp_NhapKho_Update", param, commandType: CommandType.StoredProcedure);
                 }

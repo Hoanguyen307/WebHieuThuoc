@@ -197,6 +197,8 @@
     <Compile Include="Controllers\ChatAdminController.cs" />
     <Compile Include="Controllers\DoanhThuController.cs" />
     <Compile Include="Controllers\DungTichController.cs" />
+    <Compile Include="Controllers\FlashSaleController.cs" />
+    <Compile Include="Controllers\FlashSaleProductController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\KhachHangController.cs" />
     <Compile Include="Controllers\NhanVienController.cs" />
@@ -381,6 +383,7 @@
     <Content Include="Content\assets\js\DoanhThu.js" />
     <Content Include="Content\assets\js\DonHang.js" />
     <Content Include="Content\assets\js\DungTich.js" />
+    <Content Include="Content\assets\js\FlashSale.js" />
     <Content Include="Content\assets\js\jquery-3.2.1.min.js" />
     <Content Include="Content\assets\js\KhachHang.js" />
     <Content Include="Content\assets\js\layout.js" />
@@ -3796,12 +3799,15 @@
     <Content Include="Views\ChatAdmin\Index.cshtml" />
     <Content Include="Views\ChatAdmin\Chat.cshtml" />
     <Content Include="Views\Order\ChiTietDonHang.cshtml" />
+    <Content Include="Views\FlashSale\Index.cshtml" />
+    <Content Include="Views\FlashSale\Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Images\Products\" />
     <Folder Include="Models\" />
     <Folder Include="Uploads\Product\" />
+    <Folder Include="Views\FlashSaleProduct\" />
     <Folder Include="Views\TonKho\" />
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,134 @@
+﻿<style>
+    .mega-dropdown-menu {
+        display: none;
+        position: absolute;
+        z-index: 1000;
+        top: 100%;
+        left: 0;
+        width: auto;
+        min-width: 820px;
+        max-width: calc(100vw - 20px);
+        background: #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,.1);
+        border-radius: 6px;
+        box-sizing: border-box;
+        padding: 0;
+        overflow: visible;
+    }
+        .mega-dropdown-menu.mega-left {
+            left: auto;
+            right: 0;
+        }
+    @*.menu-item:hover .mega-dropdown-menu {
+        display: block;
+    }*@
+
+    .mega-dropdown-menu.mega-full {
+    left: 10px;
+    right: 10px;
+    min-width: 0;
+    max-width: none;
+    width: auto;
+}
+
+.menu-item { position: relative; }
+
+.mega-inner { display: grid; grid-template-columns: 220px 1fr; align-items: stretch; min-height: 250px; border: 2px solid #28a745; }
+.left-col { border-right: 1px solid #eee; background: #fafafa; padding: 6px 0; }
+.left-col ul { margin: 0; }
+.main-category { padding: .7rem 1rem; cursor: pointer; transition: .2s; font-size: 15px; }
+.main-category:hover, .main-category.active { background: #28a745; color: #fff; font-weight: 600; }
+.right-col { padding: 16px 20px; min-width: 600px; background: #fff; border: 2px solid #28a745; }
+.sub-category-content { display: none; }
+.sub-category-content.active { display: block; }
+.sub-category-content .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; }
+.sub-category-content h6 { font-size: 14px; margin: 0; white-space: normal; word-break: break-word; }
+.sub-category-content h6 a { color: #333; text-decoration: none; transition: color .2s; display: block; }
+.sub-category-content h6 a:hover { color: #28a745; }
+
+@@media (max-width: 991.98px) {
+    .mega-dropdown-menu { position: static; min-width: auto; max-width: none; width: auto; }
+    .mega-inner { grid-template-columns: 1fr; min-height: auto; }
+    .left-col { border-right: 0; }
+}
+</style> 
+
+
+<div class="mega-inner">
+    <div class="left-col">
+        <ul class="list-unstyled">
+            @foreach (var parentCategory in ViewBag.Categories)
+            {
+                <li class="main-category" data-target="category-@parentCategory.ID">
+                    @parentCategory.Name
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="right-col">
+        @foreach (var parentCategory in ViewBag.Categories)
+        {
+            <div id="category-@parentCategory.ID" class="sub-category-content">
+                <div class="row">
+                    @foreach (var productCategory in ((List<Models.ProductCategory>)ViewBag.ProductCategories)
+                        .Where(pc => pc.Category_ID == parentCategory.ID))
+                    {
+                        <div class="col-4">
+                            <h6>
+                                <a href="@Url.Action("Index", "Products", new { ProductCategoryId = productCategory.DanhMucId })">
+                                    @productCategory.TenDanhMuc
+                                </a>
+                            </h6>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<script>
+    $(function () {
+        const breakpoint = 992; 
+
+        $('.menu-item').on('mouseenter', function () {
+            if ($(window).width() < breakpoint) return; 
+
+            const $li = $(this);
+            const $menu = $li.find('.mega-dropdown-menu').first();
+            if (!$menu.length) return;
+            const prevDisplay = $menu.css('display');
+            const prevVisibility = $menu.css('visibility');
+
+            $menu.css({ display: 'block', visibility: 'hidden' });
+
+            const rect = $menu[0].getBoundingClientRect();
+            const winW = window.innerWidth || document.documentElement.clientWidth;
+
+            $menu.removeClass('mega-left mega-full');
+
+            if (rect.width >= winW - 20) {
+                $menu.addClass('mega-full');
+            } else if (rect.right > winW - 10) {
+                $menu.addClass('mega-left');
+            } else if (rect.left < 10) {
+                $menu.addClass('mega-full');
+            }
+
+            $menu.css({ display: prevDisplay, visibility: prevVisibility });
+
+            $menu.stop(true, true).fadeIn(160);
+        });
+
+        $('.menu-item').on('mouseleave', function () {
+            $(this).find('.mega-dropdown-menu').stop(true, true).fadeOut(120);
+        });
+
+        $(window).on('resize', function () {
+            $('.mega-dropdown-menu').hide().removeClass('mega-left mega-full');
+        });
+    });
+</script>
+

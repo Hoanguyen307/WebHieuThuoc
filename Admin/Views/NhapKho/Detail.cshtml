@@ -12,26 +12,13 @@
     <input type="hidden" id="TotalAmount" name="TotalAmount" value="@Model.TotalAmount" />
     <div class="modal-body" style="color:black">
         <div class="tab-pane" id="tabXemTruoc" role="tabpanel">
-            <div class="col-6 mb-3">
-                <h6>Mã phiếu :</h6>
-                @Model.MaPhieu
-            </div>
-            <div class="col-6 mb-3">
-                <h6>Ngày nhập :</h6>
-                @Model.NgayNhap.ToString("dd/MM/yyyy")
-            </div>
-            <div class="col-6 mb-3">
-                <h6>Người nhập :</h6>
-                @Model.NguoiNhap
-            </div>
-            <div class="col-6 mb-3">
-                <h6>Ghi chú :</h6>
-                @Model.GhiChu
-            </div>
-            <div class="col-6 mb-3">
-                <h6>Tổng tiền :</h6>
-                @Model.TotalAmount.ToString("N0") VNĐ
-            </div>
+            <table class="table table-sm table-bordered">
+                <tr><th>Mã phiếu</th><td>@Model.MaPhieu</td></tr>
+                <tr><th>Ngày nhập</th><td>@Model.NgayNhap.ToString("dd/MM/yyyy")</td></tr>
+                <tr><th>Người nhập</th><td>@Model.NguoiNhap</td></tr>
+                <tr><th>Ghi chú</th><td>@Model.GhiChu</td></tr>
+                <tr><th>Tổng tiền</th><td>@Model.TotalAmount.ToString("N0") VNĐ</td></tr>
+            </table>
             <h6>Chi tiết sản phẩm</h6>
             <table class="table table-bordered" id="previewChiTiet">
                 <thead>
