@@ -53,31 +53,9 @@ body {
     font-weight: bold;
 }
 
-
 .search-box {
-    display: flex;
-    align-items: center;
-    background: #f5f5f5;
-    border: 2px solid #28a745;
-    border-radius: 999px;
-    padding: 6px 14px;
-    width: 600px;
+    width: 400px;
 }
-
-    .search-box i {
-        color: #999;
-        font-size: 14px;
-    }
-
-    .search-box input {
-        border: none;
-        background: transparent;
-        outline: none;
-        flex: 1;
-        padding: 5px 8px;
-        font-size: 14px;
-        width:540px;
-    }
 
 .header-right {
     display: flex;

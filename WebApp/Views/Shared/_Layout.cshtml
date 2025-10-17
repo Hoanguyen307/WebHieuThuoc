@@ -31,7 +31,7 @@
         .header-item:hover span,
         .header-item:hover a,
         .header-item:hover .fas {
-            color: #28a745 !important;
+            color: #ff4fa4 !important;
         }
 
         .main-menu-container {
@@ -68,7 +68,7 @@
             }
 
                 .menu-item a:hover {
-                    color: #28a745;
+                    color: #ff4fa4;
                 }
 
         .dropdown-menu-custom {
@@ -223,7 +223,7 @@
             font-size: 24px;
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-            z-index: 10000;
+            z-index: 999;
             transition: all 0.3s ease;
             border: none;
         }
@@ -283,7 +283,7 @@
         }
 
         /* Chatbox Container */
-        .hoaCosmetics-chatbox-container {
+        .hieuThuoc-chatbox-container {
             position: fixed;
             bottom: 100px;
             right: 30px;
@@ -295,7 +295,7 @@
             display: none;
             flex-direction: column;
             overflow: hidden;
-            z-index: 9999;
+            z-index: 1000;
             animation: slideUp 0.3s ease-out;
         }
 
@@ -312,8 +312,8 @@
         }
 
         /* Chat Header */
-        .hoaCosmetics-chat-header {
-            background: linear-gradient(135deg, #ff66b2, #ff66b2);
+        .hieuThuoc-chat-header {
+            background: linear-gradient(135deg, #28a745, #28a745);
             color: white;
             padding: 20px;
             display: flex;
@@ -323,12 +323,12 @@
             flex-shrink: 0; /* Prevent header from shrinking */
         }
 
-        .hoaCosmetics-chat-header-left {
+        .hieuThuoc-chat-header-left {
             display: flex;
             align-items: center;
         }
 
-        .hoaCosmetics-chat-avatar {
+        .hieuThuoc-chat-avatar {
             width: 40px;
             height: 40px;
             background: white;
@@ -342,7 +342,7 @@
             position: relative;
         }
 
-        .hoaCosmetics-status-indicator {
+        .hieuThuoc-status-indicator {
             width: 10px;
             height: 10px;
             background: #4CAF50;
@@ -353,19 +353,19 @@
             border: 2px solid white;
         }
 
-        .hoaCosmetics-chat-info h6 {
+        .hieuThuoc-chat-info h6 {
             margin: 0;
             font-size: 16px;
             font-weight: 600;
         }
 
-        .hoaCosmetics-chat-info p {
+        .hieuThuoc-chat-info p {
             margin: 0;
             font-size: 12px;
             opacity: 0.9;
         }
 
-        .hoaCosmetics-close-btn {
+        .hieuThuoc-close-btn {
             background: none;
             border: none;
             color: white;
@@ -376,12 +376,12 @@
             transition: background 0.3s ease;
         }
 
-            .hoaCosmetics-close-btn:hover {
+            .hieuThuoc-close-btn:hover {
                 background: rgba(255, 255, 255, 0.2);
             }
 
         /* Chat Body - Improved scrolling */
-        .hoaCosmetics-chat-body {
+        .hieuThuoc-chat-body {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
@@ -391,40 +391,40 @@
             min-height: 200px;
         }
 
-            .hoaCosmetics-chat-body::-webkit-scrollbar {
+            .hieuThuoc-chat-body::-webkit-scrollbar {
                 width: 6px;
             }
 
-            .hoaCosmetics-chat-body::-webkit-scrollbar-track {
+            .hieuThuoc-chat-body::-webkit-scrollbar-track {
                 background: transparent;
             }
 
-            .hoaCosmetics-chat-body::-webkit-scrollbar-thumb {
+            .hieuThuoc-chat-body::-webkit-scrollbar-thumb {
                 background: #ddd;
                 border-radius: 3px;
             }
 
-                .hoaCosmetics-chat-body::-webkit-scrollbar-thumb:hover {
+                .hieuThuoc-chat-body::-webkit-scrollbar-thumb:hover {
                     background: #ccc;
                 }
 
         /* Message Styles */
-        .hoaCosmetics-message {
+        .hieuThuoc-message {
             margin-bottom: 15px;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
         }
 
-            .hoaCosmetics-message.user {
+            .hieuThuoc-message.user {
                 align-items: flex-end;
             }
 
-            .hoaCosmetics-message.bot {
+            .hieuThuoc-message.bot {
                 align-items: flex-start;
             }
 
-        .hoaCosmetics-message-content {
+        .hieuThuoc-message-content {
             max-width: 85%;
             padding: 12px 16px;
             border-radius: 18px;
@@ -435,32 +435,32 @@
             word-break: break-word; /* Handle long words */
         }
 
-        .hoaCosmetics-message.user .hoaCosmetics-message-content {
-            background: linear-gradient(135deg, #ff66b2, #ff66b2);
+        .hieuThuoc-message.user .hieuThuoc-message-content {
+            background: linear-gradient(135deg, #28a745, #28a745);
             color: white;
             border-bottom-right-radius: 6px;
         }
 
-        .hoaCosmetics-message.bot .hoaCosmetics-message-content {
+        .hieuThuoc-message.bot .hieuThuoc-message-content {
             background: white;
             color: #333;
             border: 1px solid #e1e1e1;
             border-bottom-left-radius: 6px;
         }
 
-        .hoaCosmetics-message-time {
+        .hieuThuoc-message-time {
             font-size: 11px;
             color: #999;
             margin-top: 5px;
             align-self: flex-end;
         }
 
-        .hoaCosmetics-message.bot .hoaCosmetics-message-time {
+        .hieuThuoc-message.bot .hieuThuoc-message-time {
             align-self: flex-start;
         }
 
         /* Product Suggestion - Enhanced */
-        .hoaCosmetics-product-suggestion {
+        .hieuThuoc-product-suggestion {
             background: white;
             border: 1px solid #e1e1e1;
             border-radius: 12px;
@@ -475,13 +475,13 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-            .hoaCosmetics-product-suggestion:hover {
+            .hieuThuoc-product-suggestion:hover {
                 border-color: #4CAF50;
                 transform: translateY(-2px);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
 
-        .hoaCosmetics-product-image {
+        .hieuThuoc-product-image {
             width: 60px;
             height: 60px;
             border-radius: 8px;
@@ -490,12 +490,12 @@
             flex-shrink: 0;
         }
 
-        .hoaCosmetics-product-info {
+        .hieuThuoc-product-info {
             flex: 1;
             min-width: 0; /* Allow text to wrap */
         }
 
-            .hoaCosmetics-product-info h6 {
+            .hieuThuoc-product-info h6 {
                 margin: 0 0 4px 0;
                 font-size: 13px;
                 font-weight: 600;
@@ -507,14 +507,14 @@
                 overflow: hidden;
             }
 
-        .hoaCosmetics-product-price {
+        .hieuThuoc-product-price {
             color: #f44336;
             font-weight: 600;
             font-size: 14px;
             margin: 4px 0;
         }
 
-        .hoaCosmetics-product-link {
+        .hieuThuoc-product-link {
             color: #4CAF50;
             font-size: 12px;
             text-decoration: none;
@@ -523,20 +523,20 @@
             transition: color 0.3s ease;
         }
 
-            .hoaCosmetics-product-link:hover {
+            .hieuThuoc-product-link:hover {
                 color: #45a049;
                 text-decoration: underline;
             }
 
         /* Chat Input */
-        .hoaCosmetics-chat-input {
+        .hieuThuoc-chat-input {
             padding: 20px;
             background: white;
             border-top: 1px solid #e1e1e1;
             flex-shrink: 0; /* Prevent input from shrinking */
         }
 
-        .hoaCosmetics-input-group {
+        .hieuThuoc-input-group {
             display: flex;
             align-items: center;
             background: #f5f5f5;
@@ -545,7 +545,7 @@
             gap: 10px;
         }
 
-        .hoaCosmetics-chat-input-field {
+        .hieuThuoc-chat-input-field {
             flex: 1;
             border: none;
             outline: none;
@@ -556,14 +556,14 @@
             min-height: 20px;
         }
 
-            .hoaCosmetics-chat-input-field::placeholder {
+            .hieuThuoc-chat-input-field::placeholder {
                 color: #999;
             }
 
-        .hoaCosmetics-send-btn {
+        .hieuThuoc-send-btn {
             width: 35px;
             height: 35px;
-            background: linear-gradient(135deg, #ff66b2, #ff66b2);
+            background: linear-gradient(135deg, #28a745, #28a745);
             color: white;
             border: none;
             border-radius: 50%;
@@ -575,31 +575,31 @@
             flex-shrink: 0;
         }
 
-            .hoaCosmetics-send-btn:hover {
+            .hieuThuoc-send-btn:hover {
                 transform: scale(1.1);
                 box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
             }
 
-            .hoaCosmetics-send-btn:disabled {
+            .hieuThuoc-send-btn:disabled {
                 background: #ccc;
                 cursor: not-allowed;
                 transform: none;
             }
 
         /* Typing Indicator */
-        .hoaCosmetics-typing-indicator {
+        .hieuThuoc-typing-indicator {
             display: flex;
             align-items: center;
             padding: 10px 15px;
             margin-bottom: 10px;
         }
 
-        .hoaCosmetics-typing-dots {
+        .hieuThuoc-typing-dots {
             display: flex;
             gap: 3px;
         }
 
-            .hoaCosmetics-typing-dots span {
+            .hieuThuoc-typing-dots span {
                 width: 6px;
                 height: 6px;
                 background: #999;
@@ -607,15 +607,15 @@
                 animation: typing 1.4s infinite ease-in-out;
             }
 
-                .hoaCosmetics-typing-dots span:nth-child(1) {
+                .hieuThuoc-typing-dots span:nth-child(1) {
                     animation-delay: -0.32s;
                 }
 
-                .hoaCosmetics-typing-dots span:nth-child(2) {
+                .hieuThuoc-typing-dots span:nth-child(2) {
                     animation-delay: -0.16s;
                 }
 
-                .hoaCosmetics-typing-dots span:nth-child(3) {
+                .hieuThuoc-typing-dots span:nth-child(3) {
                     animation-delay: 0;
                 }
 
@@ -630,17 +630,17 @@
         }
 
         /* Quick Replies */
-        .hoaCosmetics-quick-replies {
+        .hieuThuoc-quick-replies {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             margin-top: 10px;
         }
 
-        .hoaCosmetics-quick-reply-btn {
+        .hieuThuoc-quick-reply-btn {
             background: white;
-            border: 1px solid #ff66b2;
-            color: #ff66b2;
+            border: 1px solid #28a745;
+            color: #28a745;
             padding: 6px 12px;
             border-radius: 15px;
             font-size: 12px;
@@ -649,47 +649,216 @@
             white-space: nowrap;
         }
 
-            .hoaCosmetics-quick-reply-btn:hover {
-                background: #ff66b2;
+            .hieuThuoc-quick-reply-btn:hover {
+                background: #28a745;
                 color: white;
             }
 
         /* Welcome Message */
-        .hoaCosmetics-welcome-message {
+        .hieuThuoc-welcome-message {
             text-align: center;
             padding: 30px 20px;
             color: #666;
         }
 
-            .hoaCosmetics-welcome-message i {
+            .hieuThuoc-welcome-message i {
                 font-size: 48px;
                 color: #4CAF50;
                 margin-bottom: 15px;
             }
 
-        /* Responsive */
-        @@media (max-width: 480px) {
-            .hoaCosmetics-chatbox-container {
-                width: calc(100vw - 20px);
-                right: 10px;
-                left: 10px;
-                height: 80vh;
-                bottom: 90px;
+        .header-right {
+            margin-right: 0 !important;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box form {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e5b6b6;
+            border-radius: 30px;
+            padding: 5px 10px;
+            background: #f9f9f9;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .search-box input[type="text"] {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 8px 10px;
+            font-size: 14px;
+            min-width: 0;
+        }
+
+        .search-box button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #777;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header .container-fluid {
+            margin: auto;
+            padding: 0;
+            width: 65%;
+        }
+
+        @@media (max-width: 1000px) {
+            .header .container-fluid {
+                width: 100% !important;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: stretch;
             }
 
-            .chatbox-btn {
-                right: 20px;
-                bottom: 20px;
+                header .logo {
+                    margin-bottom: 10px;
+                    text-align: center;
+                }
+
+                header .search-bar {
+                    width: 100%;
+                    margin: 0 0 10px 0;
+                }
+
+                header .header-right {
+                    display: flex;
+                    justify-content: center;
+                    gap: 15px;
+                }
+
+            .header .container-fluid {
+                width: 100% !important;
             }
 
-            .hoaCosmetics-product-suggestion {
+            .main-menu {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-left: 15px;
+            }
+
+            .menu-item {
+                padding: 8px 0;
+            }
+
+            .dropdown-menu-custom {
+                position: static;
+                box-shadow: none;
+                border: none;
+                min-width: 100%;
+            }
+
+            .footer-top .row {
                 flex-direction: column;
                 text-align: center;
             }
 
-            .hoaCosmetics-product-image {
-                width: 80px;
-                height: 80px;
+            .footer-links {
+                margin-top: 15px;
+            }
+
+            .footer-payment-logos img {
+                max-height: 30px;
+            }
+
+            .social-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.2em;
+            }
+        }
+
+        @@media (max-width: 480px) {
+            header {
+                padding: 8px 15px;
+            }
+
+                header .logo {
+                    font-size: 18px;
+                }
+
+                    header .logo img {
+                        max-height: 40px;
+                    }
+
+                header nav {
+                    display: none;
+                }
+        }
+
+
+        @@media (max-width: 480px) {
+            .header-item {
+                padding: 0 4px;
+            }
+
+                .header-item a,
+                .header-item span {
+                    font-size: 11px;
+                }
+
+                .header-item .fas {
+                    font-size: 12px;
+                }
+
+            .header-right {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .header-item a {
+                font-size: 12px;
+            }
+
+            .menu-item a {
+                font-size: 12px;
+                padding: 4px 0;
+            }
+
+            .footer-custom a {
+                font-size: 14px;
+            }
+
+            .social-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1em;
+            }
+
+            .hieuThuoc-chatbox-container {
+                width: 100vw;
+                left: 0;
+                right: 0;
+                bottom: 70px;
+                height: 75vh;
+                border-radius: 10px;
+            }
+
+            .chatbox-btn {
+                right: 15px;
+                bottom: 15px;
+                width: 50px;
+                height: 50px;
+                font-size: 20px;
             }
         }
     </style>
@@ -699,9 +868,9 @@
     <header class="header">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
-                <a href="@Url.Action("Index", "Home1")" class="logo logo-dark" style="margin-left: 190px;">
+                <a href="@Url.Action("Index", "Home1")" class="logo logo-dark" >
                     <span class="logo-sm">
-                        <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="100">
+                        <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="80">
                     </span>
                     @*<span class="logo-lg">
                             <img src="~/Content/assets/images/Logo/Logo2.png" alt="" height="70">
@@ -722,10 +891,6 @@
                         }
                     </div>
 
-                    @*<div class="header-item">
-                            <i class="fas fa-newspaper"></i>
-                            <span>Tạp chí làm đẹp</span>
-                        </div>*@
                     <div class="header-item">
                         <i class="fas fa-ellipsis-h"></i>
                     </div>
@@ -876,27 +1041,27 @@
         <span id="chatbox-badge" class="chatbox-badge" style="display: none;">1</span>
     </div>
     <!-- Modal Chat Hỗ Trợ -->
-    <div class="hoaCosmetics-chatbox-container" id="hoaCosmeticsChatboxContainer">
+    <div class="hieuThuoc-chatbox-container" id="hieuThuocChatboxContainer">
         <!-- Header -->
-        <div class="hoaCosmetics-chat-header">
-            <div class="hoaCosmetics-chat-header-left">
-                <div class="hoaCosmetics-chat-avatar">
+        <div class="hieuThuoc-chat-header">
+            <div class="hieuThuoc-chat-header-left">
+                <div class="hieuThuoc-chat-avatar">
                     <i class="fas fa-robot"></i>
-                    <div class="hoaCosmetics-status-indicator"></div>
+                    <div class="hieuThuoc-status-indicator"></div>
                 </div>
-                <div class="hoaCosmetics-chat-info">
+                <div class="hieuThuoc-chat-info">
                     <h6>Tư vấn</h6>
                     <p>Hỗ trợ 24/7</p>
                 </div>
             </div>
-            <button class="hoaCosmetics-close-btn" id="hoaCosmeticsCloseChatBtn">
+            <button class="hieuThuoc-close-btn" id="hieuThuocCloseChatBtn">
                 <i class="fas fa-times"></i>
             </button>
         </div>
 
         <!-- Chat Body -->
-        <div class="hoaCosmetics-chat-body" id="hoaCosmeticsChatBody">
-            <div class="hoaCosmetics-welcome-message">
+        <div class="hieuThuoc-chat-body" id="hieuThuocChatBody">
+            <div class="hieuThuoc-welcome-message">
                 <i class="fas fa-comments"></i>
                 <h5>Chào bạn!</h5>
                 <p>Tôi là trợ lý ảo. Hãy nhập tin nhắn để bắt đầu trò chuyện!</p>
@@ -904,10 +1069,10 @@
         </div>
 
         <!-- Chat Input -->
-        <div class="hoaCosmetics-chat-input">
-            <div class="hoaCosmetics-input-group">
-                <input type="text" class="hoaCosmetics-chat-input-field" id="hoaCosmeticsMessageInput" placeholder="Nhập nội dung tin nhắn...">
-                <button class="hoaCosmetics-send-btn" id="hoaCosmeticsSendBtn">
+        <div class="hieuThuoc-chat-input">
+            <div class="hieuThuoc-input-group">
+                <input type="text" class="hieuThuoc-chat-input-field" id="hieuThuocMessageInput" placeholder="Nhập nội dung tin nhắn...">
+                <button class="hieuThuoc-send-btn" id="hieuThuocSendBtn">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
@@ -917,9 +1082,9 @@
     @RenderSection("Scripts", required: false)
     <script>
     var currentUserName = "@(Session["CustomerName"] ?? "Khách")";
-    let hoaCosmeticsSessionId = 0;
-    let hoaCosmeticsLastMessageCount = 0;
-    let hoaCosmeticsIsOpen = false;
+    let hieuThuocSessionId = 0;
+    let hieuThuocLastMessageCount = 0;
+    let hieuThuocIsOpen = false;
     let isMessageSending = false;
     let messagePollingInterval = null;
 
@@ -934,48 +1099,48 @@
 
         // ========== CHATBOX FUNCTIONALITY ==========
         const $chatboxBtn = $('#chatbox-btn');
-        const $chatboxContainer = $('#hoaCosmeticsChatboxContainer');
-        const $closeChatBtn = $('#hoaCosmeticsCloseChatBtn');
-        const $chatBody = $('#hoaCosmeticsChatBody');
-        const $messageInput = $('#hoaCosmeticsMessageInput');
-        const $sendBtn = $('#hoaCosmeticsSendBtn');
+        const $chatboxContainer = $('#hieuThuocChatboxContainer');
+        const $closeChatBtn = $('#hieuThuocCloseChatBtn');
+        const $chatBody = $('#hieuThuocChatBody');
+        const $messageInput = $('#hieuThuocMessageInput');
+        const $sendBtn = $('#hieuThuocSendBtn');
         const $chatboxBadge = $('#chatbox-badge');
 
         // Toggle chatbox
         $chatboxBtn.on('click', function() {
-            if (hoaCosmeticsIsOpen) {
-                closehoaCosmeticsChatbox();
+            if (hieuThuocIsOpen) {
+                closehieuThuocChatbox();
             } else {
-                openhoaCosmeticsChatbox();
+                openhieuThuocChatbox();
             }
         });
 
-        $closeChatBtn.on('click', closehoaCosmeticsChatbox);
+        $closeChatBtn.on('click', closehieuThuocChatbox);
 
-        function openhoaCosmeticsChatbox() {
+        function openhieuThuocChatbox() {
             $chatboxContainer.show();
             $chatboxBtn.addClass('active');
             $chatboxBtn.find('i').removeClass('fa-comments').addClass('fa-times');
             $chatboxBadge.hide();
             $chatboxBtn.removeClass('new-message');
-            hoaCosmeticsIsOpen = true;
+            hieuThuocIsOpen = true;
             $messageInput.focus();
 
             // Clear welcome message and show initial greeting
-            if (hoaCosmeticsSessionId === 0) {
+            if (hieuThuocSessionId === 0) {
                 $chatBody.empty();
-                addhoaCosmeticsMessage('Xin chào! Tôi là trợ lý tư vấn mỹ phẩm của Hoa Cosmetics. Tôi có thể giúp bạn:', 'bot');
-                addhoaCosmeticsQuickReplies(['Tìm sản phẩm', 'Tư vấn chăm sóc da', 'Khuyến mãi hiện tại', 'Liên hệ hỗ trợ']);
+                addhieuThuocMessage('Xin chào! Tôi là dược sĩ AI của Hiệu Thuốc. Tôi có thể giúp bạn tìm thuốc hoặc tư vấn các vấn đề sức khỏe đơn giản.', 'bot');
+                addHieuThuocQuickReplies(['Tìm thuốc', 'Tư vấn theo triệu chứng', 'Khuyến mãi']);
 
                 // Initialize session
                 $.post("/Chat/StartSession", {}, function (res) {
                     if (res && res.success) {
-                        hoaCosmeticsSessionId = res.sessionId;
+                        hieuThuocSessionId = res.sessionId;
                         // Start polling for new messages every 5 seconds (reduced frequency)
                         if (messagePollingInterval) {
                             clearInterval(messagePollingInterval);
                         }
-                        messagePollingInterval = setInterval(loadhoaCosmeticsMessages, 5000);
+                        messagePollingInterval = setInterval(loadhieuThuocMessages, 5000);
                     }
                 }).fail(function () {
                     console.log('Failed to start chat session');
@@ -983,11 +1148,11 @@
             }
         }
 
-        function closehoaCosmeticsChatbox() {
+        function closehieuThuocChatbox() {
             $chatboxContainer.hide();
             $chatboxBtn.removeClass('active');
             $chatboxBtn.find('i').removeClass('fa-times').addClass('fa-comments');
-            hoaCosmeticsIsOpen = false;
+            hieuThuocIsOpen = false;
 
             if (messagePollingInterval) {
                 clearInterval(messagePollingInterval);
@@ -996,7 +1161,7 @@
         }
 
         // Send message function
-        function sendhoaCosmeticsMessage() {
+        function sendhieuThuocMessage() {
         const message = $messageInput.val().trim();
         if (!message || isMessageSending) return;
 
@@ -1008,19 +1173,19 @@
         $sendBtn.prop('disabled', true);
 
         // Add user message
-        addhoaCosmeticsMessage(message, 'user');
+        addhieuThuocMessage(message, 'user');
         $messageInput.val('');
 
         // Show typing indicator
-        showhoaCosmeticsTypingIndicator();
+        showhieuThuocTypingIndicator();
 
         // Send to server
         $.post('@Url.Action("SendMessage", "Chat")', {
-            sessionId: hoaCosmeticsSessionId,
+            sessionId: hieuThuocSessionId,
             message: message
         })
         .done(function(res) {
-            hidehoaCosmeticsTypingIndicator();
+            hidehieuThuocTypingIndicator();
 
             if (res) {
                 if (res.requiresLogin) {
@@ -1031,26 +1196,26 @@
                 if (res.success) {
                     // Add bot reply (with HTML support)
                     if (res.botReply) {
-                        addhoaCosmeticsMessage(res.botReply, 'bot');
+                        addhieuThuocMessage(res.botReply, 'bot');
                     }
 
                     // Add products if any
                     if (res.products && res.products.length > 0) {
                         res.products.forEach(function (product) {
-                            addhoaCosmeticsProduct(product);
+                            addhieuThuocProduct(product);
                         });
                     }
                 } else {
-                    addhoaCosmeticsMessage('Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.', 'bot');
+                    addhieuThuocMessage('Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.', 'bot');
                 }
             } else {
-                addhoaCosmeticsMessage('Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.', 'bot');
+                addhieuThuocMessage('Xin lỗi, có lỗi xảy ra. Vui lòng thử lại sau.', 'bot');
             }
         })
         .fail(function(xhr, status, error) {
-            hidehoaCosmeticsTypingIndicator();
+            hidehieuThuocTypingIndicator();
             console.log('Chat error:', error);
-            addhoaCosmeticsMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.', 'bot');
+            addhieuThuocMessage('Không thể kết nối đến server. Vui lòng kiểm tra kết nối mạng hoặc thử lại sau.', 'bot');
         })
         .always(function() {
             // Re-enable input and button
@@ -1065,27 +1230,27 @@
         $sendBtn.off('click').on('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
-            sendhoaCosmeticsMessage();
+            sendhieuThuocMessage();
         });
         $messageInput.off('keypress').on('keypress', function (e) {
             if (e.which === 13 && !e.shiftKey) { // Enter key
                 e.preventDefault();
                 e.stopPropagation();
-                sendhoaCosmeticsMessage();
+                sendhieuThuocMessage();
             }
         });
 
         // Load messages from server
-        function loadhoaCosmeticsMessages() {
-            if (hoaCosmeticsSessionId === 0 || !hoaCosmeticsIsOpen) return;
+        function loadhieuThuocMessages() {
+            if (hieuThuocSessionId === 0 || !hieuThuocIsOpen) return;
 
-            $.get("/Chat/GetMessages", { sessionId: hoaCosmeticsSessionId })
+            $.get("/Chat/GetMessages", { sessionId: hieuThuocSessionId })
                 .done(function (data) {
-                    if (data && data.length > hoaCosmeticsLastMessageCount) {
+                    if (data && data.length > hieuThuocLastMessageCount) {
                         // Only show notification if there are new bot messages
                         let hasNewBotMessage = false;
 
-                        for (let i = hoaCosmeticsLastMessageCount; i < data.length; i++) {
+                        for (let i = hieuThuocLastMessageCount; i < data.length; i++) {
                             let m = data[i];
                             if (m && m.Message && m.SenderType !== 'Khách') {
                                 hasNewBotMessage = true;
@@ -1094,11 +1259,11 @@
                         }
 
                         // Show notification if chat is closed and there's a new bot message
-                        if (hasNewBotMessage && !hoaCosmeticsIsOpen) {
-                            showhoaCosmeticsBadge();
+                        if (hasNewBotMessage && !hieuThuocIsOpen) {
+                            showhieuThuocBadge();
                         }
 
-                        hoaCosmeticsLastMessageCount = data.length;
+                        hieuThuocLastMessageCount = data.length;
                     }
                 })
                 .fail(function () {
@@ -1107,59 +1272,72 @@
         }
 
         // Add message to chat
-        function addhoaCosmeticsMessage(text, sender) {
+        function addhieuThuocMessage(text, sender) {
             const now = new Date();
             const timeString = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
 
             const messageHtml = `
-                <div class="hoaCosmetics-message ${sender}">
-                    <div class="hoaCosmetics-message-content">
+                <div class="hieuThuoc-message ${sender}">
+                    <div class="hieuThuoc-message-content">
                         ${text}
                     </div>
-                    ${sender === 'user' ? `<div class="hoaCosmetics-message-time">${timeString}</div>` : ''}
+                    ${sender === 'user' ? `<div class="hieuThuoc-message-time">${timeString}</div>` : ''}
                 </div>
             `;
 
             $chatBody.append(messageHtml);
-            scrollhoaCosmeticsToBottom();
+            scrollhieuThuocToBottom();
         }
-
+        function addHieuThuocQuickReplies(replies) {
+            if (!replies || !Array.isArray(replies)) return;
+            const quickRepliesHtml = replies.map(reply =>
+                `<button class="hieuThuoc-quick-reply-btn" data-reply="${reply}">${reply}</button>`
+            ).join('');
+            const messageHtml = `
+                <div class="hieuThuoc-message bot">
+                    <div class="hieuThuoc-quick-replies">
+                        ${quickRepliesHtml}
+                    </div>
+                </div>`;
+            $chatBody.append(messageHtml);
+            scrollhieuThuocToBottom();
+        }
         // Add product suggestion
-        function addhoaCosmeticsProduct(product) {
-            if (!product || !product.Name) return;
+        function addhieuThuocProduct(product) {
+            if (!product || !product.TenThuoc) return;
 
-            const imageUrl = product.Image && product.Image.trim() !== ''
-                ? product.Image
+            const imageUrl = product.HinhAnh && product.HinhAnh.trim() !== ''
+                ? product.HinhAnh
                 : 'https://via.placeholder.com/60x60?text=No+Image';
 
-            const price = product.Price || 0;
-            const productId = product.Id || '#';
+            const price = product.GiaBan || 0;
+            const ThuocId = product.ThuocId || '#';
 
             const productHtml = `
-                <div class="hoaCosmetics-message bot">
-                    <div class="hoaCosmetics-product-suggestion" onclick="window.location.href='/Product/Detail/${productId}'">
-                        <img src="${imageUrl}" alt="${product.Name}" class="hoaCosmetics-product-image" onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
-                        <div class="hoaCosmetics-product-info">
-                            <h6>${product.Name}</h6>
-                            <div class="hoaCosmetics-product-price">${Number(price).toLocaleString('vi-VN')} đ</div>
-                            <a href="/Product/Detail/${productId}" class="hoaCosmetics-product-link" onclick="event.stopPropagation()">Xem chi tiết →</a>
+                <div class="hieuThuoc-message bot">
+                    <div class="hieuThuoc-product-suggestion" onclick="window.location.href='/Products/Details/${ThuocId}'">
+                        <img src="${imageUrl}" alt="${product.TenThuoc}" class="hieuThuoc-product-image" onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
+                        <div class="hieuThuoc-product-info">
+                            <h6>${product.TenThuoc}</h6>
+                            <div class="hieuThuoc-product-price">${Number(price).toLocaleString('vi-VN')} đ</div>
+                            <a href="/Products/Details/${ThuocId}" class="hieuThuoc-product-link" onclick="event.stopPropagation()">Xem chi tiết →</a>
                         </div>
                     </div>
                 </div>
             `;
             $chatBody.append(productHtml);
-            scrollhoaCosmeticsToBottom();
+            scrollhieuThuocToBottom();
         }
 
         // Typing indicator
-        function showhoaCosmeticsTypingIndicator() {
+        function showhieuThuocTypingIndicator() {
             // Remove existing typing indicator
-            $('#hoaCosmeticsTypingIndicator').remove();
+            $('#hieuThuocTypingIndicator').remove();
 
             const typingHtml = `
-                <div class="hoaCosmetics-message bot hoaCosmetics-typing-indicator" id="hoaCosmeticsTypingIndicator">
-                    <div class="hoaCosmetics-message-content">
-                        <div class="hoaCosmetics-typing-dots">
+                <div class="hieuThuoc-message bot hieuThuoc-typing-indicator" id="hieuThuocTypingIndicator">
+                    <div class="hieuThuoc-message-content">
+                        <div class="hieuThuoc-typing-dots">
                             <span></span>
                             <span></span>
                             <span></span>
@@ -1168,35 +1346,15 @@
                 </div>
             `;
             $chatBody.append(typingHtml);
-            scrollhoaCosmeticsToBottom();
+            scrollhieuThuocToBottom();
         }
 
-        function hidehoaCosmeticsTypingIndicator() {
-            $('#hoaCosmeticsTypingIndicator').remove();
-        }
-
-        // Add quick replies
-        function addhoaCosmeticsQuickReplies(replies) {
-            if (!replies || !Array.isArray(replies)) return;
-
-            const quickRepliesHtml = replies.map(reply =>
-                `<button class="hoaCosmetics-quick-reply-btn" data-reply="${reply}">${reply}</button>`
-            ).join('');
-
-            const messageHtml = `
-                <div class="hoaCosmetics-message bot">
-                    <div class="hoaCosmetics-quick-replies">
-                        ${quickRepliesHtml}
-                    </div>
-                </div>
-            `;
-
-            $chatBody.append(messageHtml);
-            scrollhoaCosmeticsToBottom();
+        function hidehieuThuocTypingIndicator() {
+            $('#hieuThuocTypingIndicator').remove();
         }
 
         // Handle quick reply clicks
-        $(document).off('click', '.hoaCosmetics-quick-reply-btn').on('click', '.hoaCosmetics-quick-reply-btn', function (e) {
+        $(document).off('click', '.hieuThuoc-quick-reply-btn').on('click', '.hieuThuoc-quick-reply-btn', function (e) {
             e.preventDefault();
             e.stopPropagation();
 
@@ -1206,25 +1364,25 @@
             if (!reply) return;
 
             // Remove quick replies after click
-            $(this).closest('.hoaCosmetics-message').fadeOut(200, function () {
+            $(this).closest('.hieuThuoc-message').fadeOut(200, function () {
                 $(this).remove();
             });
 
             // Set the message and send
             $messageInput.val(reply);
-            sendhoaCosmeticsMessage();
+            sendhieuThuocMessage();
         });
 
         // Show badge notification
-        function showhoaCosmeticsBadge() {
-            if (!hoaCosmeticsIsOpen) {
+        function showhieuThuocBadge() {
+            if (!hieuThuocIsOpen) {
                 $chatboxBadge.show().text('1');
                 $chatboxBtn.addClass('new-message');
             }
         }
 
         // Scroll to bottom
-        function scrollhoaCosmeticsToBottom() {
+        function scrollhieuThuocToBottom() {
             setTimeout(function () {
                 const chatBodyElement = $chatBody[0];
                 if (chatBodyElement) {
@@ -1235,19 +1393,19 @@
 
         // Click outside to close chatbox
         $(document).off('click.chatbox').on('click.chatbox', function (event) {
-            if (!hoaCosmeticsIsOpen) return;
+            if (!hieuThuocIsOpen) return;
 
-            const clickedInsideChat = $(event.target).closest('#hoaCosmeticsChatboxContainer, #chatbox-btn').length > 0;
+            const clickedInsideChat = $(event.target).closest('#hieuThuocChatboxContainer, #chatbox-btn').length > 0;
 
             if (!clickedInsideChat) {
-                closehoaCosmeticsChatbox();
+                closehieuThuocChatbox();
             }
         });
 
         // Show initial badge after 5 seconds (demo purpose)
         setTimeout(function() {
-            if (!hoaCosmeticsIsOpen) {
-                showhoaCosmeticsBadge();
+            if (!hieuThuocIsOpen) {
+                showhieuThuocBadge();
             }
         }, 5000);
         $(window).on('beforeunload', function () {

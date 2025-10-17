@@ -116,12 +116,27 @@ namespace DAL
                 throw;
             }
         }
-        public List<Product> ProductsByKeyword(string keyword)
+        public List<Product> ProductsByKeywords(List<string> keywords)
         {
             try
             {
-                DynamicParameters param = new DynamicParameters();
-                param.Add("@Keyword", keyword);
+                if (keywords == null || !keywords.Any())
+                {
+                    return new List<Product>();
+                }
+
+                // 1. Tạo một DataTable để chứa danh sách từ khóa.
+                // Tên cột "Keyword" phải khớp với tên cột trong TYPE bạn đã tạo trong SQL.
+                var keywordsTable = new DataTable();
+                keywordsTable.Columns.Add("Keyword", typeof(string));
+                foreach (var keyword in keywords)
+                {
+                    keywordsTable.Rows.Add(keyword);
+                }
+
+                var param = new DynamicParameters();
+
+                param.Add("@Keywords", keywordsTable.AsTableValuedParameter("dbo.KeywordList"));
 
                 var result = SqlMapper.Query<Product>(
                     Connection.getConnection(),
@@ -132,8 +147,10 @@ namespace DAL
 
                 return result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Log lỗi ra để dễ dàng debug
+                Console.WriteLine(ex.Message);
                 throw;
             }
         }
