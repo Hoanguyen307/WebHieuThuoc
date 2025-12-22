@@ -1,0 +1,230 @@
+﻿@{
+    ViewBag.Title = "Quản lý vận chuyển";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+    .table thead th {
+        white-space: nowrap;
+    }
+
+    .status-badge {
+        font-size: 12px;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    #loadingOverlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,.6);
+        z-index: 1055;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 32px;
+        margin: 10px 0 5px 0;
+    }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 18px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #d0d7de;
+        }
+
+    .timeline-item {
+        position: relative;
+        padding: 12px 0 16px 0;
+    }
+
+        .timeline-item:last-child {
+            padding-bottom: 5px;
+        }
+
+        .timeline-item .dot {
+            position: absolute;
+            left: -1px;
+            top: 14px;
+            width: 14px;
+            height: 14px;
+            background: #0d6efd;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 3px #0d6efd33;
+        }
+
+    .timeline-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        margin-left: 22px;
+    }
+
+    .timeline-time {
+        font-size: 12px;
+        color: #6c757d;
+        margin-bottom: 4px;
+    }
+
+    .timeline-note {
+        font-size: 13px;
+        color: #333;
+    }
+</style>
+
+<div class="container-fluid mt-3">
+    <div class="d-flex align-items-end gap-2 flex-wrap">
+        <div>
+            <select id="filter-ds" class="form-select form-select-sm">
+                <option value="">-- Tất cả --</option>
+                @if (ViewBag.DeliveryServices != null)
+                {
+                    foreach (var ds in (IEnumerable<Models.DeliveryService>)ViewBag.DeliveryServices)
+                    {
+                        <option value="@ds.Id">@ds.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div>
+            <select id="filter-driver" class="form-select form-select-sm">
+                <option value="">-- Tất cả --</option>
+            </select>
+        </div>
+
+        <div>
+            <select id="filter-status" class="form-select form-select-sm">
+                <option value="">-- Tất cả --</option>
+                <option value="0">0 - Pending</option>
+                <option value="1">1 - Assigned</option>
+                <option value="2">2 - Picking</option>
+                <option value="3">3 - Delivering</option>
+                <option value="4">4 - Completed</option>
+                <option value="5">5 - Failed</option>
+            </select>
+        </div>
+        <div class="ms-auto">
+            <button id="btnReload" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-clockwise"></i> Tải lại</button>
+        </div>
+    </div>
+
+    <div class="card mt-3 shadow-sm">
+        <div class="card-body p-2">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>Mã ĐH</th>
+                            <th>Tracking</th>
+                            <th>DVVC</th>
+                            <th>Tài xế</th>
+                            <th>Kho</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th class="text-end">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipping-body"></tbody>
+                </table>
+            </div>
+            <div id="pagination" class="mt-2"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Offcanvas Assign (chọn DVVC + Tài xế + Kho) -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offAssign" aria-labelledby="offAssignLabel" style="width:420px">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offAssignLabel">Bàn giao cho DVVC</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <input type="hidden" id="assign-shippingId" />
+        <div class="mb-2">
+            <label class="form-label">Đơn vị vận chuyển</label>
+            <select id="assign-ds" class="form-select form-select-sm"></select>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">Tài xế</label>
+            <select id="assign-driver" class="form-select form-select-sm">
+                <option value="">-- Chọn tài xế --</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Kho xuất</label>
+            <select id="assign-warehouse" class="form-select form-select-sm">
+                <option value="">-- Chọn kho --</option>
+                @if (ViewBag.Warehouses != null)
+                {
+                    foreach (var w in (IEnumerable<Models.KhoHang>)ViewBag.Warehouses)
+                    {
+                        <option value="@w.Id">@w.Name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="d-grid gap-2">
+            <button id="btnAssignSave" class="btn btn-primary btn-sm">
+                Lưu & đánh dấu Assigned
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Timeline -->
+<div class="modal fade" id="modalTimeline" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lịch sử vận chuyển - <span id="tl-tracking"></span></h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="tl-body" class="timeline"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="btnAutoDemo" class="btn btn-outline-primary btn-sm">Auto Demo (2→3→4→5)</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Map -->
+<div class="modal fade" id="modalMap" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Lộ trình vận chuyển</h5>
+                <button class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div id="map" style="height: 520px; width: 100%"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="loadingOverlay">
+    <div class="spinner-border text-primary"></div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
+<script src="~/Content/assets/js/shipping.js"></script>

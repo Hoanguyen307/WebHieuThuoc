@@ -115,6 +115,22 @@ namespace Admin.Controllers
                 return Json(new { code = 500, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
+        public JsonResult ToggleHienThi(int Id, bool isActive)
+        {
+            try
+            {
+                var result = new Voucher_DAL().Voucher_IsActive(Id, isActive);
+                if (result)
+                {
+                    return Json(new { code = 200, msg = "Cập nhật thành công" }, JsonRequestBehavior.AllowGet);
+                }
+                return Json(new { code = 500, msg = "Cập nhật thất bại" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 550, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

@@ -78,6 +78,7 @@
     <Compile Include="ProductReview_DAL.cs" />
     <Compile Include="Product_DAL.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shipping_DAL.cs" />
     <Compile Include="Voucher_DAL.cs" />
     <Compile Include="XuatKho_DAL.cs" />
   </ItemGroup>

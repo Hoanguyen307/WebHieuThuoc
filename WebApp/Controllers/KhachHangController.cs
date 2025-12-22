@@ -97,5 +97,32 @@ namespace WebApp.Controllers
 
             return View(donHang);
         }
+        [HttpGet]
+        public ActionResult ChiTietDonHang(int id)
+        {
+            var khachHang = Session["Login"] as KhachHang;
+            if (khachHang == null)
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.Unauthorized, "Vui lòng đăng nhập lại.");
+            }
+
+            var orderDAL = new Order_DAL();
+
+            try
+            {
+                var orderDetails = orderDAL.GetOrderDetails_ByCustomer(id, khachHang.Id);
+
+                if (orderDetails == null)
+                {
+                    return new HttpStatusCodeResult(System.Net.HttpStatusCode.NotFound, "Không tìm thấy chi tiết đơn hàng hoặc bạn không có quyền xem.");
+                }
+
+                return PartialView("_ChiTietDonHangPartial", orderDetails);
+            }
+            catch (Exception ex)
+            {
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.InternalServerError, "Lỗi khi tải chi tiết đơn hàng.");
+            }
+        }
     }
 }

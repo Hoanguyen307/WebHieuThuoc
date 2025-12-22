@@ -66,7 +66,9 @@
     <Compile Include="ChiTietNhapKho.cs" />
     <Compile Include="ChiTietXuatKho.cs" />
     <Compile Include="DBConnect.cs" />
+    <Compile Include="DeliveryService.cs" />
     <Compile Include="DoanhThu.cs" />
+    <Compile Include="Driver.cs" />
     <Compile Include="DungTich.cs" />
     <Compile Include="DungTichSanPham.cs" />
     <Compile Include="FlashSale.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="HomeViewModel.cs" />
     <Compile Include="IdentityModels.cs" />
     <Compile Include="KhachHang.cs" />
+    <Compile Include="KhoHang.cs" />
     <Compile Include="LichLamViec.cs" />
     <Compile Include="LichLamViecViewModel\LichTrongTuanModel.cs" />
     <Compile Include="LichLamViecViewModel\XepLichNhanVienModel.cs" />
@@ -96,6 +99,12 @@
     <Compile Include="ProductImage.cs" />
     <Compile Include="ProductViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shipment.cs" />
+    <Compile Include="ShipmentHistory.cs" />
+    <Compile Include="ShippingOrder.cs" />
+    <Compile Include="ShippingOrderViewModel.cs" />
+    <Compile Include="ShippingStatusHistory.cs" />
+    <Compile Include="ShippingTrackingViewModel.cs" />
     <Compile Include="ThongKeModel.cs" />
     <Compile Include="TonKhoModel.cs" />
     <Compile Include="Voucher.cs" />

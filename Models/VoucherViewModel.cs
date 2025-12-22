@@ -10,7 +10,8 @@ namespace Models
 {
     public class VoucherViewModel
     {
-        public int VoucherCustomerId { get; set; }
+        public int Id { get; set; }
+        public int? VoucherCustomerId { get; set; }
         public int CustomerId { get; set; }
         public DateTime AssignedDate { get; set; }
         public string AssignedBy { get; set; }
@@ -27,5 +28,7 @@ namespace Models
         public DateTime? EndDate { get; set; }
         public bool IsActive { get; set; }
         public string Description { get; set; }
+        public bool IsSaved { get; set; }
+        public int? SelectedVoucherId { get; set; }
     }
 }

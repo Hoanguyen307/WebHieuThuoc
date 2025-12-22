@@ -97,25 +97,34 @@ function loadDonHang(page = 1) {
             <td>${item.CustomerName}</td>
             <td>${formatCurrency(item.TotalAmount)}</td>
             <td>
-    <select class="form-select form-select-sm"
-            onchange="updateStatus(${item.ID}, this)">
-        <option value="Chờ xác nhận" ${item.Status === "Chờ xác nhận" ? "selected" : ""}>Chờ xác nhận</option>
-        <option value="Đã xác nhận" ${item.Status === "Đã xác nhận" ? "selected" : ""}>Đã xác nhận</option>
-        <option value="Đang xử lý" ${item.Status === "Đang xử lý" ? "selected" : ""}>Đang xử lý</option>
-        <option value="Hoàn thành" ${item.Status === "Hoàn thành" ? "selected" : ""}>Hoàn thành</option>
-        <option value="Hủy" ${item.Status === "Hủy" ? "selected" : ""}>Hủy</option>
-    </select>
-</td>
+                <select class="form-select form-select-sm"
+                    onchange="updateStatus(${item.ID}, this)">
+                    <option value="Chờ xác nhận" ${item.Status === "Chờ xác nhận" ? "selected" : ""}>Chờ xác nhận</option>
+                    <option value="Đã xác nhận" ${item.Status === "Đã xác nhận" ? "selected" : ""}>Đã xác nhận</option>
+                    <option value="Người bán đang chuẩn bị đơn hàng" ${item.Status === "Người bán đang chuẩn bị đơn hàng" ? "selected" : ""}>Người bán đang chuẩn bị đơn hàng</option>
+                    <option value="Đã giao cho đơn vị vận chuyển" ${item.Status === "Đã giao cho đơn vị vận chuyển" ? "selected" : ""}>Đã giao cho đơn vị vận chuyển</option>
+                    <option value="Hoàn thành" ${item.Status === "Hoàn thành" ? "selected" : ""}>Hoàn thành</option>
+                    <option value="Hủy" ${item.Status === "Hủy" ? "selected" : ""}>Hủy</option>
+                </select>
+                <select class="form-select form-select-sm carrier-select mt-1"
+                    data-order-id="${item.ID}"
+                    data-selected-carrier="${item.CarrierName || ''}" 
+                    style="display: ${item.Status === "Đã giao cho đơn vị vận chuyển" ? "block" : "none"}">
+                    <option value="">Đang tải...</option>
+                </select>
 
+            </td>
             <td>${item.Note ?? ''}</td>
             <td>${formatDate(item.CreatedDate, true)}</td>
             <td>
                 <button type="button" class="btn btn-outline-info btn-sm" onclick="loadChiTietDonHang('${item.ID}'); event.stopPropagation();"><i class="fas fa-eye"></i></button>
-                <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateDonHang('${item.ID}'); event.stopPropagation();"><i class="fas fa-edit"></i></button>
                 <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.ID}'); event.stopPropagation();"><i class="fas fa-trash-alt"></i></button>
             </td>
         </tr>`;
                     tbody.append(row);
+                    if (item.Status === "Đã giao cho đơn vị vận chuyển") {
+                        loadDeliveryServicesForRow(item.ID, item.CarrierName);
+                    }
                 });
                 const pageSize = 10;
                 const totalCount = res.totalCount ?? res.items.length;
@@ -128,22 +137,37 @@ function loadDonHang(page = 1) {
         }
     });
 }
-function updateStatus(ID, elm) {
-    const newStatus = $(elm).val();
+function updateStatus(ID, statusElm, carrierElm = null) {
+    const newStatus = $(statusElm).val();
+    const carrierDropdown = $(statusElm).siblings(".carrier-select");
+
+    if (newStatus === "Đã giao cho đơn vị vận chuyển") {
+        carrierDropdown.show();
+
+        if (carrierDropdown.find('option').length <= 1) {
+            loadDeliveryServicesForRow(ID, carrierDropdown.data("selected-carrier"));
+        }
+
+        if (!carrierElm) {
+            return;
+        }
+    } else {
+        carrierDropdown.hide();
+    }
+
+    const carrierName = carrierElm ? $(carrierElm).val() : "";
 
     $.ajax({
         url: '/Order/UpdateStatus',
         type: 'POST',
-        data: { id: ID, status: newStatus },
+        data: { id: ID, status: newStatus, carrierName: carrierName },
         success: function (res) {
             if (res.code === 200) {
-                toastr.success(res.msg || "Cập nhật trạng thái thành công");
+                toastr.success(res.msg || "Cập nhật thành công");
+                carrierDropdown.data("selected-carrier", carrierName);
             } else {
-                toastr.error(res.msg || "Không thể cập nhật trạng thái");
+                toastr.error(res.msg || "Cập nhật thất bại");
             }
-        },
-        error: function () {
-            toastr.error("Lỗi khi cập nhật.");
         }
     });
 }
@@ -225,6 +249,32 @@ function loadChiTietDonHang(ID) {
     });
 }
 
+function loadDeliveryServicesForRow(orderId, selectedCarrier) {
+    const ddl = $(`.carrier-select[data-order-id="${orderId}"]`);
+
+    $.ajax({
+        url: '/Shipping/GetDeliveryServices',
+        type: 'GET',
+        success: function (res) {
+            if (res.code !== 200) return;
+
+            let options = '<option value="">-- Chọn đơn vị vận chuyển --</option>';
+            res.data.forEach(ds => {
+                // Kiểm tra nếu tên trùng với giá trị đã chọn thì thêm thuộc tính selected
+                const isSelected = ds.Name === selectedCarrier ? "selected" : "";
+                options += `<option value="${ds.Name}" ${isSelected}>${ds.Name}</option>`;
+            });
+            ddl.html(options);
+        }
+    });
+}
+$(document).on("change", ".carrier-select", function () {
+    const orderId = $(this).data("order-id");
+    const status = $(this).prev().val();
+    const carrierName = $(this).val();
+
+    updateStatus(orderId, this.previousElementSibling, this);
+});
 
 
 

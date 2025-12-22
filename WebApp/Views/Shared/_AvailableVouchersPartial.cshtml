@@ -1,0 +1,239 @@
+﻿@model IEnumerable<Models.VoucherViewModel>
+
+<style>
+    .voucher-list-container {
+        display: grid;
+        gap: 15px;
+        grid-template-columns: 1fr;
+    }
+
+    .voucher-card {
+        display: flex;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .voucher-left {
+        flex: 0 0 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ffebeb;
+        border-right: 2px dashed #ffcaca;
+        position: relative;
+        color: #e74c3c;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+        .voucher-left::before,
+        .voucher-left::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #f8f9fa;
+            border-radius: 50%;
+            right: -11px;
+        }
+
+        .voucher-left::before {
+            top: -10px;
+        }
+
+        .voucher-left::after {
+            bottom: -10px;
+        }
+
+    .voucher-right {
+        flex: 1;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .voucher-info .offer-text {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 5px 0;
+    }
+
+    .voucher-info .condition-text {
+        font-size: 0.9rem;
+        color: #555;
+        margin: 0;
+    }
+
+    .voucher-info .expiry-text {
+        font-size: 0.8rem;
+        color: #999;
+        margin-top: 5px;
+    }
+
+    .voucher-action .btn {
+        width: 80px;
+        font-size: 0.9rem;
+        padding: 8px 0;
+    }
+
+    .btn-saved {
+        width: 80px;
+        font-size: 0.9rem;
+        padding: 8px 0;
+        background-color: #6c757d !important;
+        border-color: #6c757d !important;
+        color: white !important;
+        opacity: 0.8;
+        cursor: not-allowed;
+    }
+
+    @@media (min-width: 768px) {
+        .voucher-list-container {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (min-width: 1200px) {
+        .voucher-list-container {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .voucher-right {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .voucher-action {
+            width: 100%;
+        }
+
+            .voucher-action .btn, .btn-saved {
+                width: 100%;
+            }
+
+        .voucher-left {
+            flex: 0 0 80px;
+            font-size: 20px;
+        }
+    }
+</style>
+
+<div class="voucher-list-container">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var voucher in Model)
+        {
+            <div class="voucher-card">
+
+                <div class="voucher-left">
+                    <span>
+                        @if (!string.IsNullOrEmpty(voucher.Percentage) && voucher.Percentage.Equals("Percentage", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <text>@(string.Format("{0:N0}", voucher.DiscountValue))%</text> }
+                        else
+                        {
+                            <text>₫</text>}
+                    </span>
+                </div>
+
+                <div class="voucher-right">
+
+                    <div class="voucher-info">
+                        <h5 class="offer-text">
+                            @if (!string.IsNullOrEmpty(voucher.Percentage) && voucher.Percentage.Equals("Percentage", StringComparison.OrdinalIgnoreCase))
+                            {
+                                <text>Giảm @(string.Format("{0:N0}", voucher.DiscountValue))%</text> }
+                            else
+                            {
+                                <text>Giảm @(string.Format("{0:N0}", voucher.DiscountValue))₫</text>}
+                        </h5>
+                        <p class="condition-text">@voucher.Description</p>
+                        <p class="expiry-text">HSD: @voucher.EndDate.Value.ToString("dd.MM.yyyy")</p>
+                    </div>
+
+                    <div class="voucher-action">
+                        @if (voucher.IsSaved)
+                        {
+                            <button type="button"
+                                    class="btn btn-saved"
+                                    disabled>
+                                Đã lưu
+                            </button> }
+                        else
+                        {
+                            <button type="button"
+                                    class="btn btn-primary btn-save-voucher"
+                                    data-voucher-id="@voucher.Id">
+                                Lưu
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "timeOut": "3000",
+        };
+
+        $(document).on('click', '.btn-save-voucher', function () {
+            var $thisButton = $(this);
+            var voucherIdToSave = $thisButton.data('voucher-id');
+
+            if ($thisButton.hasClass('btn-saved')) {
+                return;
+            }
+
+            $thisButton.prop('disabled', true).text('Đang lưu...');
+
+            $.ajax({
+                url: '@Url.Action("SaveVoucher", "Vouchers")',
+                type: 'POST',
+                data: { voucherId: voucherIdToSave },
+                success: function (response) {
+                    if (response.success) {
+                        $thisButton.text('Đã lưu').addClass('btn-saved');
+                    } else {
+                        if (response.redirectUrl) {
+                            toastr.warning(response.message);
+
+                            setTimeout(function () {
+                                window.location.href = response.redirectUrl;
+                            }, 1500);
+                        } else {
+                            toastr.error(response.message);
+                            if (response.message.includes("đã lưu")) {
+                                $thisButton.text('Đã lưu').addClass('btn-saved');
+                            } else {
+                                $thisButton.prop('disabled', false).text('Lưu');
+                            }
+                        }
+                    }
+                },
+                    error: function () {
+                        toastr.error('Lỗi: Không thể kết nối đến máy chủ.');
+                    $thisButton.prop('disabled', false).text('Lưu');
+                }
+            });
+        });
+    });
+</script>

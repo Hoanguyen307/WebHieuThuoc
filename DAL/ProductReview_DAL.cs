@@ -12,12 +12,13 @@ namespace DAL
 {
     public class ProductReview_DAL
     {
-        public List<ProductReview> ReviewGetByProduct(int productId)
+        public List<ProductReview> ReviewGetByProduct(int productId, int? rating)
         {
             try
             {
                 var param = new DynamicParameters();
                 param.Add("@ProductId", productId);
+                param.Add("@Rating", rating);
 
                 var result = SqlMapper.Query<ProductReview>(
                     Connection.getConnection(),

@@ -29,7 +29,14 @@ namespace Models
         public string PaymentMethod { get; set; }
         public string Note { get; set; }
         public string Status { get; set; }
-        //public string DiaChiChiTiet { get; set; }
+        [NotMapped]
+        public string DeliveryServiceName { get; set; }
+        [NotMapped]
+        public string DriverName { get; set; }
+        [NotMapped]
+        public string WarehouseName { get; set; }
+        [NotMapped]
+        public string CarrierName { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
         //public virtual ICollection<ThongKe> ThongKes { get; set; }
         //public virtual ICollection<Product> Products { get; set; }
@@ -42,21 +49,5 @@ namespace Models
             public string Status { get; set; }
         }
 
-        public class ShipmentHistory
-        {
-            [Key]
-            public int Id { get; set; }
-            public int OrderId { get; set; }
-            public string Status { get; set; }
-            public string TrackingNumber { get; set; }
-            public string Carrier { get; set; }
-            public string Location { get; set; }
-            public string Note { get; set; }
-            public string CreatedBy { get; set; }
-            public DateTime UpdatedDate { get; set; }
-            public bool IsCurrent { get; set; }
-            [ForeignKey("OrderId")]
-            public virtual Order Order { get; set; }
-        }
     }
 }

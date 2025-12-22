@@ -184,6 +184,16 @@ namespace WebApp.Controllers
                 return RedirectToAction("Login", "Account");
             }
             var model = new CheckoutViewModel();
+            List<CartItemModel> itemsToCheckout = null;
+            if (TempData["BuyNowItems"] != null)
+            {
+                itemsToCheckout = TempData["BuyNowItems"] as List<CartItemModel>;
+                TempData.Keep("BuyNowItems");
+            }
+            else
+            {
+                itemsToCheckout = new Cart_DAL().GetCartForCheckout(CurrentUserId);
+            }
             model.CartItems = new Cart_DAL().GetCartForCheckout(CurrentUserId);
             if (model.CartItems == null || !model.CartItems.Any())
             {
@@ -223,15 +233,29 @@ namespace WebApp.Controllers
         {
             if (CurrentUserId == 0)
                 return RedirectToAction("Login", "Account");
+            List<CartItemModel> cartItems = null;
+            bool isBuyNow = false;
+            if (TempData["BuyNowItems"] != null)
+            {
+                cartItems = TempData["BuyNowItems"] as List<CartItemModel>;
+                isBuyNow = true;
+            }
+            else
+            {
+                cartItems = new Cart_DAL().GetCartForCheckout(CurrentUserId);
+                isBuyNow = false;
+            }
 
+            if (cartItems == null || !cartItems.Any())
+            {
+                TempData["Error"] = "Không có sản phẩm để thanh toán hoặc phiên đã hết hạn.";
+                if (isBuyNow)
+                    return RedirectToAction("Index", "Home1");
+                else
+                    return RedirectToAction("Index", "Cart");
+            }
             try
             {
-                // Lấy giỏ hàng
-                var cartItems = new Cart_DAL().GetCartForCheckout(CurrentUserId);
-                if (cartItems == null || !cartItems.Any())
-                    return RedirectToAction("Index", "Cart");
-
-                // Tạo order với trạng thái Pending / Chưa thanh toán
                 var order = new Models.Order
                 {
                     OrderCode = "DH" + DateTime.Now.ToString("yyyyMMddHHmmss"),
@@ -256,20 +280,24 @@ namespace WebApp.Controllers
                 // Lưu vào DB
                 var orderDal = new Order_DAL();
                 int newOrderId = orderDal.Insert(order, orderDetails, model.SelectedVoucherId, model.UsePoints ? model.PointsToUse : 0m);
-
-                // Xóa giỏ hàng
-                new Cart_DAL().ClearCart(CurrentUserId);
+                if (!isBuyNow)
+                {
+                    new Cart_DAL().ClearCart(CurrentUserId);
+                }
+                else
+                {
+                    TempData.Remove("BuyNowItems");
+                }
 
                 if (order.PaymentMethod == "COD")
                 {
-                    // COD -> success ngay
                     ViewBag.OrderSuccess = true;
                     return View(model);
                 }
                 else
                 {
-                    // Thanh toán online -> redirect VNPAY
-                    string paymentUrl = UrlPayment(order.PaymentMethod, order.OrderCode, model.VnPayType, order.TotalAmount, order.CreatedDate.Value);
+                    decimal finalTotalAmount = orderDal.GetOrderTotalAmount(newOrderId);
+                    string paymentUrl = UrlPayment(order.PaymentMethod, order.OrderCode, model.VnPayType, finalTotalAmount, order.CreatedDate.Value);
                     return Redirect(paymentUrl);
                 }
             }
@@ -291,17 +319,23 @@ namespace WebApp.Controllers
             try
             {
                 var cartDal = new Cart_DAL();
-                var totalCartCount = cartDal.AddToCart(CurrentUserId, productId, quantity, salePrice);
+                //var totalCartCount = cartDal.AddToCart(CurrentUserId, productId, quantity, salePrice);
+                var product = new Product_DAL().SelectById(productId);
+                var buyNowItem = new CartItemModel
+                {
+                    ProductId = productId,
+                    Quantity = quantity,
+                    UnitPrice = salePrice,
+                    ProductName = product.TenThuoc,
+                    ProductImage = product.HinhAnh
+                };
 
-                if (totalCartCount > 0)
-                {
-                    return RedirectToAction("Checkout");
-                }
-                else
-                {
-                    TempData["Error"] = "Không thể mua ngay sản phẩm này.";
-                    return RedirectToAction("Index", "Home1");
-                }
+                var buyNowList = new List<CartItemModel>();
+                buyNowList.Add(buyNowItem);
+
+                TempData["BuyNowItems"] = buyNowList;
+
+                return RedirectToAction("Checkout");
             }
             catch (Exception ex)
             {

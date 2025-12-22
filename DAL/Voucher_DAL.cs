@@ -118,5 +118,76 @@ namespace DAL
                 throw;
             }
         }
+
+        public bool Voucher_IsActive(int Id, bool isActive)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@VoucherId", Id);
+                param.Add("@IsActive", isActive);
+                Connection.getConnection().Execute("sp_Voucher_IsActive", param, commandType: System.Data.CommandType.StoredProcedure);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        public int SaveVoucherForCustomer(int customerId, int voucherId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CustomerId", customerId);
+                param.Add("@VoucherId", voucherId);
+
+                return Connection.getConnection().Execute("sp_VoucherCustomer_SaveByUser",
+                    param,
+                    commandType: System.Data.CommandType.StoredProcedure);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<Voucher> Select_ActivePublicVouchers()
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                var result = SqlMapper.Query<Voucher>(Connection.getConnection(),
+                    "sp_Vouchers_GetActivePublic",
+                    param,
+                    commandType: System.Data.CommandType.StoredProcedure).ToList();
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public List<VoucherViewModel> Select_ActiveVouchersForCustomer(int customerId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@CustomerId", customerId);
+
+                var result = SqlMapper.Query<VoucherViewModel>(
+                    Connection.getConnection(),
+                    "sp_Vouchers_GetActiveForCustomer",
+                    param,
+                    commandType: System.Data.CommandType.StoredProcedure
+                ).ToList();
+
+                return result;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

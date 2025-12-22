@@ -55,6 +55,7 @@ namespace Models
 
         public string ProductName { get; set; }
         public string CustomerName { get; set; }
+        public string FullName { get; set; }
         public int CustomerId { get; set; }
 
         [Range(1, 5)]

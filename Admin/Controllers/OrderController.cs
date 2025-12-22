@@ -1,5 +1,6 @@
 ﻿using DAL;
 using Models;
+using Newtonsoft.Json;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -100,6 +101,11 @@ namespace Admin.Controllers
 
         public ActionResult ChiTietDonHang(int id)
         {
+            var products = db.Products
+                             .Select(p => new { p.ThuocId, p.TenThuoc })
+                             .ToList();
+            ViewBag.Products = JsonConvert.SerializeObject(products);
+
             var order = new Order_DAL().GetOrderDetails(id);
             if (order == null)
             {
@@ -151,11 +157,13 @@ namespace Admin.Controllers
             }
         }
         [HttpPost]
-        public JsonResult UpdateStatus(int id, string status)
+        public JsonResult UpdateStatus(int id, string status, string carrierName)
         {
             try
             {
-                var result = new Order_DAL().ToggleStatus(id, CurrentUserName, status);
+                string TenNguoiThucHien = CurrentUserName;
+               
+                var result = new Order_DAL().ToggleStatus(id, TenNguoiThucHien, status, carrierName);
                 if (result)
                 {
                     return Json(new { code = 200, msg = "Cập nhật thành công" }, JsonRequestBehavior.AllowGet);

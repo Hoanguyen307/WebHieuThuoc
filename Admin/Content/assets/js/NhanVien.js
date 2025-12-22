@@ -181,7 +181,6 @@ function SaveNhanVien() {
     });
 }
 function handleSchedule(id) {
-    debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
         return;

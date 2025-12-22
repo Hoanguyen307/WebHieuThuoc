@@ -142,7 +142,23 @@ namespace DAL
                 throw new Exception("Error inserting order with details", ex);
             }
         }
+        public decimal GetOrderTotalAmount(int orderId)
+        {
+            try
+            {
+                DynamicParameters param = new DynamicParameters();
+                param.Add("@OrderId", orderId);
 
+                return Connection.getConnection().QuerySingleOrDefault<decimal>(
+                    "SELECT TotalAmount FROM Orders WHERE Id = @OrderId",
+                    param,
+                    commandType: System.Data.CommandType.Text);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
         public bool Delete(int ID, string TenNguoiXoa)
         {
             try
@@ -159,7 +175,7 @@ namespace DAL
                 throw;
             }
         }
-        public bool ToggleStatus(int ID, string TenNguoiThucHien, string newStatus)
+        public bool ToggleStatus(int ID, string TenNguoiThucHien, string newStatus, string carrierName)
         {
             try
             {
@@ -167,6 +183,7 @@ namespace DAL
                 param.Add("@OrderId", ID);
                 param.Add("@UpdatedBy", TenNguoiThucHien);
                 param.Add("@Status", newStatus);
+                param.Add("@CarrierName", carrierName);
 
                 Connection.getConnection().Execute("sp_OrderStatus_Update", param, commandType: System.Data.CommandType.StoredProcedure);
                 return true;

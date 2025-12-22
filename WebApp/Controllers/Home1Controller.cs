@@ -88,7 +88,28 @@ namespace WebApp.Controllers
 
             return PartialView("_FlashSaleProducts", list);
         }
-
+        public ActionResult AvailableVouchersPartial()
+        {
+            try
+            {
+                int customerId = 0;
+                if (Session["Login"] != null)
+                {
+                    var kh = Session["Login"] as Models.KhachHang;
+                    if (kh != null)
+                    {
+                        customerId = kh.Id;
+                    }
+                }
+                var voucherDAL = new Voucher_DAL();
+                var availableVouchers = voucherDAL.Select_ActiveVouchersForCustomer(customerId);
+                return PartialView("_AvailableVouchersPartial", availableVouchers);
+            }
+            catch (Exception ex)
+            {
+                return PartialView("_AvailableVouchersPartial", new List<VoucherViewModel>());
+            }
+        }
 
     }
 }

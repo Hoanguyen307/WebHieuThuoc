@@ -149,8 +149,19 @@
                                 <option value="">-- Chọn voucher --</option>
                                 @foreach (var voucher in Model.Vouchers)
                                 {
-                                    <option value="@voucher.VoucherId" data-discount-value="@voucher.DiscountValue">
-                                        @voucher.Code - Giảm @voucher.DiscountValue.ToString("N0")
+                                    <option value="@voucher.VoucherCustomerId"
+                                            data-discount-type="@voucher.Percentage"
+                                            data-discount-value="@voucher.DiscountValue">
+
+                                        @voucher.Code -
+                                        @if (voucher.Percentage.Equals("Percentage", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <text>Giảm @(string.Format("{0:N0}", voucher.DiscountValue))%</text>
+                                        }
+                                        else
+                                        {
+                                            <text>Giảm @(string.Format("{0:N0}", voucher.DiscountValue))₫</text>
+                                        }
                                     </option>
                                 }
                             </select>
@@ -170,7 +181,7 @@
                             <span class="tong-tien">@Model.SubTotal.ToString("N0") ₫</span>
                         </div>
 
-                        <button id="btnPlaceOrder" type="submit" class="btn btn-success w-100 mt-3">
+                        <button id="btnPlaceOrder" type="submit" class="btn btn-danger w-100 mt-3">
                             <span class="spinner-border spinner-border-sm me-2 d-none" role="status" aria-hidden="true"></span>
                             <span class="btn-text">Đặt hàng</span>
                         </button>
@@ -351,31 +362,47 @@ $(document).on("change", "input[name='SelectedAddressId']", function () {
         }
 
         function calculateTotal() {
-            let discount = 0;
+            let totalDiscount = 0;
 
-            // Tính giảm giá từ điểm thưởng
+            const subtotal = parseInt(subtotalElem.dataset.subtotal);
+
+            const availablePoints = parseInt(document.getElementById("availablePoints").textContent) || 0;
+            const pointValue = 1;
+
             if (chkUsePoints.checked) {
-                // Tối đa số điểm có thể dùng = min(điểm hiện có, subtotal/pointValue)
                 let maxPointsUsable = Math.min(availablePoints, Math.floor(subtotal / pointValue));
                 pointsHiddenInput.value = maxPointsUsable;
-                discount += maxPointsUsable * pointValue;
+                totalDiscount += maxPointsUsable * pointValue;
             } else {
                 pointsHiddenInput.value = 0;
             }
 
-            // Tính giảm giá từ voucher
             let selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
-            if (selectedOption && selectedOption.dataset.discountValue) {
-                discount += parseInt(selectedOption.dataset.discountValue);
+
+            if (selectedOption && selectedOption.value) {
+                let discountType = selectedOption.dataset.discountType;
+                let discountValue = parseFloat(selectedOption.dataset.discountValue);
+
+                let voucherDiscount = 0;
+
+                if (discountType === 'Percentage') {
+                    voucherDiscount = (subtotal * discountValue) / 100;
+
+                } else if (discountType === 'FixedAmount') {
+                    voucherDiscount = discountValue;
+                }
+
+                totalDiscount += voucherDiscount;
             }
 
-            // Không cho vượt quá subtotal
-            if (discount > subtotal) discount = subtotal;
+            if (totalDiscount > subtotal) {
+                totalDiscount = subtotal;
+            }
 
-            let finalTotal = subtotal - discount;
+            let finalTotal = subtotal - totalDiscount;
 
-            discountElem.textContent = "-" + formatCurrency(discount);
-            totalElem.textContent = formatCurrency(finalTotal);
+            discountElem.textContent = "-" + formatCurrency(Math.round(totalDiscount));
+            totalElem.textContent = formatCurrency(Math.round(finalTotal));
         }
 
         chkUsePoints.addEventListener("change", calculateTotal);

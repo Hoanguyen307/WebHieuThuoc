@@ -207,6 +207,7 @@
     <Compile Include="Controllers\ProductCategoryController.cs" />
     <Compile Include="Controllers\ProductReviewController.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\ShippingController.cs" />
     <Compile Include="Controllers\VoucherController.cs" />
     <Compile Include="Controllers\XuatKhoController.cs" />
     <Compile Include="Global.asax.cs">
@@ -490,6 +491,7 @@
     <Content Include="Content\assets\js\Product.js" />
     <Content Include="Content\assets\js\ProductCategory.js" />
     <Content Include="Content\assets\js\QUANLY.js" />
+    <Content Include="Content\assets\js\shipping.js" />
     <Content Include="Content\assets\js\single_custom.js" />
     <Content Include="Content\assets\js\Voucher.js" />
     <Content Include="Content\assets\js\XuatKho.js" />
@@ -3801,6 +3803,7 @@
     <Content Include="Views\Order\ChiTietDonHang.cshtml" />
     <Content Include="Views\FlashSale\Index.cshtml" />
     <Content Include="Views\FlashSale\Add.cshtml" />
+    <Content Include="Views\Shipping\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

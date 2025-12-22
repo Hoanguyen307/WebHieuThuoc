@@ -130,9 +130,10 @@ function loadVoucher(page = 1) {
                         <td>${formatDate(item.EndDate, true)}</td>
                         <td>${item.Quantity ?? ''}</td>
                         <td>
-                            ${item.IsActive
-                        ? '<span class="badge bg-success">Bật</span>'
-                        : '<span class="badge bg-secondary">Tắt</span>'}
+                            <label class="switch">
+                                <input type="checkbox" class="toggle-status" data-id="${item.Id}" ${item.IsActive ? "checked" : ""}>
+                                <span class="slider round"></span>
+                            </label>
                         </td>
                         <td>
                             <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateVoucher('${item.Id}')">
@@ -150,7 +151,26 @@ function loadVoucher(page = 1) {
                 i++;
                 tbody.append(row);
             });
+            $('.toggle-status').off('change').on('change', function () {
+                const id = $(this).data('id');
+                const trangThai = $(this).is(':checked');
 
+                $.ajax({
+                    url: '/Voucher/ToggleHienThi',
+                    type: 'POST',
+                    data: { Id: id, isActive: trangThai },
+                    success: function (res) {
+                        if (res.code === 200) {
+                            toastr.success(res.msg || "Đã cập nhật trạng thái hiển thị.");
+                        } else if (res.code === 500) {
+                            toastr.error(res.msg || "Cập nhật thất bại.");
+                        }
+                    },
+                    error: function () {
+                        toastr.error("Lỗi khi cập nhật.");
+                    }
+                });
+            });
             const pageSize = 10;
             const totalCount = res.totalCount ?? res.items.length;
             const totalPages = Math.ceil(totalCount / pageSize);
