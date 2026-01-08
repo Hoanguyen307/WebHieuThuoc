@@ -13,7 +13,7 @@ namespace WebApp.Controllers
     public class ProductsController : Controller
     {
         // GET: Products
-        public ActionResult Index(int? ProductCategoryId, int? NhaCungCapId, string sortOrder = "newest", int pageSize = 40)
+        public ActionResult Index(int? ProductCategoryId, int? NhaCungCapId, string sortOrder = "newest", bool ThuocKeDon = false, int pageSize = 40)
         {
             var filter = new ProductFilter
             {
@@ -21,7 +21,7 @@ namespace WebApp.Controllers
                 NhaCungCapId = NhaCungCapId
             };
 
-            var product = new Product_DAL().Select_Published(filter, sortOrder).Take(pageSize).ToList();
+            var product = new Product_DAL().Select_Published(filter, sortOrder, ThuocKeDon).Take(pageSize).ToList();
 
             var category = new Category_DAL().Select_Category_All();
             ViewBag.Categories = category;
@@ -35,6 +35,7 @@ namespace WebApp.Controllers
             ViewBag.SelectedBrandId = NhaCungCapId;
             ViewBag.SortOrder = sortOrder;
             ViewBag.SelectedCategoryId = ProductCategoryId;
+            ViewBag.ThuocKeDon = ThuocKeDon;
             return View(product);
         }
         public ActionResult Details(int? id, int? rating = null)
@@ -44,7 +45,7 @@ namespace WebApp.Controllers
             {
                 return HttpNotFound();
             }
-            var relatedProducts = new Product_DAL().Select_Published(new ProductFilter { ProductCategoryId = product.DanhMucId }, null)
+            var relatedProducts = new Product_DAL().Select_Published(new ProductFilter { ProductCategoryId = product.DanhMucId }, null, product.ThuocKeDon)
                                      .Where(p => p.ThuocId != product.ThuocId)
                                      .Take(4)
                                      .ToList();

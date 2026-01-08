@@ -140,8 +140,9 @@
     </div>
     <div id="mini-cart-overlay" class="mini-cart-overlay"></div>
 
-    @Html.Action("MainMenu", "Home1")
-
+    <div class="header-nav-wrapper">
+        @Html.Action("MainMenu", "Home1")
+    </div>
     <div class="container mt-3">
         @RenderBody()
     </div>
@@ -465,17 +466,13 @@
         function addhieuThuocProduct(product) {
             if (!product || !product.TenThuoc) return;
 
-            const imageUrl = product.HinhAnh && product.HinhAnh.trim() !== ''
-                ? product.HinhAnh
-                : 'https://via.placeholder.com/60x60?text=No+Image';
-
             const price = product.GiaBan || 0;
             const ThuocId = product.ThuocId || '#';
 
             const productHtml = `
                 <div class="hieuThuoc-message bot">
                     <div class="hieuThuoc-product-suggestion" onclick="window.location.href='/Products/Details/${ThuocId}'">
-                        <img src="${imageUrl}" alt="${product.TenThuoc}" class="hieuThuoc-product-image" onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
+                        <img src="${product.HinhAnh}" alt="${product.TenThuoc}" class="hieuThuoc-product-image" onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
                         <div class="hieuThuoc-product-info">
                             <h6>${product.TenThuoc}</h6>
                             <div class="hieuThuoc-product-price">${Number(price).toLocaleString('vi-VN')} đ</div>

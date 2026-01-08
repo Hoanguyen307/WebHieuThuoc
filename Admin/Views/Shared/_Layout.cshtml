@@ -26,7 +26,11 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <style>
         :root {
             --primary-color: #0d6efd;
@@ -122,14 +126,57 @@
             gap: 10px;
         }
 
+            #layoutSidenav_nav .nav-link i {
+                width: 24px;
+                text-align: center;
+                font-size: 1.1rem;
+                flex-shrink: 0;
+            }
+
+            #layoutSidenav_nav .nav-link span,
+            #layoutSidenav_nav .nav-link {
+                display: flex;
+                align-items: center;
+            }
+
+        .nav-sm .nav-link {
+            padding-left: 3.5rem !important;
+        }
+
+        .menu-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.5rem 1.25rem 0.5rem !important;
+        }
+
         .sidebar-collapsed #layoutSidenav_nav {
             width: var(--sidebar-collapsed-width);
         }
 
             .sidebar-collapsed #layoutSidenav_nav span,
-            .sidebar-collapsed #layoutSidenav_nav .menu-title {
+            .sidebar-collapsed #layoutSidenav_nav .menu-title,
+            .sidebar-collapsed #layoutSidenav_nav .nav-link::after,
+            .sidebar-collapsed #layoutSidenav_nav .menu-text {
                 display: none !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
             }
+
+            .sidebar-collapsed #layoutSidenav_nav .nav-link {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                gap: 0 !important;
+            }
+
+                .sidebar-collapsed #layoutSidenav_nav .nav-link i {
+                    margin: 0 !important;
+                }
+
+        .sidebar-collapsed #layoutSidenav_content {
+            transition: all 0.3s ease;
+        }
 
         .menu-title {
             padding: 1rem 1.5rem 0.5rem;
@@ -148,15 +195,6 @@
             font-size: 0.85rem;
         }
 
-        .sidebar-collapsed #layoutSidenav_nav {
-            width: var(--sidebar-collapsed-width);
-        }
-
-            .sidebar-collapsed #layoutSidenav_nav span,
-            .sidebar-collapsed #layoutSidenav_nav .menu-title,
-            .sidebar-collapsed #layoutSidenav_nav .collapse {
-                display: none !important;
-            }
 
         @@media (max-width: 992px) {
             #layoutSidenav_nav {
@@ -178,11 +216,11 @@
         <header id="page-topbar">
             <div class="navbar-header">
                 <div class="d-flex align-items-center">
-                    <button class="btn btn-link btn-sm me-3 d-md-none" id="sidebarToggle" href="#!">
+                    <button class="btn btn-link text-dark fs-4 px-3 shadow-none" id="sidebarToggleInternal">
                         <i class="fas fa-bars"></i>
                     </button>
                     <a class="navbar-brand fw-bold fs-4 text-success" href="@Url.Action("Index", "Admin")">
-                        <i class="fas fa-prescription-bottle-alt me-2"></i>QUẢN LÝ HIỆU THUỐC
+                        <i class="fa fa-prescription-bottle-alt me-2"></i>QUẢN LÝ HIỆU THUỐC
                     </a>
                 </div>
 
@@ -263,33 +301,13 @@
 
     <script src="~/Content/assets/js/pages/dashboard-ecommerce.init.js"></script>
     <script>
-        // JavaScript logic goes here, after jQuery is loaded
-        document.addEventListener("DOMContentLoaded", function () {
-            const collapseToggles = document.querySelectorAll('[data-bs-toggle="collapse"]');
-
-            collapseToggles.forEach(toggle => {
-                const targetId = toggle.getAttribute("href");
-                const target = document.querySelector(targetId);
-
-                if (!target) return;
-
-                const collapseInstance = new bootstrap.Collapse(target, {
-                    toggle: false
-                });
-
-                toggle.addEventListener("click", function (e) {
-                    e.preventDefault();
-
-                    if (target.classList.contains("show")) {
-                        collapseInstance.hide();
-                    } else {
-                        collapseInstance.show();
-                    }
-                });
+        $(document).ready(function () {
+            $('#sidebarToggleInternal').on('click', function () {
+                $('body').toggleClass('sidebar-collapsed');
             });
         });
 
-        let lastOrderIdGlobal = 0; // lưu ID đơn hàng mới nhất đã biết
+        let lastOrderIdGlobal = 0;
 
         function initLastOrderId() {
             $.ajax({
@@ -314,10 +332,10 @@
                     if (res.hasNew) {
                         const viewedOrderId = localStorage.getItem('lastViewedOrderId');
                         if (viewedOrderId && parseInt(viewedOrderId) >= res.newestOrderId) {
-                            return; // đã xem rồi
+                            return;
                         }
 
-                        lastOrderIdGlobal = res.newestOrderId; // cập nhật ID mới nhất
+                        lastOrderIdGlobal = res.newestOrderId;
 
                         Swal.fire({
                             title: 'Có đơn hàng mới!',

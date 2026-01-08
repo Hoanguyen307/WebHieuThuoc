@@ -109,7 +109,6 @@ function loadBaiViet(page = 1) {
                 <tr>
             <td>${i}</td>
             <td>${item.TieuDe}</td>
-            <td>${item.NoiDung}</td>
             <td id="status_${item.Id}" style="color: ${item.TrangThai ? 'green' : 'red'};">${item.TrangThai ? 'Hiển thị' : 'Ẩn'}</td>
             <td>
                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateBaiViet('${item.Id}'); event.stopPropagation();">
@@ -155,10 +154,20 @@ $(document).ready(function () {
 });
 
 function SaveBaiViet() {
+    if ($('#NoiDung').length > 0) {
+        var summernoteContent = $('#NoiDung').summernote('code');
+        $('#NoiDung').val(summernoteContent);
+    }
+    $('.text-danger').text('');
+    $('.form-control').removeClass('input-validation-error');
+
     var form = $('#form-addBaiViet')[0];
     var formData = new FormData(form);
-    var id = $('#form-addBaiViet #Id').val();
 
+    var id = $('#form-addBaiViet #Id').val();
+    if (!id || id === "") {
+        formData.set("Id", "0");
+    }
     var url = (id != null && parseInt(id) > 0) ? '/BaiViet/Update' : '/BaiViet/Add';
 
     $.ajax({
@@ -175,10 +184,22 @@ function SaveBaiViet() {
                 //    location.reload(); 
                 //}, 1500);
                 loadBaiViet(1);
-            } else if (typeof res === 'string') {
-                $('#modalBaiViet .modal-body').html(res);
-            } else {
-                alert(res.msg);
+            } else if (res.code === 400) {
+                if (res.errors && res.errors.length > 0) {
+                    $.each(res.errors, function (index, error) {
+                        let errorSpan = $(`span[data-valmsg-for="${error.key}"]`);
+                        let inputField = $(`#${error.key}`);
+
+                        if (errorSpan.length > 0) {
+                            errorSpan.text(error.msg);
+                        }
+                        if (inputField.length > 0) {
+                            inputField.addClass('input-validation-error');
+                        }
+                    });
+                } else {
+                    alert(res.msg);
+                }
             }
         }
     });

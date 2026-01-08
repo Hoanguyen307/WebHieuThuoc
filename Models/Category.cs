@@ -20,8 +20,7 @@ namespace Models
         public string Description { get; set; }
         public string Image { get; set; }
         public bool IsActive { get; set; }
-        public int DisplayOrder { get; set; }
-        public int MenuId { get; set; }
+        public int? MenuId { get; set; }
         public ICollection<Post> Posts { get; set; }
         public List<ProductCategory> ProductCategories { get; set; }
         [ForeignKey("MenuId")]

@@ -18,7 +18,6 @@ function LoadAddForm() {
 }
 
 function handleFormUpdateNguoiDung(id) {
-    debugger
     if (!id || id <= 0) {
         alert('ID không hợp lệ!');
         return;
@@ -60,7 +59,6 @@ function SaveNguoiDung() {
     var email = $('#Email').val().trim();
     var phone = $('#Phone').val().trim();
     
-    debugger
     var url = (id != null && parseInt(id) > 0) ? '/Account/Edit' : '/Account/Add';
     var data = {
         Id: id,

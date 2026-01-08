@@ -18,6 +18,9 @@ namespace Models
         public string DonViTinh { get; set; } = "";
         public string QuyCach { get; set; } = "";
         public string HinhAnh { get; set; } = "";
+        public string ThanhPhan { get; set; } = "";
+        public string CongDung { get; set; } = "";
+        public string CachSuDung { get; set; } = "";
         [NotMapped]
         public string ProductCategoryName { get; set; }
         [NotMapped]
@@ -27,6 +30,7 @@ namespace Models
         public decimal? GiaGoc { get; set; }
         public decimal? GiaBan { get; set; }
         public bool KichHoat { get; set; }
+        public bool ThuocKeDon { get; set; }
         public int SoLuong { get; set; }
 
         public virtual ProductCategory DanhMuc { get; set; }

@@ -314,54 +314,11 @@ body {
     color: #28a745 !important;
 }
 
-.main-menu-container {
-    background-color: #28a745;
-    border-bottom: 1px solid #e0e0e0;
-    padding: 10px 0;
-}
-
-
-.main-menu {
-    list-style: none;
-    padding: 0;
+.header-nav-wrapper {
+    background-color: #ffffff;
+    border-bottom: 1px solid #f0f0f0;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.menu-item {
-    position: relative;
-    padding: 0 15px;
-}
-
-    .menu-item a {
-        text-decoration: none;
-        color: #333;
-        font-weight: 500;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        padding: 5px 0;
-        white-space: nowrap;
-    }
-
-        .menu-item a:hover {
-            color: #28a745;
-        }
-
-.dropdown-menu-custom {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background-color: #fff;
-    border: 1px solid #e0e0e0;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    z-index: 100;
-    padding: 10px 0;
-    min-width: 250px;
+    padding: 0;
 }
 
 .menu-item:hover > .dropdown-menu-custom {
@@ -386,8 +343,11 @@ body {
         }
 
 .footer-custom {
-    background-color: #28a745;
-    color: #fff;
+    background: linear-gradient(#1987547a, #4caf509c), url(https://cdnv2.tgdd.vn/webmwg/production-fe/ankhang/public/static/images/bg_footer.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    color: white;
+    position: relative;
 }
 
     .footer-custom h5, .footer-custom h3 {

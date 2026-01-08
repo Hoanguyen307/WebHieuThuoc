@@ -1,4 +1,4 @@
-﻿// ====== Config ======
+﻿
 const STATUS_TEXT = {
     0: "Chờ xử lý",
     1: "Đã bàn giao cho đơn vị vận chuyển",
@@ -24,7 +24,6 @@ function badge(status) {
 }
 function fmtDate(dt) {
     if (!dt) return "";
-    // dt có thể đã là chuỗi ISO, hoặc kiểu /Date(x)/
     try {
         if (typeof dt === "string" && dt.indexOf("/Date(") === 0) {
             const m = /\/Date\((\d+)\)\//.exec(dt);
@@ -142,7 +141,6 @@ function fillAssignDS(selectedId) {
     });
 }
 
-
 function onOpenAssign(e) {
     const $tr = $(e.currentTarget).closest("tr");
 
@@ -151,38 +149,58 @@ function onOpenAssign(e) {
     const driverId = $tr.data("driver");
     const whId = $tr.data("wh");
 
+    console.log("--- Bắt đầu onOpenAssign ---");
+    console.log("Thông tin dòng chọn:", { shippingId, dsId, driverId, whId });
+
     $("#assign-shippingId").val(shippingId);
 
     fillAssignDS(dsId);
 
     if (dsId) {
+        console.log("Đang gọi lấy tài xế cho dsId:", dsId);
         $.getJSON("/Shipping/GetDrivers", { deliveryServiceId: dsId }, res => {
+            console.log("Kết quả GetDrivers từ Server:", res); // Kiểm tra res.code và res.data ở đây
+
             if (res.code === 200) {
                 $("#assign-driver").html(`<option value="">-- Chọn tài xế --</option>`);
-                res.data.forEach(d => {
-                    $("#assign-driver").append(`<option value="${d.Id}">${d.DriverName} - ${d.Phone}</option>`);
-                });
 
-                if (driverId)
-                    $("#assign-driver").val(driverId);
+                if (res.data && res.data.length > 0) {
+                    res.data.forEach(d => {
+                        console.log("Dữ liệu tài xế chi tiết:", d); // Kiểm tra xem Id và DriverName có viết hoa chữ cái đầu không
+                        $("#assign-driver").append(`<option value="${d.Id}">${d.DriverName} - ${d.Phone}</option>`);
+                    });
+
+                    if (driverId) {
+                        console.log("Thực hiện gán driverId hiện tại vào dropdown:", driverId);
+                        $("#assign-driver").val(driverId);
+                    }
+                } else {
+                    console.warn("Mảng res.data rỗng - Không có tài xế cho dịch vụ này.");
+                }
+            } else {
+                console.error("Lỗi từ Server khi lấy tài xế:", res.msg);
             }
+        }).fail((jqXHR, textStatus, errorThrown) => {
+            console.error("Lỗi kết nối API GetDrivers:", textStatus, errorThrown);
         });
     }
 
-    if (whId)
-        $("#assign-warehouse").val(whId);
+    if (whId) $("#assign-warehouse").val(whId);
 
     const oc = new bootstrap.Offcanvas("#offAssign");
     oc.show();
 }
 
-
 $("#assign-ds").on("change", function () {
     const dsId = $(this).val();
+    console.log("--- Thay đổi DVVC trên Offcanvas ---");
+    console.log("dsId mới chọn:", dsId);
+
     $("#assign-driver").html(`<option value="">-- Chọn tài xế --</option>`);
     if (!dsId) return;
 
     $.getJSON("/Shipping/GetDrivers", { deliveryServiceId: dsId }, res => {
+        console.log("Kết quả nạp lại tài xế:", res);
         if (res.code === 200) {
             (res.data || []).forEach(d => {
                 $("#assign-driver").append(`<option value="${d.Id}">${d.DriverName} - ${d.Phone}</option>`);

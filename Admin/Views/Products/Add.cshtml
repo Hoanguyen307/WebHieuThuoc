@@ -15,30 +15,40 @@
         </div>
         <div class="form-group row">
             <label>Mô tả</label>
-            <input type="text" class="form-control" id="QuyCach" name="QuyCach" value="@Model.QuyCach" placeholder="Mô tả" autocomplete="off" />
+            <input type="text" class="form-control" id="QuyCach" name="QuyCach" placeholder="Mô tả" value="@Model.QuyCach" />
         </div>
         <div class="form-group row">
-            <label>Số lượng</label>
-            <input type="number" class="form-control" id="SoLuong" name="SoLuong" value="@Model.SoLuong" min="1" step="1" />
+            <label>Công dụng</label>
+            <input type="text" class="form-control" id="CongDung" name="CongDung" value="@Model.CongDung" />
         </div>
         <div class="form-group row">
-            <label>Đơn vị tính</label>
-            <input type="text" class="form-control" id="DonViTinh" name="DonViTinh" value="@Model.DonViTinh" />
+            <label>Thành phần</label>
+            <input type="text" class="form-control" id="ThanhPhan" name="ThanhPhan" value="@Model.ThanhPhan" />
         </div>
         <div class="form-group row">
-            <label>Giá gốc</label>
-            <input type="text" class="form-control" id="GiaGoc" name="GiaGoc" value="@Model.GiaGoc" autocomplete="off" />
+            <label>Cách sử dụng</label>
+            <textarea class="form-control" id="CachSuDung" name="CachSuDung">@Model.CachSuDung</textarea>
         </div>
         <div class="form-group row">
-            <label>Giá bán</label>
-            <input type="text" class="form-control" id="GiaBan" name="GiaBan" value="@Model.GiaBan" autocomplete="off" />
+            <div class="col-4">
+                <label>Đơn vị tính</label>
+                <input type="text" class="form-control" id="DonViTinh" name="DonViTinh" value="@Model.DonViTinh" />
+            </div>
+            <div class="col-4">
+                <label>Giá gốc</label>
+                <input type="text" class="form-control" id="GiaGoc" name="GiaGoc" value="@Model.GiaGoc" autocomplete="off" />
+            </div>
+            <div class="col-4">
+                <label>Giá bán</label>
+                <input type="text" class="form-control" id="GiaBan" name="GiaBan" value="@Model.GiaBan" autocomplete="off" />
+            </div>
         </div>
         <div class="form-group row">
             <label>Danh mục</label>
             @Html.DropDownListFor(m => m.DanhMucId, (SelectList)ViewBag.ProductCategories, "-- Chọn danh mục --", new { @class = "form-control" })
         </div>
         <div class="form-group row">
-            <label>Thương hiệu</label>
+            <label>Nhà cung cấp</label>
             @Html.DropDownListFor(m => m.NhaCungCapId, (SelectList)ViewBag.NhaCungCaps, "-- Chọn nhà cung cấp --", new { @class = "form-control" })
         </div>
         <div class="form-group row">
@@ -61,6 +71,13 @@
                     <label class="form-check-label" for="KichHoat">Hiển thị</label>
                 </div>
             </div>
+            <div class="col-6">
+                <div class="form-check">
+                    <input type="hidden" name="ThuocKeDon" value="false" />
+                    <input type="checkbox" class="form-check-input" id="ThuocKeDon" name="ThuocKeDon" value="true" @(Model.ThuocKeDon ? "checked" : "") />
+                    <label class="form-check-label" for="ThuocKeDon">Thuốc kê đơn</label>
+                </div>
+            </div>
         </div>
     </div>
     <div class="modal-footer">
@@ -69,3 +86,26 @@
     </div>
 </form>
 
+<script>
+    $(document).ready(function () {
+        $('#CachSuDung').summernote({
+            placeholder: 'Nhập hướng dẫn sử dụng chi tiết tại đây...',
+            tabsize: 2,
+            height: 200,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture']],
+                ['view', ['fullscreen', 'codeview']]
+            ],
+            callbacks: {
+                onChange: function (contents, $editable) {
+                    $('#CachSuDung').val(contents);
+                }
+            }
+        });
+    });
+</script>

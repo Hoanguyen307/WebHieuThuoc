@@ -10,6 +10,23 @@
     @*<input type="hidden" id="Id" value=" @Model.Id" />*@
     <div class="modal-body" style="color:black">
         <div class="form-group row">
+            <label>Tên menu</label>
+            <select class="form-control" id="MenuId" name="MenuId">
+                <option value="">-- Chọn Menu cha --</option>
+                @if (ViewBag.Menus != null)
+                {
+                    foreach (var menu in (IEnumerable<Models.Menu>)ViewBag.Menus)
+                    {
+                        bool isSelected = Model != null && Model.MenuId == menu.Id;
+
+                        <option value="@menu.Id" @(isSelected ? "selected='selected'" : "")>
+                            @menu.MenuName
+                        </option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="form-group row">
             <label>Tên Danh Mục</label>
             <input type="text" class="form-control" id="Name" name="Name" placeholder="Tên danh mục" value="@Model.Name" autocomplete="off" />
         </div>
@@ -33,11 +50,6 @@
                 <input type="hidden" name="Image" value="@Model.Image" />
             }
         </div>*@
-        <div class="form-group row">
-            <label>Thứ tự</label>
-            <input type="number" class="form-control" id="DisplayOrder" name="DisplayOrder" value="@Model.DisplayOrder" placeholder="Thứ tự" min="1"
-                   step="1" />
-        </div>
         <div class="form-group row">
             <div class="form-check">
                 <input type="hidden" name="IsActive" value="false" />

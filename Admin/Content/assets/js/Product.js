@@ -187,11 +187,17 @@ function loadData(page = 1) {
 }
 
 function SaveProduct() {
+    if ($('#CachSuDung').length > 0) {
+        var summernoteContent = $('#CachSuDung').summernote('code');
+        $('#CachSuDung').val(summernoteContent);
+    }
     var form = $('#form-addProduct')[0];
     var formData = new FormData(form);
     var id = $('#ThuocId').val();
     formData.delete("KichHoat");
     formData.append("KichHoat", $('#KichHoat').is(':checked'));
+    formData.delete("ThuocKeDon");
+    formData.append("ThuocKeDon", $('#ThuocKeDon').is(':checked'));
 
     var url = (id != null && parseInt(id) > 0) ? '/Products/Update' : '/Products/Add';
     $.ajax({

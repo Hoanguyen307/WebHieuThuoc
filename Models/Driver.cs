@@ -14,7 +14,6 @@ namespace Models
         public string Phone { get; set; }
         public bool IsActive { get; set; }
 
-        // Optional: navigation (nếu bạn muốn)
         public DeliveryService DeliveryService { get; set; }
     }
 }

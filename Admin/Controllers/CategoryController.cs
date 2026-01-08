@@ -1,5 +1,6 @@
 ﻿using DAL;
 using Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,13 +16,19 @@ namespace Admin.Controllers
         private DBConnect db = new DBConnect();
         public ActionResult Index()
         {
-            List<Category> category = new Category_DAL().Select_Category_All();
-            return View(category);
+            return View();
         }
-        public ActionResult GetDanhSachDanhMuc()
+        public ActionResult GetDanhSachDanhMuc(int page = 1, int pageSize = 10)
         {
             var categories = new Category_DAL().Select_Category_All();
-            return PartialView("Index", categories);
+            var pagedList = categories.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+            return Json(new
+            {
+                items = pagedList.ToList(),
+                totalCount = pagedList.TotalItemCount,
+                currentPage = pagedList.PageNumber,
+                pageSize = pagedList.PageSize
+            }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult Add(int? id)
@@ -32,6 +39,7 @@ namespace Admin.Controllers
                 var danhmuc = db.Categories.Find();
                 return PartialView(danhmuc);
             }
+            ViewBag.Menus = new Category_DAL().Select_Menu_All();
             return PartialView("Add", category);
         }
 
@@ -75,6 +83,7 @@ namespace Admin.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.Menus = new Category_DAL().Select_Menu_All();
 
 
             return PartialView("Add", lstmodel);

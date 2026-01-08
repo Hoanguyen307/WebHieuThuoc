@@ -1,4 +1,42 @@
-﻿
+﻿.custom-tabs {
+	border-bottom: 1px solid #dee2e6;
+	padding-bottom: 0;
+}
+
+	.custom-tabs .nav-item {
+		margin-right: 20px;
+	}
+
+	.custom-tabs .nav-link {
+		border: none;
+		background: none;
+		color: #495057;
+		font-weight: 500;
+		padding: 10px 0;
+		border-radius: 0;
+		position: relative;
+	}
+
+		.custom-tabs .nav-link.active {
+			background: none !important;
+			color: #00a651 !important;
+		}
+
+			.custom-tabs .nav-link.active::after {
+				content: "";
+				position: absolute;
+				bottom: -1px;
+				left: 0;
+				width: 100%;
+				height: 3px;
+				background-color: #00a651;
+			}
+
+.prescription-warning {
+	color: #dc3545;
+	font-weight: bold;
+	font-size: 0.9rem;
+}
 
 .product-list-page {
 	max-width: 1200px;
@@ -211,8 +249,8 @@
 }
 
 	.filter-section ul li a:hover {
-		background-color: #ced4da;
-		color: #28a745;
+		background-color: #bdedc9;
+		color: #28a745 !important;
 	}
 
 	.filter-section ul li a.active {

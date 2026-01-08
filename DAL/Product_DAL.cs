@@ -59,11 +59,14 @@ namespace DAL
                 param.Add("@DonViTinh", obj.DonViTinh);
                 param.Add("@QuyCach", obj.QuyCach);
                 param.Add("@HoatChat", obj.HoatChat);
+                param.Add("@CachSuDung", obj.CachSuDung);
+                param.Add("@CongDung", obj.CongDung);
+                param.Add("@ThanhPhan", obj.ThanhPhan);
                 param.Add("@GiaGoc", obj.GiaGoc);
                 param.Add("@GiaBan", obj.GiaBan);
                 param.Add("@HinhAnh", obj.HinhAnh);
                 param.Add("@KichHoat", obj.KichHoat);
-                param.Add("@SoLuong", obj.SoLuong);
+                param.Add("@ThuocKeDon", obj.ThuocKeDon);
                 param.Add("@NhaCungCapId", obj.NhaCungCapId);
                 param.Add("@CreatedBy", obj.CreatedBy);
                 return Connection.getConnection().Execute("sp_Product_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
@@ -84,11 +87,14 @@ namespace DAL
                 param.Add("@DonViTinh", obj.DonViTinh);
                 param.Add("@QuyCach", obj.QuyCach);
                 param.Add("@HoatChat", obj.HoatChat);
+                param.Add("@CachSuDung", obj.CachSuDung);
+                param.Add("@CongDung", obj.CongDung);
+                param.Add("@ThanhPhan", obj.ThanhPhan);
                 param.Add("@GiaGoc", obj.GiaGoc);
                 param.Add("@GiaBan", obj.GiaBan);
                 param.Add("@HinhAnh", obj.HinhAnh);
                 param.Add("@KichHoat", obj.KichHoat);
-                param.Add("@SoLuong", obj.SoLuong);
+                param.Add("@ThuocKeDon", obj.ThuocKeDon);
                 param.Add("@NhaCungCapId", obj.NhaCungCapId);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
                 return Connection.getConnection().Execute("sp_Product_Update", param, commandType: System.Data.CommandType.StoredProcedure);
@@ -132,13 +138,14 @@ namespace DAL
             }
         }
 
-        public List<Product> Select_Published(ProductFilter filter, string SortOrder)
+        public List<Product> Select_Published(ProductFilter filter, string SortOrder, bool ThuocKeDon)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@ProductCategoryId", filter.ProductCategoryId);
                 param.Add("@SortOrder", SortOrder);
+                param.Add("@ThuocKeDon", ThuocKeDon);
 
                 var result = SqlMapper.Query<Product>(Connection.getConnection(), "sp_Product_GetPublished",
                                param, commandType: System.Data.CommandType.StoredProcedure).ToList();
@@ -177,11 +184,10 @@ namespace DAL
             }
             catch (Exception)
             {
-                // Xử lý lỗi
                 return new List<Product>();
             }
         }
-        public List<Product> Select_GetLatest(int limit = 8)
+        public List<Product> Select_GetLatest(int limit = 10)
         {
             try
             {
@@ -193,7 +199,6 @@ namespace DAL
             }
             catch (Exception)
             {
-                // Xử lý lỗi
                 return new List<Product>();
             }
         }

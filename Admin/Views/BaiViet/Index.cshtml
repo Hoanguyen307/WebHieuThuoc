@@ -6,6 +6,12 @@
 }
 @section Styles {
     <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+    <style>
+
+        #modalBaiViet {
+            z-index: 10003 !important;
+        }
+    </style>
 }
 <div class="container-wrapper" style=" display: flex; flex-direction: column;">
     <input type="hidden" id="Id" name="Id" />
@@ -58,7 +64,6 @@
                     <tr>
                         <th>STT</th>
                         <th>Tiêu đề</th>
-                        <th>Nội dung</th>
                         <th>Trạng thái</th>
                         <th>Hành động</th>
                     </tr>

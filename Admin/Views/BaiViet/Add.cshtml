@@ -4,18 +4,43 @@
     bool isEdit = Model.Id > 0;
     string actionUrl = isEdit ? Url.Action("Update", "BaiViet") : Url.Action("Add", "BaiViet");
 }
+<style>
+    .text-danger {
+        color: #d9534f;
+        display: block;
+        margin-top: 5px;
+    }
 
+    .input-validation-error {
+        border: 1px solid #d9534f !important;
+    }
+</style>
 <form id="form-addBaiViet" autocomplete="off" enctype="multipart/form-data">
     @Html.HiddenFor(m => m.Id)
     @*<input type="hidden" id="Id" value=" @Model.Id" />*@
     <div class="modal-body" style="color:black">
         <div class="form-group row">
+            <label>Danh mục bài viết</label>
+            <select class="form-control" id="LoaiDanhMuc" name="LoaiDanhMuc">
+                <option value="">-- Chọn danh mục --</option>
+                <option value="Góc review" @(Model.LoaiDanhMuc == "Góc review" ? "selected" : "")>Góc review</option>
+                <option value="Cách chăm sóc da" @(Model.LoaiDanhMuc == "Cách chăm sóc da" ? "selected" : "")>Cách chăm sóc da</option>
+                <option value="Xu hướng trang điểm" @(Model.LoaiDanhMuc == "Xu hướng trang điểm" ? "selected" : "")>Xu hướng trang điểm</option>
+                <option value="Bí quyết khoẻ đẹp" @(Model.LoaiDanhMuc == "Bí quyết khoẻ đẹp" ? "selected" : "")>Bí quyết khoẻ đẹp</option>
+                <option value="Sự kiện" @(Model.LoaiDanhMuc == "Sự kiện" ? "selected" : "")>Sự kiện</option>
+                <option value="Tin tức" @(Model.LoaiDanhMuc == "Tin tức" ? "selected" : "")>Tin tức</option>
+            </select>
+            @Html.ValidationMessageFor(m => m.LoaiDanhMuc, "", new { @class = "text-danger small" })
+        </div>
+        <div class="form-group row">
             <label>Tiêu đề</label>
             <input type="text" class="form-control" id="TieuDe" name="TieuDe" placeholder="Tiêu đề" value="@Model.TieuDe" autocomplete="off" />
+            @Html.ValidationMessageFor(m => m.TieuDe, "", new { @class = "text-danger small" })
         </div>
         <div class="form-group row">
             <label>Nội dung</label>
-            <input type="text" class="form-control" id="NoiDung" name="NoiDung" value="@Model.NoiDung" placeholder="Nội dung" />
+            <textarea class="form-control" id="NoiDung" name="NoiDung" rows="10" placeholder="Nhập nội dung bài viết...">@Model.NoiDung</textarea>
+            @Html.ValidationMessageFor(m => m.NoiDung, "", new { @class = "text-danger small" })
         </div>
         <div class="form-group row">
             <label>Ảnh</label>
@@ -35,4 +60,26 @@
         <button type="button" onclick="SaveBaiViet()" class="btn btn-primary"> <i class="fas fa-save"></i> Lưu</button>
     </div>
 </form>
-
+<script>
+    $(document).ready(function () {
+        $('#NoiDung').summernote({
+            placeholder: 'Nhập nội dung bài viết chi tiết tại đây...',
+            tabsize: 2,
+            height: 400,
+            toolbar: [
+                ['style', ['style']],
+                ['font', ['bold', 'underline', 'clear']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['table', ['table']],
+                ['insert', ['link', 'picture', 'video']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ],
+            callbacks: {
+                onChange: function (contents, $editable) {
+                    $('#NoiDung').val(contents);
+                }
+            }
+        });
+    });
+</script>

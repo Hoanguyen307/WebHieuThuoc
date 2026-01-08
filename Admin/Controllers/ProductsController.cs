@@ -1,6 +1,7 @@
 ﻿using DAL;
 using Models;
 using OfficeOpenXml;
+using OfficeOpenXml.Drawing;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -11,14 +12,26 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using static Models.Product;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using System.Configuration;
 
 namespace Admin.Controllers
 {
     /*[Authorize(Roles = "Admin, Employee")]*/
     public class ProductsController : Controller
     {
-        private DBConnect db = new DBConnect();
-
+        private DBConnect db = new DBConnect(); 
+        private readonly Cloudinary _cloudinary;
+        public ProductsController()
+        {
+            var account = new Account(
+                ConfigurationManager.AppSettings["Cloudinary_CloudName"],
+                ConfigurationManager.AppSettings["Cloudinary_ApiKey"],
+                ConfigurationManager.AppSettings["Cloudinary_ApiSecret"]
+            );
+            _cloudinary = new Cloudinary(account);
+        }
         public ActionResult Index(string searchString, decimal? MinPrice, decimal? MaxPrice, int? ProductCategoryId, int? NhaCungCapId, int? Month, int? Year)
         {
             var currentYear = DateTime.Now.Year;
@@ -96,17 +109,14 @@ namespace Admin.Controllers
             return PartialView("Add", product);
         }
         [HttpPost]
+        [ValidateInput(false)]
         public JsonResult Add(Product model, HttpPostedFileBase ImageFile)
         {
             try
             {
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    string fileName = Path.GetFileName(ImageFile.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Uploads/Product/"), fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    ImageFile.SaveAs(path);
-                    model.HinhAnh = "/Uploads/Product/" + fileName;
+                    model.HinhAnh = UploadFileToCloud(ImageFile);
                 }
 
                 model.CreatedDate = DateTime.Now;
@@ -144,7 +154,9 @@ namespace Admin.Controllers
 
             return PartialView("Add", lstmodel);
         }
+
         [HttpPost]
+        [ValidateInput(false)]
         public JsonResult Update(Product model, HttpPostedFileBase ImageFile)
         {
             try
@@ -154,12 +166,7 @@ namespace Admin.Controllers
 
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    string fileName = Path.GetFileName(ImageFile.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Uploads/Product/"), fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    ImageFile.SaveAs(path);
-
-                    model.HinhAnh = "/Uploads/Product/" + fileName;
+                    model.HinhAnh = UploadFileToCloud(ImageFile);
                 }
 
                 var result = new Product_DAL().Update(model);
@@ -215,83 +222,55 @@ namespace Admin.Controllers
         {
             if (excelFile == null || excelFile.ContentLength == 0)
                 return RedirectToAction("Index");
-
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var imageFolder = Server.MapPath("~/Uploads/Product/");
-            if (!Directory.Exists(imageFolder))
-            {
-                Directory.CreateDirectory(imageFolder);
-            }
+            
 
             using (var package = new ExcelPackage(excelFile.InputStream))
             {
                 var worksheet = package.Workbook.Worksheets[0];
                 int rowCount = worksheet.Dimension.Rows;
+                var drawings = worksheet.Drawings;
+                var username = User?.Identity?.Name ?? "Unknown";
 
                 for (int row = 2; row <= rowCount; row++)
                 {
-                    var categoryIdStr = worksheet.Cells[row, 1].Text?.Trim(); 
-                    var supplierIdStr = worksheet.Cells[row, 2].Text?.Trim(); 
                     var name = worksheet.Cells[row, 3].Text?.Trim();
-                    var hoatChat = worksheet.Cells[row, 4].Text?.Trim();
-                    var donViTinh = worksheet.Cells[row, 5].Text?.Trim();
-                    var quyCach = worksheet.Cells[row, 6].Text?.Trim();
-                    var priceStr = worksheet.Cells[row, 7].Text?.Trim();
-                    var salepriceStr = worksheet.Cells[row, 8].Text?.Trim();
-                    var qtyStr = worksheet.Cells[row, 9].Text?.Trim();
-                    var image = worksheet.Cells[row, 10].Text?.Trim();
-                    var isActiveStr = worksheet.Cells[row, 11].Text?.Trim();
+                    if (string.IsNullOrEmpty(name)) continue;
+
+                    string finalImageUrl = null;
+                    var drawing = drawings.FirstOrDefault(d => d.From.Row + 1 == row);
+                    if (drawing is ExcelPicture picture)
+                    {
+                        finalImageUrl = UploadBytesToCloud(picture.Image.ImageBytes, name + "_excel");
+                    }
+                    else
+                    {
+                        var imageUrl = worksheet.Cells[row, 10].Text?.Trim();
+                        if (!string.IsNullOrEmpty(imageUrl))
+                        {
+                            finalImageUrl = UploadUrlToCloud(imageUrl);
+                        }
+                    }
+
+                    var product = new Product
+                    {
+                        DanhMucId = int.TryParse(worksheet.Cells[row, 1].Text, out int cid) ? cid : (int?)null,
+                        NhaCungCapId = int.TryParse(worksheet.Cells[row, 2].Text, out int sid) ? sid : (int?)null,
+                        TenThuoc = name,
+                        HoatChat = worksheet.Cells[row, 4].Text,
+                        DonViTinh = worksheet.Cells[row, 5].Text,
+                        QuyCach = worksheet.Cells[row, 6].Text,
+                        GiaGoc = decimal.TryParse(worksheet.Cells[row, 7].Text, out decimal p) ? p : 0,
+                        GiaBan = decimal.TryParse(worksheet.Cells[row, 8].Text, out decimal sp) ? sp : 0,
+                        SoLuong = int.TryParse(worksheet.Cells[row, 9].Text, out int q) ? q : 0,
+                        HinhAnh = finalImageUrl,
+                        KichHoat = worksheet.Cells[row, 11].Text == "1" || worksheet.Cells[row, 11].Text.ToLower() == "true",
+                        ThuocKeDon = worksheet.Cells[row, 12].Text == "1" || worksheet.Cells[row, 12].Text.ToLower() == "true"
+                    };
 
                     if (string.IsNullOrEmpty(name))
                         continue;
 
                     var existing = db.Products.FirstOrDefault(pr => pr.TenThuoc == name);
-                    var username = User?.Identity?.Name ?? "Unknown";
-
-                    // Xử lý hình ảnh
-                    string savedImageName = null;
-                    if (!string.IsNullOrEmpty(image))
-                    {
-                        if (Uri.IsWellFormedUriString(image, UriKind.Absolute))
-                        {
-                            var fileName = Path.GetFileName(new Uri(image).LocalPath);
-                            savedImageName = $"{Guid.NewGuid().ToString().Substring(0, 8)}_{fileName}";
-                            var savePath = Path.Combine(imageFolder, savedImageName);
-
-                            using (WebClient client = new WebClient())
-                            {
-                                client.DownloadFile(image, savePath);
-                            }
-                            savedImageName = $"/Uploads/Product/{savedImageName}";
-                        }
-                        else
-                        {
-                            savedImageName = image;
-                        }
-                    }
-
-                    // Parse dữ liệu
-                    int? categoryId = int.TryParse(categoryIdStr, out var cid) ? cid : (int?)null;
-                    int? supplierId = int.TryParse(supplierIdStr, out var sid) ? sid : (int?)null;
-                    decimal price = decimal.TryParse(priceStr, out var p) ? p : 0;
-                    decimal saleprice = decimal.TryParse(priceStr, out var sp) ? sp : 0;
-                    int quantity = int.TryParse(qtyStr, out var q) ? q : 0;
-                    bool isActive = isActiveStr == "1" || isActiveStr.Equals("true", StringComparison.OrdinalIgnoreCase);
-
-                    var product = new Product
-                    {
-                        DanhMucId = categoryId,
-                        NhaCungCapId = supplierId,
-                        TenThuoc = name,
-                        HoatChat = hoatChat,
-                        DonViTinh = donViTinh,
-                        QuyCach = quyCach,
-                        GiaGoc = price,
-                        GiaBan = saleprice,
-                        SoLuong = quantity,
-                        HinhAnh = savedImageName,
-                        KichHoat = isActive
-                    };
 
                     if (existing != null)
                     {
@@ -313,8 +292,6 @@ namespace Admin.Controllers
             return RedirectToAction("Index");
         }
 
-
-
         [HttpPost]
         public JsonResult ToggleHienThi(int Id, bool isActive)
         {
@@ -332,44 +309,69 @@ namespace Admin.Controllers
                 return Json(new { code = 550, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-        public ActionResult DungTich(int? id)
+
+        // Dùng cho Form Add/Update
+        private string UploadFileToCloud(HttpPostedFileBase file)
         {
-            var product = new DungTichSanPham();
-            var listDungTich = new DungTich_DAL().Select_DungTich_All();
-            ViewBag.DungTiches = new SelectList(listDungTich, "Id", "Value");
+            if (file == null || file.ContentLength == 0) return null;
 
-            if (id != null)
-            {
-                var sanpham = db.Products.Find(id);
-                if (sanpham != null)
-                {
-                    product.ProductId = sanpham.ThuocId;
-                    product.ProductName = sanpham.TenThuoc; 
-                }
-            }
-            return PartialView("DungTich", product);
-        }
-        [HttpPost]
-        public JsonResult AddDungTich(DungTichSanPham model)
-        {
-            try
-            {
+            string fileNameOnly = Path.GetFileNameWithoutExtension(file.FileName);
 
-                model.CreatedDate = DateTime.Now;
-                model.IsDeleted = false;
-
-                var result = new DungTich_DAL().Insert(model);
-                if (result > 0)
-                {
-                    return Json(new { id = result, code = 200, msg = "Thêm mới thành công" }, JsonRequestBehavior.AllowGet);
-                }
-                return Json(new { code = 500, msg = "Thêm mới thất bại" }, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
+            var uploadParams = new ImageUploadParams()
             {
-                return Json(new { code = 500, msg = "Lỗi:" + ex.Message }, JsonRequestBehavior.AllowGet);
-            }
+                File = new FileDescription(file.FileName, file.InputStream),
+                Folder = "NhaThuoc/Products",
+                PublicId = fileNameOnly,
+                Overwrite = true,       
+                UniqueFilename = false, 
+                UseFilename = true      
+            };
+            var result = _cloudinary.Upload(uploadParams);
+            return result.SecureUrl?.ToString();
         }
 
+        // Dùng cho Import Excel link online 
+        private string UploadUrlToCloud(string url)
+        {
+            if (string.IsNullOrEmpty(url)) return null;
+            if (!url.StartsWith("http")) return url;
+
+            string fileNameOnly = Path.GetFileNameWithoutExtension(new Uri(url).LocalPath);
+
+            var uploadParams = new ImageUploadParams()
+            {
+                File = new FileDescription(url),
+                Folder = "NhaThuoc/Products",
+                PublicId = fileNameOnly,
+                Overwrite = true,
+                UniqueFilename = false,
+                UseFilename = true
+            };
+            var result = _cloudinary.Upload(uploadParams);
+            return result.SecureUrl?.ToString();
+        }
+
+        // Dùng cho Import Excel ảnh nhúng
+        private string UploadBytesToCloud(byte[] bytes, string fileName)
+        {
+            if (bytes == null || bytes.Length == 0) return null;
+
+            string fileNameOnly = Path.GetFileNameWithoutExtension(fileName);
+
+            using (var stream = new MemoryStream(bytes))
+            {
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(fileName, stream),
+                    Folder = "NhaThuoc/Products",
+                    PublicId = fileNameOnly,
+                    Overwrite = true,
+                    UniqueFilename = false,
+                    UseFilename = true
+                };
+                var result = _cloudinary.Upload(uploadParams);
+                return result.SecureUrl?.ToString();
+            }
+        }
     }
 }

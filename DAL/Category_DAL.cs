@@ -76,9 +76,9 @@ namespace DAL
                 param.Add("@Name", obj.Name);
                 param.Add("@Slug", obj.Slug);
                 param.Add("@Description", obj.Description);
-                param.Add("@DisplayOrder", obj.DisplayOrder);
                 param.Add("@IsActive", obj.IsActive);
                 param.Add("@CreatedBy", obj.CreatedBy);
+                param.Add("@MenuId", obj.MenuId);
                 return Connection.getConnection().Execute("Categories_Insert", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)
@@ -95,9 +95,9 @@ namespace DAL
                 param.Add("@Name", obj.Name);
                 param.Add("@Slug", obj.Slug);
                 param.Add("@Description", obj.Description);
-                param.Add("@DisplayOrder", obj.DisplayOrder);
                 param.Add("@IsActive", obj.IsActive);
                 param.Add("@UpdatedBy", obj.UpdatedBy);
+                param.Add("@MenuId", obj.MenuId);
                 return Connection.getConnection().Execute("Categories_Update", param, commandType: System.Data.CommandType.StoredProcedure);
             }
             catch (Exception)

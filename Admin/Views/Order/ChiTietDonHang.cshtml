@@ -1,52 +1,106 @@
 ﻿@model Models.OrderDetail
+@functions {
+    public string getStatusBadgeClass(string status)
+    {
+        switch (status)
+        {
+            case "Hoàn thành": return "bg-success-light";
+            case "Hủy": return "bg-danger-light";
+            case "Chờ xác nhận": return "bg-warning-light";
+            default: return "bg-primary-light";
+        }
+    }
+}
 
-<div class="modal-header">
-    <h5 class="modal-title">Chi tiết đơn hàng: @Model.OrderCode</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<div class="modal-header border-0 pb-0">
+    <h4 class="modal-title fw-bold text-primary">
+        <i class="fas fa-file-invoice me-2"></i>Chi tiết đơn hàng: <span class="text-dark">@Model.OrderCode</span>
+    </h4>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<div class="modal-body">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <p><strong>Khách hàng:</strong> @Model.FullName</p>
-            <p><strong>Ngày tạo:</strong> @Model.CreatedDate</p>
-        </div>
-        <div class="col-md-6">
-            <p><strong>Trạng thái:</strong> @Model.Status</p>
-            <p><strong>Tổng tiền:</strong> @string.Format("{0:N0} đ", Model.LineTotal)</p>
-            <p><strong>Ghi chú:</strong> @Model.Note</p>
-        </div>
-    </div>
-    <hr />
-    <h6 class="fw-bold mb-2">Danh sách sản phẩm</h6>
-    <div class="list-group">
-        <div class="list-group-item d-flex align-items-center">
-            <img src="@Model.Image" alt="Ảnh" class="rounded me-3"
-                 style="width:60px;height:60px;object-fit:cover;" />
-            <div class="flex-grow-1">
-                <div class="fw-bold">@Model.ProductName</div>
-                <small class="text-muted">Số lượng: @Model.Quantity</small>
+
+<div class="modal-body pt-4">
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="info-card p-3 rounded-3 bg-light h-100">
+                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Khách hàng</label>
+                <div class="d-flex align-items-center">
+                    <div class="avatar-sm bg-primary-light rounded-circle me-2 d-flex align-items-center justify-content-center">
+                        <i class="fas fa-user text-primary"></i>
+                    </div>
+                    <span class="fw-bold fs-5">@Model.FullName</span>
+                </div>
             </div>
         </div>
-        @if (Model.listProduct != null && Model.listProduct.Any())
-        {
-            foreach (var p in Model.listProduct)
-            {
-                <div class="list-group-item d-flex align-items-center">
-                    <img src="@p.Image" alt="Ảnh" class="rounded me-3"
-                         style="width:60px;height:60px;object-fit:cover;" />
-                    <div class="flex-grow-1">
-                        <div class="fw-bold">@p.Name</div>
-                        <small class="text-muted">Số lượng: @p.Quantity</small>
-                    </div>
+        <div class="col-md-4">
+            <div class="info-card p-3 rounded-3 bg-light h-100">
+                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Trạng thái & Thanh toán</label>
+                <div class="mb-2">
+                    <span class="badge @getStatusBadgeClass(Model.Status) px-3 py-2">@Model.Status</span>
                 </div>
-            }
-        }
-        else
-        {
-            <div class="text-center text-muted p-3">Không có sản phẩm nào</div>
-        }
+                <div class="fw-bold fs-5 text-success">@string.Format("{0:N0} đ", Model.LineTotal)</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="info-card p-3 rounded-3 bg-light h-100">
+                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Thời gian đặt hàng</label>
+                @*<div class="d-flex align-items-center mb-1">
+                    <i class="far fa-calendar-alt me-2 text-muted"></i>
+                    <span>@Model.CreatedDate</span>
+                </div>*@
+                <div class="d-flex align-items-center">
+                    <i class="far fa-clock me-2 text-muted"></i>
+                    <span>@Model.CreatedDate</span>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <h6 class="fw-bold mb-3 d-flex align-items-center">
+        <i class="fas fa-shopping-basket me-2 text-primary"></i>Sản phẩm đã mua
+    </h6>
+    <div class="table-responsive rounded-3 border">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="ps-3" style="width: 80px">Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th class="text-center">Số lượng</th>
+                    <th class="text-end pe-3">Đơn giá</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.listProduct)
+                {
+                    <tr>
+                        <td class="ps-3">
+                            <img src="@item.HinhAnh" class="rounded-2 border" style="width: 50px; height: 50px; object-fit: cover;" />
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">@item.TenThuoc</div>
+                            @*<div class="text-muted small">SKU: @item.SKU</div>*@
+                        </td>
+                        <td class="text-center fw-bold">x @item.SoLuong</td>
+                        @*<td class="text-end pe-3 fw-bold">@string.Format("{0:N0} đ", item.SalePrice)</td>*@
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.Note))
+    {
+        <div class="mt-4 p-3 bg-warning-light rounded-3 border border-warning border-opacity-25">
+            <i class="fas fa-sticky-note me-2 text-warning"></i>
+            <strong>Ghi chú đơn hàng:</strong>
+            <span class="ms-1 text-muted">@Model.Note</span>
+        </div>
+    }
 </div>
-<div class="modal-footer">
-    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+
+<div class="modal-footer border-0">
+    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Đóng</button>
+    <button type="button" class="btn btn-primary px-4"><i class="fas fa-print me-2"></i>In đơn hàng</button>
 </div>
+
+

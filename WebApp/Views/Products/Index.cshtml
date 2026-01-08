@@ -77,6 +77,33 @@
         </div>
 
         <div class="col-md-9">
+            <div class="product-tabs mb-4">
+                <ul class="nav nav-pills custom-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.ThuocKeDon == false ? "active" : "")"
+                           href="@Url.Action("Index", "Products", new { ThuocKeDon = false, ProductCategoryId = ViewBag.SelectedCategoryId, NhaCungCapId = ViewBag.SelectedBrandId, sortOrder = ViewBag.SortOrder })">
+                            Thuốc không kê đơn
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link @(ViewBag.ThuocKeDon == true ? "active" : "")"
+                           href="@Url.Action("Index", "Products", new { ThuocKeDon = true, ProductCategoryId = ViewBag.SelectedCategoryId, NhaCungCapId = ViewBag.SelectedBrandId, sortOrder = ViewBag.SortOrder })">
+                            Thuốc kê đơn
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            @if (ViewBag.ThuocKeDon == true)
+            {
+                <div class="alert alert-info border-0 shadow-sm mb-4" style="background-color: #eef7ff; border-radius: 10px; padding: 15px;">
+                    <div class="d-flex align-items-start">
+                        <i class="fas fa-info-circle text-primary me-3 mt-1" style="font-size: 1.2rem;"></i>
+                        <div style="font-size: 0.95rem; color: #333; line-height: 1.5;">
+                            <strong class="text-primary">Lưu ý:</strong> Sản phẩm là thuốc chỉ bán khi có chỉ định của bác sĩ, mọi thông tin trên Website chỉ mang tính chất tham khảo. Vui lòng liên hệ với dược sĩ, bác sĩ hoặc nhân viên y tế để được tư vấn thêm.
+                        </div>
+                    </div>
+                </div>
+            }
             <div class="filter-sort-section">
                 <h2 class="product-page-title mb-0">Tất cả sản phẩm</h2>
                 <div class="sort-options">
@@ -133,7 +160,7 @@
                         <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
                     </form>
                 </div>
-                
+
 
             </div>
 
@@ -153,7 +180,7 @@
 
                             <div class="product-image-box">
                                 <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
-                                    <img src="https://localhost:44310/@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
+                                    <img src="@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
                                 </a>
                                 @if (discount > 0)
                                 {
@@ -166,17 +193,37 @@
                                 <a class="product-title" href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
                                     @product.TenThuoc
                                 </a>
-                                <div class="product-prices">
-                                    @if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
-                                    {
-                                        <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
-                                        <span class="product-price-original">@((product.GiaGoc ?? 0).ToString("N0")) đ</span>
-                                    }
-                                    else
-                                    {
-                                <span class="product-price-sale">@((product.GiaGoc ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
-                                    }
-                                </div>
+                                @if (ViewBag.ThuocKeDon == true)
+                                {
+                                    <div class="product-etc-info mt-2">
+                                        @if (!string.IsNullOrEmpty(product.QuyCach))
+                                        {
+                                            <span class="badge bg-light text-primary border mb-2">@product.QuyCach</span>
+                                        }
+                                        <div class="consultation-text text-muted mb-2">
+                                            <small>Cần dược sĩ tư vấn</small>
+                                        </div>
+                                        <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })"
+                                           class="btn btn-sm btn-light w-100 btn-view-detail">
+                                            Xem chi tiết
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="product-prices">
+                                        @if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
+                                        {
+                                            <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
+                                            <span class="product-price-original">@((product.GiaGoc ?? 0).ToString("N0")) đ</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="product-price-sale">@((product.GiaGoc ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
+                                        }
+                                    </div>
+                                    <button class="btn btn-sm btn-primary w-100 mt-2">Thêm vào giỏ hàng</button>
+                                }
 
 
                                 <div class="product-rating">
@@ -197,3 +244,31 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+
+    @if (ViewBag.ThuocKeDon == true)
+    {
+        <script>
+            $(document).ready(function () {
+                Swal.fire({
+                    title: '<strong>LƯU Ý QUAN TRỌNG</strong>',
+                    icon: 'info',
+                    html: '<div style="text-align: left; font-size: 0.95rem;">' +
+                        'Sản phẩm là thuốc <b>chỉ bán khi có chỉ định của bác sĩ</b>. <br><br>' +
+                        'Mọi thông tin trên website chỉ mang tính chất tham khảo. ' +
+                        'Vui lòng liên hệ với dược sĩ để được tư vấn thêm.' +
+                        '</div>',
+                    showCloseButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: '<i class="fa fa-check"></i> Tôi đã hiểu',
+                    confirmButtonColor: '#00a651',
+                    position: 'center',
+                    width: '500px',
+                    backdrop: `rgba(0,0,0,0.4)`,
+                    allowOutsideClick: false 
+                });
+            });
+        </script>
+    }
+}

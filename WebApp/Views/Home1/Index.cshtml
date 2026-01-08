@@ -140,7 +140,7 @@
                         <a href="#">
                             <div class="product-image">
                                 <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
-                                    <img src="https://localhost:44310/@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
+                                    <img src="@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
                                 </a>
                             </div>
                         </a>
@@ -202,7 +202,7 @@
 
                     <div class="product-image-box">
                         <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })">
-                            <img src="https://localhost:44310/@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
+                            <img src="@product.HinhAnh" alt="@product.TenThuoc" class="product-img" />
                         </a>
                         @if (discount > 0)
                         {
@@ -244,6 +244,9 @@
     </div>
 </div>
 
+<section id="beautybox-magazine">
+    @Html.Action("LatestBlogPartial", "BaiViet")
+</section>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/duration.js"></script>
 @section Scripts {

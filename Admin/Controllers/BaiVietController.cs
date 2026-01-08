@@ -7,8 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using static Models.NhanVien;
 using static Models.Post;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using System.Configuration;
 
 namespace Admin.Controllers
 {
@@ -16,7 +18,18 @@ namespace Admin.Controllers
     public class BaiVietController : Controller
     {
         // GET: Admin/BaiViet
-        private DBConnect db = new DBConnect();
+        private DBConnect db = new DBConnect(); 
+        private readonly Cloudinary _cloudinary;
+
+        public BaiVietController()
+        {
+            var account = new Account(
+                ConfigurationManager.AppSettings["Cloudinary_CloudName"],
+                ConfigurationManager.AppSettings["Cloudinary_ApiKey"],
+                ConfigurationManager.AppSettings["Cloudinary_ApiSecret"]
+            );
+            _cloudinary = new Cloudinary(account);
+        }
 
         public ActionResult Index(string searchString, int? Month, int? Year)
         {
@@ -69,21 +82,20 @@ namespace Admin.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public JsonResult Add(Post model, HttpPostedFileBase ImageFile)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    return Json(new { code = 400, msg = "Dữ liệu không hợp lệ." }, JsonRequestBehavior.AllowGet);
+                    var errors = ModelState.Where(x => x.Value.Errors.Count > 0)
+                                   .Select(x => new { key = x.Key, msg = x.Value.Errors[0].ErrorMessage });
+                    return Json(new { code = 400, msg = "Dữ liệu không hợp lệ", errors = errors });
                 }
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    string fileName = Path.GetFileName(ImageFile.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Uploads/BaiViet/"), fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    ImageFile.SaveAs(path);
-                    model.AnhDaiDien = "/Uploads/BaiViet/" + fileName;
+                    model.AnhDaiDien = UploadToCloud(ImageFile);
                 }
 
                 model.CreatedDate = DateTime.Now;
@@ -118,6 +130,7 @@ namespace Admin.Controllers
             return PartialView("Add", lstmodel);
         }
         [HttpPost]
+        [ValidateInput(false)]
         public JsonResult Update(Post model, HttpPostedFileBase ImageFile)
         {
             try
@@ -127,12 +140,7 @@ namespace Admin.Controllers
 
                 if (ImageFile != null && ImageFile.ContentLength > 0)
                 {
-                    string fileName = Path.GetFileName(ImageFile.FileName);
-                    string path = Path.Combine(Server.MapPath("~/Uploads/Category/"), fileName);
-                    Directory.CreateDirectory(Path.GetDirectoryName(path));
-                    ImageFile.SaveAs(path);
-
-                    model.AnhDaiDien = "/Uploads/Category/" + fileName;
+                    model.AnhDaiDien = UploadToCloud(ImageFile);
                 }
 
                 var result = new BaiViet_DAL().Update(model);
@@ -184,6 +192,39 @@ namespace Admin.Controllers
             }
         }
 
+        private string UploadToCloud(HttpPostedFileBase file)
+        {
+            if (file == null || file.ContentLength == 0) return null;
 
+            try
+            {
+                string fileNameWithExtension = Path.GetFileName(file.FileName);
+                string fileNameOnly = Path.GetFileNameWithoutExtension(file.FileName);
+
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(fileNameWithExtension, file.InputStream),
+                    PublicId = fileNameOnly,
+                    Folder = "NhaThuoc/BaiViet",
+                    Overwrite = true,
+                    UseFilename = true,
+                    UniqueFilename = false
+                };
+
+                var result = _cloudinary.Upload(uploadParams);
+
+                if (result.Error != null)
+                {
+                    System.Diagnostics.Debug.WriteLine("Lỗi: " + result.Error.Message);
+                    return null;
+                }
+
+                return result.SecureUrl?.ToString();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

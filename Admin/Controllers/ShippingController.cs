@@ -18,7 +18,6 @@ namespace Admin.Controllers
             }
         }
 
-        // ================== INDEX ========================
         public ActionResult Index()
         {
             ViewBag.DeliveryServices = _dal.GetDeliveryServices();
@@ -26,7 +25,6 @@ namespace Admin.Controllers
             return View();
         }
 
-        // ================== GET SHIPPING ORDERS ========================
         [HttpGet]
         public JsonResult GetShippingOrders(string keyword = null, int? status = null, int? deliveryServiceId = null, int? driverId = null, int? warehouseId = null, DateTime? fromDate = null, DateTime? toDate = null)
 
@@ -55,7 +53,6 @@ namespace Admin.Controllers
                 return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-        // ================== ASSIGN DVVC / DRIVER / WAREHOUSE =============
         [HttpPost]
         public JsonResult Assign(int shippingOrderId, int? deliveryServiceId, int? driverId, int? warehouseId)
         {
@@ -72,7 +69,6 @@ namespace Admin.Controllers
             }
         }
 
-        // ================== UPDATE STATUS =========================
         [HttpPost]
         public JsonResult UpdateStatus(int shippingOrderId, int status, string location, string note)
         {
@@ -87,7 +83,6 @@ namespace Admin.Controllers
             }
         }
 
-        // ================== GET HISTORY =========================
         [HttpGet]
         public JsonResult GetHistory(int shippingOrderId)
         {
@@ -102,7 +97,6 @@ namespace Admin.Controllers
             }
         }
 
-        // ================== GET DRIVERS =========================
         [HttpGet]
         public JsonResult GetDrivers(int deliveryServiceId)
         {
@@ -117,7 +111,6 @@ namespace Admin.Controllers
             }
         }
 
-        // ================== GET WAREHOUSE =======================
         [HttpGet]
         public JsonResult GetWarehouses()
         {

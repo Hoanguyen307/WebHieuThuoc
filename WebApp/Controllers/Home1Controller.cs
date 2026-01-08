@@ -16,7 +16,7 @@ namespace WebApp.Controllers
             var viewModel = new HomeViewModel();
 
             viewModel.TopSellingProducts = new Product_DAL().Select_TopSelling(8);
-            viewModel.LatestProducts = new Product_DAL().Select_GetLatest(8);
+            viewModel.LatestProducts = new Product_DAL().Select_GetLatest(10);
 
             var allFlashSales = new FlashSale_DAL().Select_ActiveFlashSale();
 

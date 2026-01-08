@@ -1,0 +1,46 @@
+﻿@model List<Models.Post>
+
+@if (Model != null && Model.Any())
+{
+
+    var currentHost = HttpContext.Current?.Request?.Url?.Host?.ToLower() ?? "";
+    var adminBaseUrl = currentHost.Contains("localhost")
+        ? "https://localhost:44310/"
+        : "/Admin/";
+
+    foreach (var item in Model)
+    {
+        string imageUrl = string.IsNullOrEmpty(item.AnhDaiDien)
+            ? "/Content/assets/images/noimage.png"
+            : item.AnhDaiDien;
+        <div class="col-md-4 mb-4">
+            <div class="blog-item-card h-100 d-flex flex-column">
+                <div class="img-thumb-box">
+                    <a href="@Url.Action("Details", "BaiViet", new { id = item.Id })">
+                        @if (!string.IsNullOrEmpty(item.AnhDaiDien))
+                        {
+                            <img src="@imageUrl" class="fixed-img" alt="@item.TieuDe">
+                        }
+                        else
+                        {
+                            <div class="no-image-placeholder">
+                                <span class="placeholder-link">@item.TieuDe</span>
+                            </div>
+                        }
+                    </a>
+                </div>
+                <div class="content-box pt-3 pb-2 flex-grow-1">
+                    <small class="text-muted d-block mb-1">@item.LoaiDanhMuc</small>
+                    <h5 class="fw-bold fs-6">
+                        <a href="@Url.Action("Details", "BaiViet", new { id = item.Id })" class="text-dark text-decoration-none">
+                            @item.TieuDe
+                        </a>
+                    </h5>
+                    <p class="small text-secondary mb-0 line-clamp-3">
+                        @Html.Raw(System.Text.RegularExpressions.Regex.Replace(item.NoiDung ?? "", "<.*?>", string.Empty))
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
+}

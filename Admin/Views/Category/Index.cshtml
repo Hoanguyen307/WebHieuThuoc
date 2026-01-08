@@ -29,29 +29,10 @@
                         <th>STT</th>
                         <th>Tên danh mục</th>
                         <th>Mô tả</th>
-                        <th>Thứ tự</th>
                         <th>Hành động</th>
                     </tr>
                 </thead>
                 <tbody id="danhmuc-body">
-                    @if (Model != null && Model.Any())
-                    {
-                        var i = 1;
-                        foreach (var item in Model)
-                        {
-                            <tr id="trow_@item.ID">
-                                <td>@i</td>
-                                <td>@item.Name</td>
-                                <td>@item.Description</td>
-                                <td>@item.DisplayOrder</td>
-                                <td>
-                                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateDanhMuc('@item.ID')"><i class="fas fa-edit"></i></button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('@item.ID')"><i class="fas fa-trash-alt"></i></button>
-                                </td>
-                            </tr>
-                            i++;
-                        }
-                    }
                 </tbody>
             </table>
         </div>
