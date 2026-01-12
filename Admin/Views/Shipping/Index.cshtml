@@ -107,13 +107,13 @@
 
         <div>
             <select id="filter-status" class="form-select form-select-sm">
-                <option value="">-- Tất cả --</option>
-                <option value="0">0 - Pending</option>
-                <option value="1">1 - Assigned</option>
-                <option value="2">2 - Picking</option>
-                <option value="3">3 - Delivering</option>
-                <option value="4">4 - Completed</option>
-                <option value="5">5 - Failed</option>
+                <option value="">-- Tất cả trạng thái --</option>
+                <option value="0">0 - Chờ xử lý</option>
+                <option value="1">1 - Đã phân công</option>
+                <option value="2">2 - Đang lấy hàng</option>
+                <option value="3">3 - Đang giao hàng</option>
+                <option value="4">4 - Giao thành công</option>
+                <option value="5">5 - Giao thất bại</option>
             </select>
         </div>
         <div class="ms-auto">
@@ -135,7 +135,7 @@
                             <th>Kho</th>
                             <th>Trạng thái</th>
                             <th>Ngày tạo</th>
-                            <th class="text-end">Thao tác</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody id="shipping-body"></tbody>
@@ -179,7 +179,7 @@
         </div>
         <div class="d-grid gap-2">
             <button id="btnAssignSave" class="btn btn-primary btn-sm">
-                Lưu & đánh dấu Assigned
+                Xác nhận & Chuyển trạng thái Đã phân công
             </button>
         </div>
     </div>
@@ -197,7 +197,7 @@
                 <div id="tl-body" class="timeline"></div>
             </div>
             <div class="modal-footer">
-                <button id="btnAutoDemo" class="btn btn-outline-primary btn-sm">Auto Demo (2→3→4→5)</button>
+                <button id="btnAutoDemo" class="btn btn-outline-primary btn-sm">Chạy thử quy trình (2→3→4→5)</button>
             </div>
         </div>
     </div>

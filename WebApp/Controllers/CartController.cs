@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -58,7 +60,7 @@ namespace WebApp.Controllers
                     x.CartItemId,
                     x.ProductId,
                     x.ProductName,
-                    ProductImage = "https://localhost:44310" + x.ProductImage,
+                    ProductImage = x.ProductImage,
                     x.UnitPrice,
                     x.Quantity,
                     x.Status,
@@ -294,12 +296,19 @@ namespace WebApp.Controllers
                     ViewBag.OrderSuccess = true;
                     return View(model);
                 }
-                else
+                else if (order.PaymentMethod == "VNPAY")
                 {
                     decimal finalTotalAmount = orderDal.GetOrderTotalAmount(newOrderId);
                     string paymentUrl = UrlPayment(order.PaymentMethod, order.OrderCode, model.VnPayType, finalTotalAmount, order.CreatedDate.Value);
                     return Redirect(paymentUrl);
                 }
+                else if (order.PaymentMethod == "MOMO")
+                {
+                    decimal finalTotalAmount = orderDal.GetOrderTotalAmount(newOrderId);
+                    string paymentUrl = CreateMomoPayment(order.OrderCode, finalTotalAmount);
+                    return Redirect(paymentUrl);
+                }
+                return RedirectToAction("Index", "Home1");
             }
             catch (Exception ex)
             {
@@ -435,6 +444,129 @@ namespace WebApp.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        public ActionResult MomoReturn()
+        {
+            // 1. Lấy cấu hình MoMo Test
+            string secretKey = "L99D79F15N0v19S68N7S10v19S68N7S1";
+
+            // 2. Lấy dữ liệu từ URL MoMo trả về
+            string partnerCode = Request.QueryString["partnerCode"];
+            string orderId = Request.QueryString["orderId"];
+            string requestId = Request.QueryString["requestId"];
+            string amount = Request.QueryString["amount"];
+            string orderInfo = Request.QueryString["orderInfo"];
+            string orderType = Request.QueryString["orderType"];
+            string transId = Request.QueryString["transId"];
+            string resultCode = Request.QueryString["resultCode"];
+            string message = Request.QueryString["message"];
+            string payType = Request.QueryString["payType"];
+            string responseTime = Request.QueryString["responseTime"];
+            string extraData = Request.QueryString["extraData"];
+            string signature = Request.QueryString["signature"];
+
+            // 3. Xây dựng chuỗi rawHash để kiểm tra chữ ký (Theo đúng thứ tự MoMo quy định)
+            string rawHash = $"accessKey=6VpX6vNInSOn0HOf&amount={amount}&extraData={extraData}&message={message}&orderId={orderId}&orderInfo={orderInfo}&partnerCode={partnerCode}&requestId={requestId}&responseTime={responseTime}&resultCode={resultCode}&transId={transId}";
+
+            // 4. Kiểm tra chữ ký bằng hàm HmacSHA256 (đã viết ở bước trước)
+            string mySignature = Utils.HmacSHA256(secretKey, rawHash);
+            string originalOrderCode = orderId.Split('_')[0];
+
+            if (mySignature.Equals(signature, StringComparison.InvariantCultureIgnoreCase))
+            {
+                if (resultCode == "0") // MoMo thành công là "0"
+                {
+                    var itemOrder = db.Orders.SingleOrDefault(x => x.OrderCode == originalOrderCode);
+                    if (itemOrder != null)
+                    {
+                        itemOrder.PaymentStatus = "Đã thanh toán";
+                        db.SaveChanges();
+
+                        ViewBag.IsSuccess = true;
+                        ViewBag.Message = "Thanh toán qua ví MoMo thành công!";
+                        ViewBag.OrderCode = "Mã đơn hàng: " + orderId;
+                        ViewBag.Amount = "Số tiền: " + double.Parse(amount).ToString("N0") + " VND";
+                    }
+                }
+                else
+                {
+                    ViewBag.IsSuccess = false;
+                    ViewBag.Message = "Giao dịch MoMo thất bại hoặc đã bị hủy. Mã lỗi: " + resultCode;
+                }
+            }
+            else
+            {
+                ViewBag.IsSuccess = false;
+                ViewBag.Message = "Chữ ký MoMo không hợp lệ!";
+            }
+
+            return View("VnpayReturn"); // Bạn có thể dùng chung Giao diện (View) để hiển thị thông báo
+        }
+        public string CreateMomoPayment(string orderCode, decimal amount)
+        {
+            string endpoint = ConfigurationManager.AppSettings["MomoEndpoint"];
+            string partnerCode = ConfigurationManager.AppSettings["MomoPartnerCode"];
+            string accessKey = ConfigurationManager.AppSettings["MomoAccessKey"];
+            string secretKey = ConfigurationManager.AppSettings["MomoSecretKey"];
+            string redirectUrl = ConfigurationManager.AppSettings["MomoRedirectUrl"];
+            string ipnUrl = ConfigurationManager.AppSettings["MomoIpnUrl"];
+            string orderInfo = "Thanh toan don hang " + orderCode;
+            string extraData = "";
+            string momoOrderId = orderCode + "_" + DateTime.Now.Ticks.ToString();
+            string requestId = momoOrderId;
+            long amountLong = (long)amount;
+
+            string rawHash = $"accessKey={accessKey}" +
+                             $"&amount={amountLong}" +
+                             $"&extraData={extraData}" +
+                             $"&ipnUrl={ipnUrl}" +
+                             $"&orderId={momoOrderId}" +
+                             $"&orderInfo={orderInfo}" +
+                             $"&partnerCode={partnerCode}" +
+                             $"&redirectUrl={redirectUrl}" +
+                             $"&requestId={requestId}" +
+                             $"&requestType=payWithMethod";
+
+            string signature = Utils.HmacSHA256(secretKey, rawHash);
+
+            var requestData = new
+            {
+                partnerCode,
+                partnerName = "Test",
+                storeId = "MomoTestStore",
+                requestId,
+                amount,
+                orderId = momoOrderId,
+                orderInfo,
+                redirectUrl,
+                ipnUrl,
+                lang = "vi",
+                extraData,
+                requestType = "payWithMethod",
+                signature
+            };
+
+            var json = new System.Web.Script.Serialization.JavaScriptSerializer().Serialize(requestData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            using (var client = new HttpClient())
+            {
+                var response = client.PostAsync(endpoint, content).Result;
+                var responseString = response.Content.ReadAsStringAsync().Result;
+
+                System.Diagnostics.Debug.WriteLine("MoMo Response: " + responseString);
+
+                var jss = new System.Web.Script.Serialization.JavaScriptSerializer();
+                var result = jss.Deserialize<Dictionary<string, object>>(responseString);
+
+                if (result != null && result.ContainsKey("payUrl"))
+                {
+                    return result["payUrl"].ToString();
+                }
+
+                throw new Exception("Lỗi MoMo: " + responseString);
+            }
+        }
         #region Thanh toán vnpay
         public string UrlPayment(string paymentMethodCode, string orderCode, string vnPayType, decimal amount, DateTime createdDate)
         {

@@ -87,8 +87,16 @@ function loadDonHang(page = 1) {
                 tbody.empty();
                 let index = (res.currentPage - 1) * res.pageSize + 1;
                 let i = 1;
-
+                const statusOrder = {
+                    "Chờ xác nhận": 1,
+                    "Đã xác nhận": 2,
+                    "Người bán đang chuẩn bị đơn hàng": 3,
+                    "Đã giao cho đơn vị vận chuyển": 4,
+                    "Hoàn thành": 5,
+                    "Hủy": 6
+                };
                 res.items.forEach(item => {
+                    const currentLevel = statusOrder[item.Status] || 0;
                     const row = `
                 <tr>
             <td></td>
@@ -97,14 +105,24 @@ function loadDonHang(page = 1) {
             <td>${item.CustomerName}</td>
             <td>${formatCurrency(item.TotalAmount)}</td>
             <td>
-                <select class="form-select form-select-sm"
-                    onchange="updateStatus(${item.ID}, this)">
-                    <option value="Chờ xác nhận" ${item.Status === "Chờ xác nhận" ? "selected" : ""}>Chờ xác nhận</option>
-                    <option value="Đã xác nhận" ${item.Status === "Đã xác nhận" ? "selected" : ""}>Đã xác nhận</option>
-                    <option value="Người bán đang chuẩn bị đơn hàng" ${item.Status === "Người bán đang chuẩn bị đơn hàng" ? "selected" : ""}>Người bán đang chuẩn bị đơn hàng</option>
-                    <option value="Đã giao cho đơn vị vận chuyển" ${item.Status === "Đã giao cho đơn vị vận chuyển" ? "selected" : ""}>Đã giao cho đơn vị vận chuyển</option>
-                    <option value="Hoàn thành" ${item.Status === "Hoàn thành" ? "selected" : ""}>Hoàn thành</option>
-                    <option value="Hủy" ${item.Status === "Hủy" ? "selected" : ""}>Hủy</option>
+                <select class="form-select form-select-sm" onchange="updateStatus(${item.ID}, this)">
+                    <option value="Chờ xác nhận" ${item.Status === "Chờ xác nhận" ? "selected" : ""} 
+                        ${currentLevel > 1 ? "disabled" : ""}>Chờ xác nhận</option>
+            
+                    <option value="Đã xác nhận" ${item.Status === "Đã xác nhận" ? "selected" : ""} 
+                        ${currentLevel > 2 ? "disabled" : ""}>Đã xác nhận</option>
+            
+                    <option value="Người bán đang chuẩn bị đơn hàng" ${item.Status === "Người bán đang chuẩn bị đơn hàng" ? "selected" : ""} 
+                        ${currentLevel > 3 ? "disabled" : ""}>Người bán đang chuẩn bị đơn hàng</option>
+            
+                    <option value="Đã giao cho đơn vị vận chuyển" ${item.Status === "Đã giao cho đơn vị vận chuyển" ? "selected" : ""} 
+                        ${currentLevel > 4 ? "disabled" : ""}>Đã giao cho đơn vị vận chuyển</option>
+            
+                    <option value="Hoàn thành" ${item.Status === "Hoàn thành" ? "selected" : ""} 
+                        ${currentLevel > 5 ? "disabled" : ""}>Hoàn thành</option>
+            
+                    <option value="Hủy" ${item.Status === "Hủy" ? "selected" : ""} 
+                        ${(currentLevel >= 4 || currentLevel === 6) ? "disabled" : ""}>Hủy</option>
                 </select>
                 <select class="form-select form-select-sm carrier-select mt-1"
                     data-order-id="${item.ID}"

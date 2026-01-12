@@ -8,23 +8,23 @@
         : Model.MaPhieu;
 }
 
+<style>
+    #productModal {
+        z-index: 10003 !important;
+    }
+</style>
 <form id="form-addNhapKho">
     @Html.HiddenFor(m => m.Id)
-    <input type="hidden" id="SelectedProductsJson"
-           value='@Html.Raw(JsonConvert.SerializeObject(Model.ChiTietNhapKho))' />
-    <input type="hidden" id="TotalAmount" name="TotalAmount" value="@Model.TotalAmount" />
-    <input type="hidden" id="ProductsData" value='@Html.Raw(ViewBag.Products ?? "[]")' />
-
+    <script type="text/javascript">
+        window.tempProducts = @Html.Raw(ViewBag.Products ?? "[]");
+        window.tempSelected = @Html.Raw(JsonConvert.SerializeObject(Model.ChiTietNhapKho ?? new List<Models.ChiTietNhapKho>()));
+    </script>
     <div class="modal-body" style="color:black">
         <!-- Thông tin phiếu -->
         <div class="row">
             <div class="col-md-6 form-group">
                 <label for="MaPhieu">Mã phiếu</label>
                 <input type="text" class="form-control" id="MaPhieu" name="MaPhieu" value="@autoCode" readonly>
-            </div>
-            <div class="col-md-6 form-group">
-                <label for="NhaCungCap">Nhà cung cấp</label>
-                <input type="text" class="form-control" id="NhaCungCap" name="NhaCungCap" value="@Model.NhaCungCap" required>
             </div>
             <div class="col-md-12 form-group">
                 <label for="GhiChu">Ghi chú</label>
@@ -58,6 +58,7 @@
                 <tr><td colspan="7" class="text-center">Chưa có sản phẩm nào.</td></tr>
             </tbody>
         </table>
+        <div id="SelectedPagination" class="mt-2"></div>
 
         <div class="text-end">
             <strong>Tổng tiền: <span id="previewTotalAmount">0</span></strong>
@@ -77,7 +78,7 @@
 
 <!-- Modal phụ: chọn sản phẩm -->
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" style=" min-width: 1111px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Chọn sản phẩm nhập kho</h5>

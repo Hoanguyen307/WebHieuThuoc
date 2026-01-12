@@ -56,11 +56,18 @@ namespace Admin.Controllers
                 pageSize = pagedList.PageSize
             }, JsonRequestBehavior.AllowGet);
         }
-
+        [HttpGet]
+        public JsonResult GetProductList()
+        {
+            var products = db.Products
+                .Select(p => new { p.ThuocId, p.TenThuoc, p.GiaGoc })
+                .ToList();
+            return Json(products, JsonRequestBehavior.AllowGet);
+        }
         public ActionResult Add(int? id)
         {
             var products = db.Products
-                    .Select(p => new { p.ThuocId, p.TenThuoc })
+                    .Select(p => new { p.ThuocId, p.TenThuoc, p.GiaGoc })
                     .ToList();
 
             ViewBag.Products = JsonConvert.SerializeObject(products);
@@ -119,7 +126,7 @@ namespace Admin.Controllers
                 return HttpNotFound();
             }
             var products = db.Products
-                    .Select(p => new { p.ThuocId, p.TenThuoc })
+                    .Select(p => new { p.ThuocId, p.TenThuoc, p.GiaGoc })
                     .ToList();
 
             ViewBag.Products = JsonConvert.SerializeObject(products);
@@ -196,7 +203,7 @@ namespace Admin.Controllers
                 return HttpNotFound();
             }
             var products = db.Products
-                    .Select(p => new { p.ThuocId, p.TenThuoc })
+                    .Select(p => new { p.ThuocId, p.TenThuoc, p.GiaGoc })
                     .ToList();
 
             ViewBag.Products = JsonConvert.SerializeObject(products);

@@ -65,7 +65,7 @@ namespace WebApp.Controllers
             }
         }
 
-        public ActionResult Diem()
+        public ActionResult Diem(int page = 1, int pageSize = 10)
         {
             var kh = Session["Login"] as KhachHang;
             if (kh == null)
@@ -75,16 +75,22 @@ namespace WebApp.Controllers
 
             var dal = new KhachHang_DAL();
 
-            int tongDiem = dal.GetCustomerPoints(kh.Id);
-            ViewBag.TongDiem = tongDiem;
+            var allLichSu = dal.LichSu_Diem(kh.Id);
+            int totalRecords = allLichSu.Count();
+            int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
 
-            var lichSu = dal.LichSu_Diem(kh.Id);
-            ViewBag.LichSuDiem = lichSu;
+            var pagedLichSu = allLichSu
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
 
+            ViewBag.LichSuDiem = pagedLichSu;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
             return View();
         }
 
-        public ActionResult DonHang()
+        public ActionResult DonHang(string status, int page = 1, int pageSize = 10)
         {
             var khachHang = Session["Login"] as KhachHang;
             if (khachHang == null)
@@ -93,9 +99,51 @@ namespace WebApp.Controllers
             }
 
             var orderDAL = new Order_DAL();
-            var donHang = orderDAL.LichSu_DonHang(khachHang.Id);
+            var allOrders = orderDAL.LichSu_DonHang(khachHang.Id);
+            if (!string.IsNullOrEmpty(status))
+            {
+                allOrders = allOrders.Where(o => o.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+            int totalRecords = allOrders.Count();
+            int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
 
-            return View(donHang);
+            var pagedOrders = allOrders
+                                .OrderByDescending(o => o.CreatedDate)
+                                .Skip((page - 1) * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.CurrentStatus = status;
+
+            return View(pagedOrders);
+        }
+        [HttpGet]
+        public JsonResult Track(string tracking)
+        {
+            try
+            {
+                var order = new Shipping_DAL().GetShippingOrderByTracking(tracking);
+                if (order == null)
+                    return Json(new { code = 404, msg = "Không tìm thấy mã vận đơn" }, JsonRequestBehavior.AllowGet);
+
+                var history = new Shipping_DAL().GetShippingHistory(order.Id);
+
+                return Json(new
+                {
+                    code = 200,
+                    data = new
+                    {
+                        order = order,
+                        history = history
+                    }
+                }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
         }
         [HttpGet]
         public ActionResult ChiTietDonHang(int id)
@@ -107,6 +155,7 @@ namespace WebApp.Controllers
             }
 
             var orderDAL = new Order_DAL();
+            var shippingDAL = new Shipping_DAL();
 
             try
             {
@@ -114,14 +163,21 @@ namespace WebApp.Controllers
 
                 if (orderDetails == null)
                 {
-                    return new HttpStatusCodeResult(System.Net.HttpStatusCode.NotFound, "Không tìm thấy chi tiết đơn hàng hoặc bạn không có quyền xem.");
+                    return new HttpStatusCodeResult(System.Net.HttpStatusCode.NotFound,
+                        "Không tìm thấy chi tiết đơn hàng hoặc bạn không có quyền xem.");
                 }
+
+                var shipping = shippingDAL.GetByOrderId(id);
+
+                ViewBag.TrackingCode = shipping?.TrackingCode ?? "";
+                ViewBag.ShippingStatus = shipping?.CurrentStatus ?? -1;
 
                 return PartialView("_ChiTietDonHangPartial", orderDetails);
             }
-            catch (Exception ex)
+            catch
             {
-                return new HttpStatusCodeResult(System.Net.HttpStatusCode.InternalServerError, "Lỗi khi tải chi tiết đơn hàng.");
+                return new HttpStatusCodeResult(System.Net.HttpStatusCode.InternalServerError,
+                    "Lỗi khi tải chi tiết đơn hàng.");
             }
         }
     }

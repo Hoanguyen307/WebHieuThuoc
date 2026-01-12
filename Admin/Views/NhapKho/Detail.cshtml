@@ -4,11 +4,9 @@
     ViewBag.Title = "Nhập kho";
 }
 <form id="form-addNhapKho" autocomplete="off">
-    @Html.HiddenFor(m => m.Id)
-    <input type="hidden" id="SelectedProductsJson"
-           value='@Html.Raw(JsonConvert.SerializeObject(Model.ChiTietNhapKho))' />
-
-    <input type="hidden" id="ProductsData" value="@ViewBag.Products" />
+    <script id="data-detail-json" type="application/json">
+        @Html.Raw(JsonConvert.SerializeObject(Model.ChiTietNhapKho))
+    </script>
     <input type="hidden" id="TotalAmount" name="TotalAmount" value="@Model.TotalAmount" />
     <div class="modal-body" style="color:black">
         <div class="tab-pane" id="tabXemTruoc" role="tabpanel">
@@ -48,9 +46,8 @@
     <div class="modal-footer">
         <button type="button" class="btn btn-danger btn-sm" onclick="closeModal()" data-dismiss="modal">
             <i class="fas fa-times"></i> Đóng
+        </button><button type="button" class="btn btn-primary px-4" onclick="">
+            <i class="fas fa-print me-2"></i> In phiếu nhập
         </button>
-        @*<button type="button" onclick="SavePhieuNhap()" class="btn btn-primary">
-                <i class="fas fa-save"></i> Lưu
-            </button>*@
     </div>
 </form>

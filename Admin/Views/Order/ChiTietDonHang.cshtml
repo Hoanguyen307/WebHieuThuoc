@@ -4,10 +4,11 @@
     {
         switch (status)
         {
-            case "Hoàn thành": return "bg-success-light";
-            case "Hủy": return "bg-danger-light";
-            case "Chờ xác nhận": return "bg-warning-light";
-            default: return "bg-primary-light";
+            case "Hoàn thành": return "bg-success text-white";
+            case "Hủy": return "bg-danger text-white";
+            case "Chờ xác nhận": return "bg-warning text-dark";
+            case "Đã xác nhận": return "bg-primary text-white";
+            default: return "bg-info text-dark";
         }
     }
 }
@@ -23,12 +24,25 @@
     <div class="row g-4 mb-5">
         <div class="col-md-4">
             <div class="info-card p-3 rounded-3 bg-light h-100">
-                <label class="text-muted small text-uppercase fw-bold d-block mb-1">Khách hàng</label>
-                <div class="d-flex align-items-center">
-                    <div class="avatar-sm bg-primary-light rounded-circle me-2 d-flex align-items-center justify-content-center">
-                        <i class="fas fa-user text-primary"></i>
+                <label class="text-muted small text-uppercase fw-bold d-block mb-2">Khách hàng</label>
+                <div class="d-flex align-items-start justify-content-start">
+                    <div class="d-flex flex-column gap-2">
+
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm bg-primary-light rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                <i class="fas fa-user text-primary" style="font-size: 12px;"></i>
+                            </div>
+                            <span class="fw-bold fs-5 text-dark">@Model.FullName</span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <div class="avatar-sm bg-primary-light rounded-circle me-2 d-flex align-items-center justify-content-center" style="width: 24px; height: 24px;">
+                                <i class="fas fa-map-marker-alt text-danger" style="font-size: 12px;"></i>
+                            </div>
+                            <span class="text-muted fw-bold">@Model.Address</span>
+                        </div>
+
                     </div>
-                    <span class="fw-bold fs-5">@Model.FullName</span>
                 </div>
             </div>
         </div>
@@ -38,16 +52,14 @@
                 <div class="mb-2">
                     <span class="badge @getStatusBadgeClass(Model.Status) px-3 py-2">@Model.Status</span>
                 </div>
-                <div class="fw-bold fs-5 text-success">@string.Format("{0:N0} đ", Model.LineTotal)</div>
+                <div class="fw-bold fs-5 text-success">
+                    @string.Format("{0:N0} đ", Model.LineTotal > 0 ? Model.LineTotal : (Model.TotalAmount > 0 ? Model.TotalAmount : 0))
+                </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="info-card p-3 rounded-3 bg-light h-100">
                 <label class="text-muted small text-uppercase fw-bold d-block mb-1">Thời gian đặt hàng</label>
-                @*<div class="d-flex align-items-center mb-1">
-                    <i class="far fa-calendar-alt me-2 text-muted"></i>
-                    <span>@Model.CreatedDate</span>
-                </div>*@
                 <div class="d-flex align-items-center">
                     <i class="far fa-clock me-2 text-muted"></i>
                     <span>@Model.CreatedDate</span>
@@ -70,19 +82,25 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model.listProduct)
+                @if (Model.listProduct != null)
                 {
-                    <tr>
-                        <td class="ps-3">
-                            <img src="@item.HinhAnh" class="rounded-2 border" style="width: 50px; height: 50px; object-fit: cover;" />
-                        </td>
-                        <td>
-                            <div class="fw-bold text-dark">@item.TenThuoc</div>
-                            @*<div class="text-muted small">SKU: @item.SKU</div>*@
-                        </td>
-                        <td class="text-center fw-bold">x @item.SoLuong</td>
-                        @*<td class="text-end pe-3 fw-bold">@string.Format("{0:N0} đ", item.SalePrice)</td>*@
-                    </tr>
+                    foreach (var item in Model.listProduct)
+                    {
+                        <tr>
+                            <td class="ps-3">
+                                @* Ảnh vẫn lấy từ thuộc tính HinhAnh của dòng đó *@
+                                <img src="@item.HinhAnh" class="rounded-2 border" style="width: 100px; height: 60px;" />
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark">@item.TenThuoc</div>
+                            </td>
+                            <td class="text-center fw-bold">x @item.Quantity</td>
+
+                            <td class="text-end pe-3 fw-bold">
+                                @string.Format("{0:N0} đ", item.UnitPrice)
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>

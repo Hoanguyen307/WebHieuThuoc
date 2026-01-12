@@ -12,28 +12,15 @@ namespace DAL
 {
     public class Dashboard_DAL
     {
-        public ThongKeTongQuan LayThongKeTongQuan()
-        {
-            try
-            {
-                DynamicParameters param = new DynamicParameters();
-                var result = SqlMapper.Query<ThongKeTongQuan>(Connection.getConnection(),
-                    "Dashboard_LayThongKeTongQuan", param,
-                    commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
 
-        public DuLieuBanHang LayDuLieuBanHang(string kyHan)
+        public DuLieuBanHang LayDuLieuBanHang(string kyHan, DateTime? tuNgay, DateTime? denNgay)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@KyHan", kyHan);
+                param.Add("@TuNgay", tuNgay); 
+                param.Add("@DenNgay", denNgay);
 
                 var result = SqlMapper.Query(Connection.getConnection(),
                     "Dashboard_LayDuLieuBanHang", param,
@@ -54,7 +41,6 @@ namespace DAL
                     }
                     else
                     {
-                        // Nếu là chuỗi 'Tuần 36' hoặc 'Tháng 9'
                         duLieuBanHang.NhanThoiGian.Add(item.NhanThoiGian.ToString());
                     }
                     duLieuBanHang.BanHang.Add(item.BanHang);
@@ -69,21 +55,26 @@ namespace DAL
             }
         }
 
-        public TongKetTaiChinh LayTongKetTaiChinh()
+        public ThongKeTongQuan LayThongKeTongQuan(DateTime? tuNgay, DateTime? denNgay)
         {
-            try
-            {
-                DynamicParameters param = new DynamicParameters();
-                var result = SqlMapper.Query<TongKetTaiChinh>(Connection.getConnection(),
-                    "Dashboard_LayTongKetTaiChinh", param,
-                    commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
-                return result;
-            }
-            catch (Exception)
-            {
-                throw;
-            }
+            DynamicParameters param = new DynamicParameters();
+            param.Add("@TuNgay", tuNgay); // Truyền tham số lọc
+            param.Add("@DenNgay", denNgay);
+
+            return SqlMapper.Query<ThongKeTongQuan>(Connection.getConnection(),
+                "Dashboard_LayThongKeTongQuan", param,
+                commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
         }
 
+        public TongKetTaiChinh LayTongKetTaiChinh(DateTime? tuNgay, DateTime? denNgay)
+        {
+            DynamicParameters param = new DynamicParameters();
+            param.Add("@TuNgay", tuNgay);
+            param.Add("@DenNgay", denNgay);
+
+            return SqlMapper.Query<TongKetTaiChinh>(Connection.getConnection(),
+                "Dashboard_LayTongKetTaiChinh", param,
+                commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+        }
     }
 }

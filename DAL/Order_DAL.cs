@@ -36,48 +36,48 @@ namespace DAL
             {
                 var lookup = new Dictionary<string, OrderDetail>();
 
-                var result = conn.Query<OrderDetail, Product, OrderDetail>(
+                var result = conn.Query<OrderDetail, OrderDetail, OrderDetail>(
                     "sp_GetOrderDetails",
                     (order, product) =>
                     {
-                        OrderDetail orderEntry;
-
-                        if (!lookup.TryGetValue(order.OrderCode, out orderEntry))
+                        if (!lookup.TryGetValue(order.OrderCode, out var orderEntry))
                         {
                             orderEntry = order;
-                            orderEntry.listProduct = new List<Product>();
+                            orderEntry.listProduct = new List<OrderDetail>();
                             lookup.Add(order.OrderCode, orderEntry);
                         }
 
                         if (product != null)
                         {
-                            orderEntry.listProduct.Add(product);
+                            orderEntry.listProduct.Add(product); // đưa tất cả sản phẩm vào listProduct
                         }
 
                         return orderEntry;
                     },
                     new { OrderId = orderId },
                     commandType: CommandType.StoredProcedure,
-                    splitOn: "ProductId" // cột đầu tiên thuộc về Product
+                    splitOn: "ProductId"
                 );
 
                 return result.FirstOrDefault();
             }
         }
 
-        public OrderDetail GetOrderDetails_ByCustomer(int OrderId, int CustomerId)
+        public List<OrderDetail> GetOrderDetails_ByCustomer(int OrderId, int CustomerId)
         {
             try
             {
                 DynamicParameters param = new DynamicParameters();
                 param.Add("@OrderId", OrderId);
                 param.Add("@CustomerId", CustomerId);
-                var model = SqlMapper.Query<OrderDetail>(Connection.getConnection(), "sp_GetOrderDetails_ByCustomer", param, commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+
+                var model = SqlMapper.Query<OrderDetail>(Connection.getConnection(), "sp_GetOrderDetails_ByCustomer", param, commandType: System.Data.CommandType.StoredProcedure).ToList();
+
                 return model;
             }
             catch (Exception)
             {
-                throw ;
+                throw;
             }
         }
         public List<Order> LichSu_DonHang(int ID)

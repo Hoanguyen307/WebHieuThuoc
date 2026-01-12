@@ -248,16 +248,13 @@
     let isMessageSending = false;
     let messagePollingInterval = null;
 
-    $(document).ready(function () {
         function updateCartCount() {
             $.get("/Cart/GetCartCount", function (res) {
-                $("#cart-count").text(res.count); // đúng ID
+                $("#cart-count").text(res.count);
             });
         }
 
-        updateCartCount();
-
-        // ========== CHATBOX FUNCTIONALITY ==========
+    $(document).ready(function () {
         const $chatboxBtn = $('#chatbox-btn');
         const $chatboxContainer = $('#hieuThuocChatboxContainer');
         const $closeChatBtn = $('#hieuThuocCloseChatBtn');
@@ -266,7 +263,6 @@
         const $sendBtn = $('#hieuThuocSendBtn');
         const $chatboxBadge = $('#chatbox-badge');
 
-        // Toggle chatbox
         $chatboxBtn.on('click', function() {
             if (hieuThuocIsOpen) {
                 closehieuThuocChatbox();
@@ -286,17 +282,14 @@
             hieuThuocIsOpen = true;
             $messageInput.focus();
 
-            // Clear welcome message and show initial greeting
             if (hieuThuocSessionId === 0) {
                 $chatBody.empty();
                 addhieuThuocMessage('Xin chào! Tôi là dược sĩ AI của Hiệu Thuốc. Tôi có thể giúp bạn tìm thuốc hoặc tư vấn các vấn đề sức khỏe đơn giản.', 'bot');
                 addHieuThuocQuickReplies(['Tìm thuốc', 'Tư vấn theo triệu chứng', 'Khuyến mãi']);
 
-                // Initialize session
                 $.post("/Chat/StartSession", {}, function (res) {
                     if (res && res.success) {
                         hieuThuocSessionId = res.sessionId;
-                        // Start polling for new messages every 5 seconds (reduced frequency)
                         if (messagePollingInterval) {
                             clearInterval(messagePollingInterval);
                         }
@@ -646,7 +639,7 @@
 
             items.forEach(function (it) {
                 const cartItemId = it.CartItemId;
-                const image = it.ProductImage || 'https://localhost:44310/images/no-image.png';
+                const image = it.ProductImage;
                 const name = it.ProductName || it.Name || '';
                 const price = Number(it.UnitPrice || it.Price || 0);
                 const qty = Number(it.Quantity || 0);

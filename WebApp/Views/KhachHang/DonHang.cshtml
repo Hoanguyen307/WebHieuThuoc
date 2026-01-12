@@ -5,6 +5,91 @@
 }
 
 <style>
+    .btn-xs {
+        font-size: 11px;
+        padding: 4px 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .hover-shadow:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 .25rem .75rem rgba(0,0,0,.08) !important;
+        border-color: #a1efab !important;
+    }
+
+    .transition {
+        transition: all 0.2s ease-in-out;
+    }
+    .btn-outline-danger {
+        color: #a1efab;
+        border-color: #a1efab;
+    }
+
+        .btn-outline-danger:hover {
+            background-color: #a1efab;
+            color: white;
+        }
+
+    .order-items-container img {
+        border: 1px solid #f0f0f0;
+    }
+
+    .timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background: #dee2e6;
+        }
+
+    .timeline-item {
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item .dot {
+            position: absolute;
+            left: -30px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            background: #0d6efd;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            z-index: 2;
+        }
+
+    .timeline-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .timeline-time {
+        font-size: 11px;
+        color: #6c757d;
+    }
+
+    @@media (min-width: 768px) {
+        .border-start-md {
+            border-left: 1px solid #dee2e6 !important;
+        }
+    }
+
+
     .nav-tabs .nav-link.active {
         background-color: #ff4fa4;
         border-color: #dee2e6 #dee2e6 #fff;
@@ -30,6 +115,23 @@
             background-color: #e54794;
             border-color: #e54794;
         }
+
+    .pagination .page-link {
+        color: #a1efab;
+        border: 1px solid #eee;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #a1efab;
+        border-color: #a1efab;
+        color: white;
+    }
+
+    .pagination .page-link:hover {
+        background-color: #a1efab;
+        color: white;
+    }
 </style>
 <div class="container-fluid">
     <div class="row">
@@ -40,28 +142,26 @@
 
     <div class="row">
         <div class="col-12">
-            <ul class="nav nav-tabs nav-justified" id="myOrderTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="online-tab" data-bs-toggle="tab" data-bs-target="#online-orders" type="button" role="tab" aria-controls="online-orders" aria-selected="true">
-                        Mua online
-                    </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="store-tab" data-bs-toggle="tab" data-bs-target="#store-orders" type="button" role="tab" aria-controls="store-orders" aria-selected="false">
-                        Mua tại cửa hàng
-                    </button>
-                </li>
-            </ul>
-
             <div class="tab-content" id="myOrderTabContent">
                 <div class="tab-pane fade show active" id="online-orders" role="tabpanel" aria-labelledby="online-tab">
                     <div id="order-status-buttons" class="d-flex flex-wrap mt-3">
-                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2 active" data-status="">Tất cả</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Mới đặt">Mới đặt</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Đang xử lý">Đang xử lý</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Đang vận chuyển">Đang vận chuyển</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Thành công">Thành công</button>
-                        <button class="btn btn-sm btn-outline-secondary me-2 mb-2" data-status="Đã hủy">Đã hủy</button>
+                        <a href="@Url.Action("DonHang", new { status = "" })"
+                           class="btn btn-sm btn-outline-secondary me-2 mb-2 @(string.IsNullOrEmpty(ViewBag.CurrentStatus) ? "active" : "")">Tất cả</a>
+
+                        <a href="@Url.Action("DonHang", new { status = "Chờ xác nhận" })"
+                           class="btn btn-sm btn-outline-secondary me-2 mb-2 @(ViewBag.CurrentStatus == "Chờ xác nhận" ? "active" : "")">Chờ xác nhận</a>
+
+                        <a href="@Url.Action("DonHang", new { status = "Đã xác nhận" })"
+                           class="btn btn-sm btn-outline-secondary me-2 mb-2 @(ViewBag.CurrentStatus == "Đã xác nhận" ? "active" : "")">Đã xác nhận</a>
+
+                        <a href="@Url.Action("DonHang", new { status = "Đang vận chuyển" })"
+                           class="btn btn-sm btn-outline-secondary me-2 mb-2 @(ViewBag.CurrentStatus == "Đang vận chuyển" ? "active" : "")">Đang vận chuyển</a>
+
+                        <a href="@Url.Action("DonHang", new { status = "Hoàn thành" })"
+                           class="btn btn-sm btn-outline-secondary me-2 mb-2 @(ViewBag.CurrentStatus == "Thành công" ? "active" : "")">Hoàn thành</a>
+
+                        <a href="@Url.Action("DonHang", new { status = "Đã hủy" })"
+                           class="btn btn-sm btn-outline-secondary me-2 mb-2 @(ViewBag.CurrentStatus == "Đã hủy" ? "active" : "")">Đã hủy</a>
                     </div>
                     <div class="card shadow-sm p-4 mt-3">
                         @if (Model == null || !Model.Any())
@@ -90,29 +190,38 @@
                                         <p><strong>Tổng tiền:</strong> @string.Format("{0:N0}", order.TotalAmount) đ</p>
                                         @{
                                             string badgeClass = "bg-secondary";
-                                            switch (order.Status)
+                                            string textClass = "";
+                                            string statusText = order.Status ?? "Chưa rõ";
+
+                                            switch (statusText)
                                             {
-                                                case "Chờ xác nhận":
-                                                    badgeClass = "bg-secondary";
-                                                    break;
-                                                case "Đã xác nhận":
-                                                    badgeClass = "bg-info text-dark";
-                                                    break;
-                                                case "Đang vận chuyển":
-                                                    badgeClass = "bg-warning text-dark";
-                                                    break;
+                                                case "Hoàn thành":
                                                 case "Thành công":
                                                     badgeClass = "bg-success";
                                                     break;
+                                                case "Chờ xác nhận":
+                                                    badgeClass = "bg-warning";
+                                                    textClass = "text-dark";
+                                                    break;
                                                 case "Đã hủy":
+                                                case "Hủy":
                                                     badgeClass = "bg-danger";
+                                                    break;
+                                                case "Đã xác nhận":
+                                                    badgeClass = "bg-primary";
+                                                    break;
+                                                case "Đang vận chuyển":
+                                                case "Người bán đang chuẩn bị đơn hàng":
+                                                case "Đã giao cho đơn vị vận chuyển":
+                                                    badgeClass = "bg-info";
+                                                    textClass = "text-dark";
                                                     break;
                                                 default:
                                                     badgeClass = "bg-secondary";
                                                     break;
                                             }
                                         }
-                                        <span class="badge @badgeClass">@order.Status</span>
+                                        <span class="badge @badgeClass @textClass">@statusText</span>
 
                                         <button type="button"
                                                 class="btn btn-sm btn-outline-primary float-end btn-view-detail"
@@ -124,15 +233,40 @@
                             </div>
                         }
                     </div>
+                    @if (ViewBag.TotalPages > 1)
+                    {
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("DonHang", new { page = ViewBag.CurrentPage - 1, status = ViewBag.CurrentStatus })">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                                {
+                                    if (i == 1 || i == ViewBag.TotalPages || (i >= ViewBag.CurrentPage - 2 && i <= ViewBag.CurrentPage + 2))
+                                    {
+                                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                                            <a class="page-link" href="@Url.Action("DonHang", new { page = i, status = ViewBag.CurrentStatus })">@i</a>
+                                        </li>
+                                    }
+                                    else if (i == ViewBag.CurrentPage - 3 || i == ViewBag.CurrentPage + 3)
+                                    {
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    }
+                                }
+
+                                <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                                    <a class="page-link" href="@Url.Action("DonHang", new { page = ViewBag.CurrentPage + 1, status = ViewBag.CurrentStatus })">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
                 </div>
 
-                <div class="tab-pane fade" id="store-orders" role="tabpanel" aria-labelledby="store-tab">
-                    <div class="card shadow-sm p-4">
-                        <div class="text-center py-5">
-                            <h5 class="text-muted mt-3">Chức năng đang được phát triển...</h5>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -148,14 +282,6 @@
 @section scripts {
     <script>
         $(document).ready(function() {
-            $('.btn[data-status]').on('click', function() {
-                $('.btn[data-status]').removeClass('active');
-                $(this).addClass('active');
-                var status = $(this).data('status');
-                // Ví dụ: $.get('@Url.Action("LichSu_DonHang", "KhachHang")', { status: status }, function(data) {
-                //      $('#order-list').html(data); // Cập nhật danh sách
-                // });
-            });
             var modalElement = document.getElementById('orderDetailModal');
             var myModal = new bootstrap.Modal(modalElement);
             var modalPlaceholder = $('#modal-content-placeholder');

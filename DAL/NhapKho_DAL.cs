@@ -86,7 +86,6 @@ namespace DAL
                     param.Add("@NguoiNhap", obj.NguoiNhap);
                     param.Add("@NhaCungCap", obj.NhaCungCap);
                     param.Add("@GhiChu", obj.GhiChu);
-                    param.Add("@TotalAmount", obj.TotalAmount);
                     param.Add("@CreatedBy", obj.CreatedBy);
 
                     if (obj.ChiTietNhapKho != null && obj.ChiTietNhapKho.Any())

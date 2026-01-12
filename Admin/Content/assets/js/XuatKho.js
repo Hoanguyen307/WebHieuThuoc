@@ -3,7 +3,6 @@
     $('#modalDetail').modal('hide');
 }
 function LoadForm() {
-    debugger
     $.get('/NhapKho/Add', function (res) {
         $('#modalNhapKho .modal-body').html(res);
         $('#modalNhapKho').modal('show');

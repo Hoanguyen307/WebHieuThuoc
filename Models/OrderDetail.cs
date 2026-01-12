@@ -17,10 +17,11 @@ namespace Models
         public string OrderCode { get; set; }
         //productID
         public int ProductId { get; set; }
-        public string Image { get; set; }
-        public string ProductName { get; set; }
+        public string HinhAnh { get; set; }
+        public string TenThuoc { get; set; }
 
         public string FullName { get; set; }
+        public string Address { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Discount { get; set; }
         public decimal LineTotal { get; set; }
@@ -30,7 +31,7 @@ namespace Models
         public string Note { get; set; }
         public string Status { get; set; }
         public int Quantity { get; set; }
-        public List<Product> listProduct { get; set; }
+        public List<OrderDetail> listProduct { get; set; }
 
 
     }

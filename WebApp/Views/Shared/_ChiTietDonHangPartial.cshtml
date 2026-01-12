@@ -1,0 +1,163 @@
+﻿@model IEnumerable<Models.OrderDetail>
+@if (Model != null && Model.Any())
+{
+    var firstItem = Model.First();
+    var trackingCode = ViewBag.TrackingCode as string ?? "";
+
+    <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-uppercase" style="letter-spacing: 1px;">
+            <i class="fas fa-file-invoice me-2 text-primary"></i>Chi tiết đơn hàng: <span class="text-primary">#@firstItem.OrderCode</span>
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        <div class="card border-0 bg-light rounded-3 mb-4">
+            <div class="card-body row g-3">
+                <div class="col-md-6">
+                    <div class="text-muted small mb-1"><i class="fas fa-user me-1"></i> Khách hàng</div>
+                    <div class="fw-bold text-dark">@firstItem.FullName</div>
+                    <div class="text-muted small mt-2"><i class="fas fa-calendar-alt me-1"></i> Ngày tạo</div>
+                    <div class="fw-bold text-dark">@firstItem.CreatedDate</div>
+                </div>
+                <div class="col-md-6 border-start-md">
+                    <div class="text-muted small mb-1"><i class="fas fa-info-circle me-1"></i> Trạng thái đơn hàng</div>
+                    <div>
+                        @{
+                            string bgClass = "bg-secondary";
+                            string textClass = "text-white";
+                            string statusText = firstItem.Status ?? "Chưa rõ";
+
+                            switch (statusText)
+                            {
+                                case "Hoàn thành": bgClass = "bg-success"; break;
+                                case "Chờ xác nhận": bgClass = "bg-warning"; textClass = "text-dark"; break;
+                                case "Hủy": bgClass = "bg-danger"; break;
+                                case "Đã xác nhận": bgClass = "bg-primary"; break;
+                                case "Người bán đang chuẩn bị đơn hàng":
+                                case "Đã giao cho đơn vị vận chuyển": bgClass = "bg-info"; textClass = "text-dark"; break;
+                            }
+                        }
+                        <span class="badge rounded-pill @bgClass @textClass px-3 py-2 shadow-sm">@statusText</span>
+                    </div>
+                    <div class="text-muted small mt-2"><i class="fas fa-money-bill-wave me-1"></i> Tổng thanh toán</div>
+                    <div class="fw-bold text-danger fs-5">@string.Format("{0:N0} đ", firstItem.TotalAmount)</div>
+                </div>
+            </div>
+        </div>
+
+        <h6 class="fw-bold mb-3"><i class="fas fa-box-open me-2 text-primary"></i>Danh sách sản phẩm</h6>
+        <div class="order-items-container mb-4">
+            @foreach (var p in Model)
+            {
+                <div class="d-flex align-items-center p-3 mb-2 bg-white border rounded shadow-sm hover-shadow transition">
+                    <div class="position-relative">
+                        <img src="@p.HinhAnh" alt="@p.ProductName" class="rounded border" style="width:70px;height:70px;object-fit:cover;" />
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark border border-light">
+                            x @p.Quantity
+                        </span>
+                    </div>
+                    <div class="flex-grow-1 ms-4">
+                        <div class="fw-bold text-dark mb-1">@p.ProductName</div>
+                        <div class="text-danger fw-bold small">@string.Format("{0:N0} đ", p.LineTotal)</div>
+                    </div>
+
+                    @if (firstItem.Status == "Hoàn thành")
+                    {
+                        <div class="ms-auto d-flex flex-column gap-2">
+                            <a href="@Url.Action("Details", "Products", new { id = p.ProductId })"
+                               class="btn btn-xs btn-outline-primary rounded-pill px-3 py-1 fw-bold">
+                                <i class="fas fa-redo me-1"></i> Mua lại
+                            </a>
+                            <a href="@Url.Action("Details", "Products", new { id = p.ProductId })#reviews"
+                               class="btn btn-xs btn-outline-danger rounded-pill px-3 py-1 fw-bold">
+                                <i class="fas fa-star me-1"></i> Đánh giá
+                            </a>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="bg-light rounded-3 p-3">
+            <h6 class="fw-bold mb-3"><i class="fas fa-truck me-2 text-primary"></i>Hành trình vận chuyển</h6>
+            <div id="orderTimeline" class="ms-2">
+                <div class="text-muted small italic">Đang tải lịch sử hành trình...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
+    </div>
+}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dayjs/1.11.10/dayjs.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        const tracking = "@(ViewBag.TrackingCode ?? "")";
+
+    if (!tracking || tracking.trim() === "") {
+        $("#orderTimeline").html(`<div class="text-muted"><i class="fas fa-info-circle me-1"></i> Đơn hàng đang được chuẩn bị. Thông tin vận chuyển sẽ sớm được cập nhật.</div>`);
+        return;
+    }
+
+        $.getJSON("/KhachHang/Track", { tracking: tracking }, function (res) {
+            if (res.code !== 200) {
+                $("#orderTimeline").html(`<div class="text-danger">Không thể tải lịch sử vận chuyển.</div>`);
+                return;
+            }
+
+            const history = res.data.history;
+
+            if (!history || history.length === 0) {
+                $("#orderTimeline").html(`<div class="text-muted">Chưa có lịch sử vận chuyển.</div>`);
+                return;
+            }
+
+            let html = `<div class="timeline">`;
+
+            const statusText = {
+                0: "Chờ xử lý",
+                1: "Đã bàn giao cho đơn vị vận chuyển",
+                2: "Đang lấy hàng",
+                3: "Đang giao hàng",
+                4: "Giao hàng thành công",
+                5: "Giao thất bại"
+            };
+
+            history.forEach(h => {
+                html += `
+                    <div class="timeline-item">
+                        <div class="dot"></div>
+                        <div class="timeline-title">${statusText[h.Status] || h.Status}</div>
+                        <div class="timeline-time">${formatVN(h.CreatedDate)}${h.Location ? " • " + h.Location : ""}</div>
+                        ${h.Note ? `<div class="timeline-note">${h.Note}</div>` : ""}
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            $("#orderTimeline").html(html);
+        });
+
+    });
+
+    function formatVN(dateString) {
+        if (!dateString) return "";
+
+        let d;
+        const match = /\/Date\((\d+)(?:[+-]\d+)?\)\//.exec(dateString);
+        if (match) {
+            d = dayjs(parseInt(match[1]));
+        } else {
+            d = dayjs(dateString);
+        }
+
+        if (!d.isValid()) return dateString;
+
+        return d.format('DD/MM/YYYY HH:mm');
+    }
+</script>
+
+

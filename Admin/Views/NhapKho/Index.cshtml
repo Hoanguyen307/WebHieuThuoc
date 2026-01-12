@@ -5,6 +5,23 @@
 }
 @section Styles {
     <link href="~/Content/assets/css/common.css" rel="stylesheet" />
+    <style>
+        #productPagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 4px;
+            padding: 10px 0;
+        }
+
+            #productPagination .page-item .page-link {
+                padding: 5px 10px;
+                font-size: 13px; 
+                min-width: 35px;
+                text-align: center;
+                border-radius: 4px !important; 
+            }
+    </style>
 }
 <div class="container-wrapper" style=" display: flex; flex-direction: column;">
     <div class="d-flex justify-content-between mb-3">
@@ -66,7 +83,7 @@
     <div id="pagination" class="d-flex justify-content-end mt-2"></div>
 </div>
 <div class="modal" id="modalNhapKho" style="color:black">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document" style=" min-width: 1111px;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modaldanhmucLabel">Thông tin nhập kho    </h5>
@@ -88,13 +105,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
             <div class="modal-body" style="color:black">
-                <!-- Ajax sẽ load nội dung ở đây -->
             </div>
         </div>
     </div>
 </div>
 
-</div>
 @section Scripts {
     <script src="~/Content/assets/js/NhapKho.js?v=(@DateTime.Now.Ticks)"></script>
 }

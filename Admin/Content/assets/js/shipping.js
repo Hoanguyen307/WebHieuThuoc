@@ -109,11 +109,11 @@ function renderTable(rows) {
         <td>${r.WarehouseName || "<span class='text-secondary'>-</span>"}</td>
         <td>${badge(r.CurrentStatus || 0)}</td>
         <td>${fmtDate(r.CreatedDate)}</td>
-        <td class="text-end">
+        <td >
             <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-primary btn-assign">Assign</button>
-                <button class="btn btn-outline-secondary btn-history">Timeline</button>
-                <button class="btn btn-outline-success btn-map">Map</button>
+                <button class="btn btn-outline-primary btn-assign">Phân công</button>
+                <button class="btn btn-outline-secondary btn-history">Hành trình</button>
+                <button class="btn btn-outline-success btn-map">Bản đồ</button>
             </div>
         </td>
       </tr>
@@ -159,14 +159,14 @@ function onOpenAssign(e) {
     if (dsId) {
         console.log("Đang gọi lấy tài xế cho dsId:", dsId);
         $.getJSON("/Shipping/GetDrivers", { deliveryServiceId: dsId }, res => {
-            console.log("Kết quả GetDrivers từ Server:", res); // Kiểm tra res.code và res.data ở đây
+            console.log("Kết quả GetDrivers từ Server:", res); 
 
             if (res.code === 200) {
                 $("#assign-driver").html(`<option value="">-- Chọn tài xế --</option>`);
 
                 if (res.data && res.data.length > 0) {
                     res.data.forEach(d => {
-                        console.log("Dữ liệu tài xế chi tiết:", d); // Kiểm tra xem Id và DriverName có viết hoa chữ cái đầu không
+                        console.log("Dữ liệu tài xế chi tiết:", d); 
                         $("#assign-driver").append(`<option value="${d.Id}">${d.DriverName} - ${d.Phone}</option>`);
                     });
 

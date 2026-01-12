@@ -47,6 +47,7 @@ namespace Models.Payment
 
         #region Request
 
+
         public string CreateRequestUrl(string baseUrl, string vnp_HashSecret)
         {
             StringBuilder data = new StringBuilder();
@@ -54,22 +55,19 @@ namespace Models.Payment
             {
                 if (!String.IsNullOrEmpty(kv.Value))
                 {
-                    data.Append(WebUtility.UrlEncode(kv.Key) + "=" + WebUtility.UrlEncode(kv.Value) + "&");
+                    data.Append(Uri.EscapeDataString(kv.Key) + "=" + Uri.EscapeDataString(kv.Value) + "&");
                 }
             }
+
             string queryString = data.ToString();
-
-            baseUrl += "?" + queryString;
-            String signData = queryString;
-            if (signData.Length > 0)
+            if (queryString.EndsWith("&"))
             {
-
-                signData = signData.Remove(data.Length - 1, 1);
+                queryString = queryString.Remove(queryString.Length - 1);
             }
-            string vnp_SecureHash = Utils.HmacSHA512(vnp_HashSecret, signData);
-            baseUrl += "vnp_SecureHash=" + vnp_SecureHash;
 
-            return baseUrl;
+            string vnp_SecureHash = Utils.HmacSHA512(vnp_HashSecret, queryString);
+
+            return baseUrl + "?" + queryString + "&vnp_SecureHash=" + vnp_SecureHash;
         }
 
 
@@ -117,7 +115,16 @@ namespace Models.Payment
 
     public class Utils
     {
-
+        public static String HmacSHA256(string key, string inputData)
+        {
+            byte[] keyBytes = Encoding.UTF8.GetBytes(key);
+            byte[] inputBytes = Encoding.UTF8.GetBytes(inputData);
+            using (var hmac = new HMACSHA256(keyBytes))
+            {
+                byte[] hashValue = hmac.ComputeHash(inputBytes);
+                return BitConverter.ToString(hashValue).Replace("-", "").ToLower();
+            }
+        }
 
         public static String HmacSHA512(string key, String inputData)
         {
@@ -129,10 +136,10 @@ namespace Models.Payment
                 byte[] hashValue = hmac.ComputeHash(inputBytes);
                 foreach (var theByte in hashValue)
                 {
-                    hash.Append(theByte.ToString("x2"));
+                    // BẮT BUỘC: "X2" để ra chữ HOA (ví dụ: A1B2...)
+                    hash.Append(theByte.ToString("X2"));
                 }
             }
-
             return hash.ToString();
         }
         public static string GetIpAddress()

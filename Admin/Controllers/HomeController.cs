@@ -18,11 +18,11 @@ namespace Admin.Controllers
         }
 
         [HttpGet]
-        public JsonResult LayThongKeTongQuan()
+        public JsonResult LayThongKeTongQuan(DateTime? tuNgay, DateTime? denNgay)
         {
             try
             {
-                var thongKe = new Dashboard_DAL().LayThongKeTongQuan();
+                var thongKe = new Dashboard_DAL().LayThongKeTongQuan(tuNgay, denNgay);
                 if (thongKe != null)
                 {
                     return Json(new
@@ -40,11 +40,11 @@ namespace Admin.Controllers
         }
 
         [HttpGet]
-        public JsonResult LayDuLieuBanHang(string kyHan = "ngay")
+        public JsonResult LayDuLieuBanHang(string kyHan = "ngay", DateTime? tuNgay = null, DateTime? denNgay = null)
         {
             try
             {
-                var duLieu = new Dashboard_DAL().LayDuLieuBanHang(kyHan);
+                var duLieu = new Dashboard_DAL().LayDuLieuBanHang(kyHan, tuNgay, denNgay);
                 if (duLieu != null)
                 {
                     return Json(new
@@ -62,11 +62,11 @@ namespace Admin.Controllers
         }
 
         [HttpGet]
-        public JsonResult LayTongKetTaiChinh()
+        public JsonResult LayTongKetTaiChinh(DateTime? tuNgay, DateTime? denNgay)
         {
             try
             {
-                var taiChinh = new Dashboard_DAL().LayTongKetTaiChinh();
+                var taiChinh = new Dashboard_DAL().LayTongKetTaiChinh(tuNgay, denNgay);
                 if (taiChinh != null)
                 {
                     return Json(new

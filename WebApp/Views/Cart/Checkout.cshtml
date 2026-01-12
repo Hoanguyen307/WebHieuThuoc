@@ -19,10 +19,10 @@
                         {
                             <div class="d-flex justify-content-between align-items-center border-bottom py-2">
                                 <div class="d-flex align-items-center">
-                                    <img src="https://localhost:44310/@item.ProductImage" width="125" class="me-3" />
+                                    <img src="@item.ProductImage" width="125" class="me-3" />
                                     <div style="width: 550px; padding-right: 25px;">
                                         <strong>@item.ProductName</strong><br />
-                                        SL: @item.Quantity 
+                                        SL: @item.Quantity
 
                                     </div>
                                 </div>
@@ -207,119 +207,121 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        @if (ViewBag.OrderSuccess != null && (bool)ViewBag.OrderSuccess == true)
-{
-    <text>
-        Swal.fire({
-            title: "🎉 Đặt hàng thành công!",
-            text: "Cảm ơn bạn đã mua sắm 💖",
-            icon: "success",
-            showConfirmButton: false,
-            timer: 5000
-        });
-
-        setTimeout(function () {
-            window.location.href = '@Url.Action("Index", "Home1")';
-        }, 5000);
-    </text>
-}
-    });
-    document.addEventListener("DOMContentLoaded", function () {
-        const form = document.getElementById("checkoutForm");
-        const btn = document.getElementById("btnPlaceOrder");
-        const spinner = btn.querySelector(".spinner-border");
-        const btnText = btn.querySelector(".btn-text");
-
-        form.addEventListener("submit", function (e) {
-            btn.disabled = true;
-            spinner.classList.remove("d-none");
-            btnText.textContent = "Đang xử lý...";
-        });
-
-    });
-function handleDelete(id) {
-    if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
-        $.ajax({
-            url: '/DiaChiGiaoHang/Delete',
-            type: 'POST',
-            data: { DiaChiId: id },
-            success: function (res) {
-                if (res.code === 200) {
-                    alert(res.msg);
-                    location.reload();
-                    //loadKhachHang();
-                } else {
-                    alert(res.msg);
-                }
-            }
-        });
+    var timer = 0;
+    function formatCurrency(value) {
+        return Math.round(value).toLocaleString("vi-VN") + " ₫";
     }
-}
-// Khi chọn radio, gọi AJAX set mặc định
-$(document).on("change", "input[name='SelectedAddressId']", function () {
-    let id = $(this).val();
 
-    $.post("@Url.Action("SetDefault", "DiaChiGiaoHang")", { DiaChiId: id }, function (res) {
-        toastr[res.code === 200 ? "success" : "error"](res.msg);
+    document.addEventListener("DOMContentLoaded", function () {
+        var orderSuccess = '@(ViewBag.OrderSuccess != null && (bool)ViewBag.OrderSuccess == true ? "true" : "false")';
 
-        if (res.code === 200) {
-            // Cập nhật lại UI mà không cần reload
-            $(".badge.bg-danger").remove(); // xóa badge cũ
-            $("input[name='SelectedAddressId']:checked")
-                .closest("label")
-                .find(".flex-grow-1")
-                .append('<span class="badge bg-danger mt-1">Mặc định</span>');
+        if (orderSuccess === "true") {
+            Swal.fire({
+                title: "🎉 Đặt hàng thành công!",
+                text: "Cảm ơn bạn đã mua sắm 💖",
+                icon: "success",
+                showConfirmButton: false,
+                timer: 3000
+            }).then(function() {
+                window.location.href = '@Url.Action("Index", "Home1")';
+            });
+        }
+
+        const chkUsePoints = document.getElementById("chkUsePoints");
+        const pointsHiddenInput = document.getElementById("PointsToUse");
+        const voucherSelect = document.getElementById("voucherSelect");
+        const subtotalElem = document.querySelector(".tam-tinh");
+        const discountElem = document.querySelector(".giam-gia");
+        const totalElem = document.querySelector(".tong-tien");
+
+        if (subtotalElem) {
+            const subtotalBase = parseInt(subtotalElem.getAttribute("data-subtotal")) || 0;
+            const availablePoints = parseInt(document.getElementById("availablePoints")?.textContent) || 0;
+
+            function calculateTotal() {
+                let totalDiscount = 0;
+
+                // Điểm thưởng
+                if (chkUsePoints && chkUsePoints.checked) {
+                    let maxPointsUsable = Math.min(availablePoints, subtotalBase);
+                    pointsHiddenInput.value = maxPointsUsable;
+                    totalDiscount += maxPointsUsable;
+                } else if (pointsHiddenInput) {
+                    pointsHiddenInput.value = 0;
+                }
+
+                // Voucher
+                let selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
+                if (selectedOption && selectedOption.value) {
+                    let discountType = selectedOption.dataset.discountType;
+                    let discountValue = parseFloat(selectedOption.dataset.discountValue) || 0;
+
+                    if (discountType === 'Percentage') {
+                        totalDiscount += (subtotalBase * discountValue) / 100;
+                    } else {
+                        totalDiscount += discountValue;
+                    }
+                }
+
+                if (totalDiscount > subtotalBase) totalDiscount = subtotalBase;
+                let finalTotal = subtotalBase - totalDiscount;
+
+                discountElem.textContent = "-" + formatCurrency(totalDiscount);
+                totalElem.textContent = formatCurrency(finalTotal);
+            }
+
+            if (chkUsePoints) chkUsePoints.addEventListener("change", calculateTotal);
+            if (voucherSelect) voucherSelect.addEventListener("change", calculateTotal);
+            calculateTotal();
+        }
+
+        // --- PHẦN 3: HIỆN/ẨN VNPAY ---
+        const paymentRadios = document.querySelectorAll("input[name='SelectedPaymentMethod']");
+        const vnpayOptionsDiv = document.getElementById("load_form_payment");
+
+        paymentRadios.forEach(radio => {
+            radio.addEventListener("change", function () {
+                if (vnpayOptionsDiv) {
+                    vnpayOptionsDiv.style.display = (this.value === "VNPAY") ? "block" : "none";
+                }
+            });
+        });
+
+        // --- PHẦN 4: HIỆU ỨNG NÚT ĐẶT HÀNG ---
+        const form = document.getElementById("checkoutForm");
+        const btnPlaceOrder = document.getElementById("btnPlaceOrder");
+        if (form && btnPlaceOrder) {
+            form.addEventListener("submit", function () {
+                btnPlaceOrder.disabled = true;
+                btnPlaceOrder.querySelector(".spinner-border")?.classList.remove("d-none");
+                const btnText = btnPlaceOrder.querySelector(".btn-text");
+                if (btnText) btnText.textContent = "Đang xử lý...";
+            });
         }
     });
-});
 
+    // --- PHẦN 5: CÁC HÀM AJAX ĐỊA CHỈ (Nằm ngoài DOMContentLoaded) ---
     function LoadForm() {
-        $.ajax({
-            url: '/DiaChiGiaoHang/Create',
-            type: 'Get',
-            success: function (res) {
-                if ($('#formAdd').length > 0) {
-                    $('#formAdd')[0].reset();
-                }
-                $('#DiaChiId').val('');
-                $('#modalDiaChi .modal-body').html(res);
-                $('#modalDiaChi').modal('show');
-            }
-        })
+        $.get('/DiaChiGiaoHang/Create', function (res) {
+            $('#modalDiaChi .modal-body').html(res);
+            $('#modalDiaChi').modal('show');
+        });
     }
 
     function handleFormUpdateDanhMuc(id) {
-        debugger
-        if (!id || parseInt(id) <= 0) {
-            toastr.error("ID không hợp lệ");
-            return;
-        }
-
-        $.ajax({
-            url: '/DiaChiGiaoHang/Edit',
-            type: 'GET',
-            data: { DiaChiId: id },
-            success: function (res) {
-                $('#modalDiaChi .modal-body').html(res);
-                $('#modalDiaChi').modal('show');
-            },
-            error: function (xhr, status, error) {
-                console.error('Lỗi khi load form:', error);
-                alert('Có lỗi xảy ra khi tải form. Vui lòng thử lại!');
-            }
+        $.get('/DiaChiGiaoHang/Edit', { DiaChiId: id }, function (res) {
+            $('#modalDiaChi .modal-body').html(res);
+            $('#modalDiaChi').modal('show');
         });
     }
+
     function SaveDiaChi() {
-        debugger
         var form = $('#form-addDiaChi')[0];
         var formData = new FormData(form);
         var id = $('#DiaChiId').val();
-        formData.append("MacDinh", $('#MacDinh').is(':checked'));
-
-        var url = (id != null && parseInt(id) > 0) ? '/DiaChiGiaoHang/Edit' : '/DiaChiGiaoHang/Create';
-        console.log([...formData.entries()]);
+        var url = (id && parseInt(id) > 0) ? '/DiaChiGiaoHang/Edit' : '/DiaChiGiaoHang/Create';
 
         $.ajax({
             url: url,
@@ -329,107 +331,33 @@ $(document).on("change", "input[name='SelectedAddressId']", function () {
             contentType: false,
             success: function (res) {
                 if (res.code === 200) {
-                    toastr.success(res.msg || "Cập nhật thành công");
                     $('#modalDiaChi').modal('hide');
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1500);
-                    //loadDanhMuc();
-                } else if (typeof res === 'string') {
-                    $('#modalDiaChi .modal-body').html(res);
+                    Swal.fire("Thành công", res.msg, "success").then(() => location.reload());
                 } else {
-                    toastr.error(res.msg || "Cập nhật thất bại");
+                    Swal.fire("Lỗi", res.msg || "Cập nhật thất bại", "error");
                 }
             }
         });
     }
-    document.addEventListener("DOMContentLoaded", function () {
-        const chkUsePoints = document.getElementById("chkUsePoints");
-        const pointsHiddenInput = document.getElementById("PointsToUse");
-        const voucherSelect = document.getElementById("voucherSelect");
-        const subtotalElem = document.querySelector(".tam-tinh");
-        const discountElem = document.querySelector(".giam-gia");
-        const totalElem = document.querySelector(".tong-tien");
 
-        const subtotal = parseInt(subtotalElem.dataset.subtotal);
-        const availablePoints = parseInt(document.getElementById("availablePoints").textContent) || 0;
-
-        // giả sử 1 điểm = 1đ (nếu khác thì sửa ở đây)
-        const pointValue = 1;
-
-        function formatCurrency(value) {
-            return value.toLocaleString("vi-VN") + " ₫";
-        }
-
-        function calculateTotal() {
-            let totalDiscount = 0;
-
-            const subtotal = parseInt(subtotalElem.dataset.subtotal);
-
-            const availablePoints = parseInt(document.getElementById("availablePoints").textContent) || 0;
-            const pointValue = 1;
-
-            if (chkUsePoints.checked) {
-                let maxPointsUsable = Math.min(availablePoints, Math.floor(subtotal / pointValue));
-                pointsHiddenInput.value = maxPointsUsable;
-                totalDiscount += maxPointsUsable * pointValue;
-            } else {
-                pointsHiddenInput.value = 0;
+    function handleDelete(id) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn?',
+            text: "Địa chỉ này sẽ bị xóa!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            confirmButtonText: 'Xóa ngay'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('/DiaChiGiaoHang/Delete', { DiaChiId: id }, function (res) {
+                    if (res.code === 200) {
+                        location.reload();
+                    } else {
+                        Swal.fire("Lỗi", res.msg, "error");
+                    }
+                });
             }
-
-            let selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
-
-            if (selectedOption && selectedOption.value) {
-                let discountType = selectedOption.dataset.discountType;
-                let discountValue = parseFloat(selectedOption.dataset.discountValue);
-
-                let voucherDiscount = 0;
-
-                if (discountType === 'Percentage') {
-                    voucherDiscount = (subtotal * discountValue) / 100;
-
-                } else if (discountType === 'FixedAmount') {
-                    voucherDiscount = discountValue;
-                }
-
-                totalDiscount += voucherDiscount;
-            }
-
-            if (totalDiscount > subtotal) {
-                totalDiscount = subtotal;
-            }
-
-            let finalTotal = subtotal - totalDiscount;
-
-            discountElem.textContent = "-" + formatCurrency(Math.round(totalDiscount));
-            totalElem.textContent = formatCurrency(Math.round(finalTotal));
-        }
-
-        chkUsePoints.addEventListener("change", calculateTotal);
-        voucherSelect.addEventListener("change", calculateTotal);
-
-        // gọi 1 lần ban đầu để sync giá trị
-        calculateTotal();
-    });
-    // JavaScript để xử lý logic hiển thị tùy chọn VNPay
-    document.addEventListener("DOMContentLoaded", function () {
-        const paymentRadios = document.querySelectorAll("input[name='SelectedPaymentMethod']");
-        const vnpayOptionsDiv = document.getElementById("load_form_payment");
-
-        paymentRadios.forEach(radio => {
-            radio.addEventListener("change", function () {
-                if (this.value === "VNPAY") {
-                    vnpayOptionsDiv.style.display = "block";
-                } else {
-                    vnpayOptionsDiv.style.display = "none";
-                }
-            });
         });
-
-        // Kiểm tra trạng thái ban đầu khi tải trang
-        const initialSelectedMethod = document.querySelector("input[name='SelectedPaymentMethod']:checked");
-        if (initialSelectedMethod && initialSelectedMethod.value === "VNPAY") {
-            vnpayOptionsDiv.style.display = "block";
-        }
-    });
+    }
 </script>

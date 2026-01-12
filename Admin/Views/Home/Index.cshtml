@@ -344,12 +344,27 @@
     </style>
 </head>
 <body>
-    <div class="header" >
+    <div class="header">
         <div>
             <h1>Bảng Điều Khiển</h1>
             <div class="header-subtitle">Thống kê và báo cáo tổng hợp</div>
         </div>
 
+        <div class="header-controls">
+            <div style="display: flex; gap: 10px; align-items: flex-end;">
+                <div>
+                    <label style="font-size: 11px; font-weight: 600; color: #64748b; display: block;">Từ ngày</label>
+                    <input type="date" id="commonFromDate" class="chart-tab" style="border: 1px solid #e2e8f0; padding: 5px 10px;">
+                </div>
+                <div>
+                    <label style="font-size: 11px; font-weight: 600; color: #64748b; display: block;">Đến ngày</label>
+                    <input type="date" id="commonToDate" class="chart-tab" style="border: 1px solid #e2e8f0; padding: 5px 10px;">
+                </div>
+                <button onclick="taiTatCaDuLieu()" class="chart-tab active" style="background: #3b82f6; color: white; border: none; cursor: pointer; height: 32px;">
+                    <i class="fas fa-filter"></i> Lọc
+                </button>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -448,6 +463,16 @@
         let salesChart;
         let currentPeriod = 'ngay';
 
+        async function taiTatCaDuLieu() {
+            const tuNgay = document.getElementById('commonFromDate').value;
+            const denNgay = document.getElementById('commonToDate').value;
+
+            await Promise.all([
+                taiThongKeTongQuan(tuNgay, denNgay),
+                taiDuLieuBanHang(currentPeriod, tuNgay, denNgay),
+                taiTongKetTaiChinh(tuNgay, denNgay)
+            ]);
+        }
         function layTokenChongGiaMao() {
             const tokenElement = document.getElementById('antiForgeryToken');
             return tokenElement ? tokenElement.value : '';
@@ -476,9 +501,11 @@
             return result.data;
         }
 
-        async function taiThongKeTongQuan() {
+        async function taiThongKeTongQuan(tuNgay = '', denNgay = '') {
             try {
-                const stats = await guiYeuCauAjax('/Home/LayThongKeTongQuan');
+                const url = `/Home/LayThongKeTongQuan?tuNgay=${tuNgay}&denNgay=${denNgay}`;
+                const stats = await guiYeuCauAjax(url);
+
                 document.getElementById('totalProfit').textContent = dinhDangTienTe(stats.TongLoiNhuan);
                 document.getElementById('profitProgress').style.width = `${stats.PhanTramThayDoiLoiNhuan}%`;
                 document.getElementById('profitChange').textContent = `Thay đổi: ${stats.PhanTramThayDoiLoiNhuan}%`;
@@ -491,13 +518,15 @@
                 document.getElementById('usersProgress').style.width = `${stats.PhanTramThayDoiNguoiDung}%`;
                 document.getElementById('usersChange').textContent = `Thay đổi: ${stats.PhanTramThayDoiNguoiDung}%`;
             } catch (error) {
-                hienThiLoi(`Không thể tải thống kê: ${error.message}`);
+                hienThiLoi(`Lỗi thống kê: ${error.message}`);
             }
         }
 
-        async function taiDuLieuBanHang(thoiGian) {
+        async function taiDuLieuBanHang(thoiGian, tuNgay = '', denNgay = '') {
             try {
-                const salesData = await guiYeuCauAjax(`/Home/LayDuLieuBanHang?kyHan=${thoiGian}`);
+                const url = `/Home/LayDuLieuBanHang?kyHan=${thoiGian}&tuNgay=${tuNgay}&denNgay=${denNgay}`;
+                const salesData = await guiYeuCauAjax(url);
+
                 if (salesChart) { salesChart.destroy(); }
                 const ctx = document.getElementById('salesChart').getContext('2d');
                 salesChart = new Chart(ctx, {
@@ -507,40 +536,54 @@
                         datasets: [{
                             label: 'Doanh số',
                             data: salesData.BanHang,
-                            backgroundColor: 'rgba(16, 185, 129, 0.8)', borderColor: 'rgba(16, 185, 129, 1)',
-                            fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 6
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderColor: 'rgba(59, 130, 246, 1)',
+                            fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6
                         }, {
                             label: 'Lợi nhuận',
                             data: salesData.LoiNhuan,
-                            backgroundColor: 'rgba(16, 185, 129, 0.4)', borderColor: 'rgba(16, 185, 129, 0.6)',
-                            fill: true, tension: 0.4, pointRadius: 0, pointHoverRadius: 6
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderColor: 'rgba(16, 185, 129, 1)',
+                            fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6
                         }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' }, ticks: { color: '#64748b', callback: (val) => dinhDangTienTe(val) } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } } }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: true, position: 'top' } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { callback: (val) => dinhDangSo(val) } }
+                        }
+                    }
                 });
             } catch (error) {
-                hienThiLoi(`Không thể tải dữ liệu bán hàng: ${error.message}`);
+                hienThiLoi(`Lỗi biểu đồ: ${error.message}`);
             }
         }
 
-        async function taiTongKetTaiChinh() {
+        async function taiTongKetTaiChinh(tuNgay = '', denNgay = '') {
             try {
-                const financial = await guiYeuCauAjax('/Home/LayTongKetTaiChinh');
+                const url = `/Home/LayTongKetTaiChinh?tuNgay=${tuNgay}&denNgay=${denNgay}`;
+                const financial = await guiYeuCauAjax(url);
+
                 document.getElementById('financialTotalSales').textContent = dinhDangTienTe(financial.TongBanHang);
                 document.getElementById('financialRevenue').textContent = dinhDangTienTe(financial.DoanhThu);
                 document.getElementById('financialExpenses').textContent = dinhDangTienTe(financial.ChiPhi);
                 document.getElementById('financialGrowth').textContent = dinhDangTienTe(financial.TangTruong);
             } catch (error) {
-                hienThiLoi(`Không thể tải tóm tắt tài chính: ${error.message}`);
+                hienThiLoi(`Lỗi tài chính: ${error.message}`);
             }
         }
-
 
         function chuyenTab(event, thoiGian) {
             document.querySelectorAll('.chart-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
             currentPeriod = thoiGian;
-            taiDuLieuBanHang(thoiGian);
+
+            // Lấy ngày hiện tại từ input để giữ đúng dải lọc khi đổi tab biểu đồ
+            const tuNgay = document.getElementById('commonFromDate').value;
+            const denNgay = document.getElementById('commonToDate').value;
+            taiDuLieuBanHang(thoiGian, tuNgay, denNgay);
         }
 
 
@@ -584,9 +627,15 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            taiThongKeTongQuan();
-            taiDuLieuBanHang(currentPeriod);
-            taiTongKetTaiChinh();
+            const date = new Date();
+            // Mặc định từ ngày 1 đầu tháng đến ngày hiện tại
+            const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0];
+            const today = date.toISOString().split('T')[0];
+
+            document.getElementById('commonFromDate').value = firstDay;
+            document.getElementById('commonToDate').value = today;
+
+            taiTatCaDuLieu();
         });
 
     </script>
