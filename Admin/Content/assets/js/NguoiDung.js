@@ -4,7 +4,7 @@
 
 function LoadAddForm() {
     $.ajax({
-        url: '/Account/Add',
+        url: rootPath + 'Account/Add',
         type: 'GET',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -24,7 +24,7 @@ function handleFormUpdateNguoiDung(id) {
     }
 
     $.ajax({
-        url: '/Account/Edit',
+        url: rootPath + 'Account/Edit',
         type: 'GET',
         data: { id: id }, 
         success: function (res) {
@@ -40,7 +40,7 @@ function handleFormUpdateNguoiDung(id) {
 
 function loadNguoiDung() {
     $.ajax({
-        url: '/Account/LoadNguoiDung',
+        url: rootPath + 'Account/LoadNguoiDung',
         type: 'GET',
         success: function (data) {
 
@@ -59,7 +59,7 @@ function SaveNguoiDung() {
     var email = $('#Email').val().trim();
     var phone = $('#Phone').val().trim();
     
-    var url = (id != null && parseInt(id) > 0) ? '/Account/Edit' : '/Account/Add';
+    var url = (id != null && parseInt(id) > 0) ? rootPath + 'Account/Edit' : rootPath + 'Account/Add';
     var data = {
         Id: id,
         UserName: tendangnhap,
@@ -94,7 +94,7 @@ function SaveNguoiDung() {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/Account/DeleteAccount',
+            url: rootPath + 'Account/DeleteAccount',
             type: 'POST',
             data: { Id: id },
             success: function (res) {

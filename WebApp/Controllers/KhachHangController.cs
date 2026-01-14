@@ -75,6 +75,9 @@ namespace WebApp.Controllers
 
             var dal = new KhachHang_DAL();
 
+            int tongDiem = dal.GetCustomerPoints(kh.Id);
+            ViewBag.TongDiem = tongDiem;
+
             var allLichSu = dal.LichSu_Diem(kh.Id);
             int totalRecords = allLichSu.Count();
             int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
@@ -87,6 +90,7 @@ namespace WebApp.Controllers
             ViewBag.LichSuDiem = pagedLichSu;
             ViewBag.CurrentPage = page;
             ViewBag.TotalPages = totalPages;
+
             return View();
         }
 

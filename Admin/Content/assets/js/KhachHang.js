@@ -5,7 +5,7 @@
 function LoadForm() {
     $("#loadingOverlay").show();
     $.ajax({
-        url: '/KhachHang/Add',
+        url: rootPath + 'KhachHang/Add',
         type: 'Get',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -29,7 +29,7 @@ function handleFormUpdateKhachHang(id) {
     }
 
     $.ajax({
-        url: '/KhachHang/Edit',
+        url: rootPath + 'KhachHang/Edit',
         type: 'GET',
         data: { Id: id },
         success: function (res) {
@@ -45,7 +45,7 @@ function handleFormUpdateKhachHang(id) {
         }
     });
 }
-function formatDate(dateStr) {
+function formatDate(dateStr, includeTime = false) {
     if (!dateStr) return '';
 
     const match = /\/Date\((\d+)(?:[+-]\d+)?\)\//.exec(dateStr);
@@ -56,9 +56,8 @@ function formatDate(dateStr) {
 
     if (!d.isValid()) return 'Invalid Date';
 
-    return d.format('DD/MM/YYYY HH:mm:ss');
+    return includeTime ? d.format('DD/MM/YYYY HH:mm:ss') : d.format('DD/MM/YYYY');
 }
-
 function loadKhachHang(page = 1) {
     $("#loadingOverlay").show();
     const month = $('#month').val();
@@ -66,7 +65,7 @@ function loadKhachHang(page = 1) {
     const name = $('#searchString').val();
 
     $.ajax({
-        url: '/KhachHang/GetKhachHang',
+        url: rootPath + 'KhachHang/GetKhachHang',
         type: 'GET',
         data: {
             Month: month,
@@ -89,11 +88,11 @@ function loadKhachHang(page = 1) {
             <td>${i}</td>
             <td>${item.FullName}</td>
             <td>${item.Gender ? 'Nam' : 'Nữ'}</td>
-            <td>${item.BirthDate ? formatDate(item.BirthDate) : ''}</td>
+            <td>${formatDate(item.BirthDate, false)}</td>
             <td>${item.Address}</td>
             <td>${item.Phone}</td>
             <td>${item.Email}</td>
-            <td>${item.PointsBalance }</td>
+            <td>${item.LoyaltyPoint }</td>
             <td id="status_${item.Id}" style="color:${item.IsActive ? 'green' : 'red'}">
                 ${item.IsActive ? 'Đang hoạt động' : 'Đã khóa'}
             </td>
@@ -134,7 +133,7 @@ function SaveKhachHang() {
         alert('Vui lòng nhập họ tên!');
         return;
     }
-    var url = (id != null && parseInt(id) > 0) ? '/KhachHang/Update' : '/KhachHang/Add';
+    var url = (id != null && parseInt(id) > 0) ? rootPath + 'KhachHang/Update' : rootPath + 'KhachHang/Add';
 
     $.ajax({
         url: url,
@@ -165,7 +164,7 @@ function handleDelete(id) {
     $("#loadingOverlay").show();
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/KhachHang/DeleteAccount',
+            url: rootPath + 'KhachHang/DeleteAccount',
             type: 'POST',
             data: { Id: id },
             success: function (res) {
@@ -184,7 +183,6 @@ function handleDelete(id) {
 }
 function toggleStatus(id) {
     $("#loadingOverlay").show();
-    debugger
     var lyDo = prompt("Nhập lý do khóa/mở tài khoản:");
     if (lyDo == null || lyDo.trim() === "") {
         alert("Bạn phải nhập lý do.");
@@ -192,7 +190,7 @@ function toggleStatus(id) {
     }
 
     $.ajax({
-        url: '/KhachHang/ToggleStatus',
+        url: rootPath + 'KhachHang/ToggleStatus',
         type: 'POST',
         data: { Id: id, lyDo: lyDo },  
         success: function (res) {
@@ -213,7 +211,7 @@ function toggleStatus(id) {
 }
 function xemLichSuDiem(customerId, page = 1) {
     $.ajax({
-        url: '/KhachHang/GetPointHistory',
+        url: rootPath + 'KhachHang/GetPointHistory',
         type: 'GET',
         data: {
             customerId: customerId,
@@ -292,7 +290,8 @@ function renderPagination(totalPages, currentPage) {
         e.preventDefault();
         const page = parseInt($(this).data("page"));
         if (!isNaN(page) && page !== currentPage) {
-            loadData(page);
+
+            loadKhachHang(page);
             xemLichSuDiem(customerId, page);
         }
     });

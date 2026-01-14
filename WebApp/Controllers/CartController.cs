@@ -209,6 +209,14 @@ namespace WebApp.Controllers
                 new DiaChiGiaoHang_DAL().SetDefault(CurrentUserId, diaChiId.Value);
             }
             var defaultAddress = new DiaChiGiaoHang_DAL().GetDefault(CurrentUserId);
+            if (defaultAddress != null)
+            {
+                model.SelectedAddressId = defaultAddress.DiaChiId;
+            }
+            else if (model.Addresses.Any())
+            {
+                model.SelectedAddressId = model.Addresses.First().DiaChiId;
+            }
             //var defaultAddress = model.Addresses.FirstOrDefault(a => a.MacDinh);
 
             // Lấy voucher khả dụng cho khách
@@ -223,7 +231,7 @@ namespace WebApp.Controllers
                 new PaymentMethodViewModel { Code = "MOMO", Name = "Thanh toán qua Momo" },
                 new PaymentMethodViewModel { Code = "CARD", Name = "Thẻ tín dụng/ghi nợ" }
             };
-
+            model.SelectedPaymentMethod = "COD";
             model.SubTotal = model.CartItems.Sum(x => x.UnitPrice * x.Quantity);
             model.Discount = 0; // nếu có giảm giá thì thay đổi
             model.FinalTotal = model.SubTotal - model.Discount;
@@ -256,21 +264,22 @@ namespace WebApp.Controllers
                 else
                     return RedirectToAction("Index", "Cart");
             }
+
             try
             {
                 var order = new Models.Order
                 {
                     OrderCode = "DH" + DateTime.Now.ToString("yyyyMMddHHmmss"),
                     CustomerId = CurrentUserId,
-                    Status = "Chờ xác nhận",
+                    Status = model.SelectedPaymentMethod == "COD" ? "Chờ xác nhận" : "Đã xác nhận",
                     Note = model?.Note ?? string.Empty,
                     CreatedBy = CurrentUserId.ToString(),
-                    TotalAmount = cartItems.Sum(c => c.Quantity * c.UnitPrice),
+                    TotalAmount = model.FinalTotal > 0 ? model.FinalTotal : cartItems.Sum(c => c.Quantity * c.UnitPrice),
                     DiaChiId = model.SelectedAddressId.Value,
-                    PaymentMethod = model.SelectedPaymentMethod ?? "COD"
+                    PaymentMethod = model.SelectedPaymentMethod ?? "COD",
+                    CreatedDate = DateTime.Now
                 };
-                order.CreatedDate = DateTime.Now;
-                // Chuyển cart -> OrderDetail
+
                 var orderDetails = cartItems.Select(c => new OrderDetail
                 {
                     ProductId = c.ProductId,
@@ -279,9 +288,9 @@ namespace WebApp.Controllers
                     Discount = 0
                 }).ToList();
 
-                // Lưu vào DB
                 var orderDal = new Order_DAL();
-                int newOrderId = orderDal.Insert(order, orderDetails, model.SelectedVoucherId, model.UsePoints ? model.PointsToUse : 0m);
+                int newOrderId = orderDal.Insert(order, orderDetails, model.SelectedVoucherId, model.UsePoints ? (decimal)model.PointsToUse : 0m);
+
                 if (!isBuyNow)
                 {
                     new Cart_DAL().ClearCart(CurrentUserId);

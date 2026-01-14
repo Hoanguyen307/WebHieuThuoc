@@ -11,7 +11,7 @@ using static Models.ProductReview;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin")]*/
+    [Authorize(Roles = "Admin")]
     public class ProductReviewController : Controller
     {
         // GET: ProductReview

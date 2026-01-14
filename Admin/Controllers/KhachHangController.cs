@@ -12,7 +12,7 @@ using static Models.Product;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin, Employee")]*/
+    [Authorize(Roles = "Admin, Employee")]
     public class KhachHangController : Controller
     {
         // GET: KhachHang

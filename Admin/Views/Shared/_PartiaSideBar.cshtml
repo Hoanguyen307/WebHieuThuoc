@@ -2,18 +2,19 @@
 <div class="py-3">
     <ul class="nav flex-column">
 
-        <li><a class="nav-link" href="~/Home/Index"><i class="fa fa-user"></i> <span>Dashboard</span></a></li>
+        <li><a class="nav-link" href="@Url.Action("Index", "Home")"><i class="fa fa-user"></i> <span>Dashboard</span></a></li>
         @if (User.IsInRole("Admin"))
         {
             <li class="nav-item">
                 <a class="nav-link collapsed" data-bs-toggle="collapse" href="#menuUser" role="button"
                    aria-expanded="false" aria-controls="menuUser">
-                    <i class="fa fa-users"></i> <span>Người Dùng</span>
+                    <i class="fa fa-users"></i>
+                    <span class="menu-text">Người Dùng</span>
                 </a>
                 <div class="collapse" id="menuUser">
                     <ul class="nav flex-column ms-3">
-                        <li class="nav-item"><a class="nav-link" href="~/Account/AssignRole"><span>Phân Quyền</span></a></li>
-                        <li class="nav-item"><a class="nav-link" href="~/Account/Index"><span>Tài Khoản</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="@Url.Action("AssignRole", "Account")"><span class="menu-text">Phân Quyền</span></a></li>
+                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Account")"><span class="menu-text">Tài Khoản</span></a></li>
                     </ul>
                 </div>
             </li>
@@ -26,10 +27,10 @@
             <div class="collapse menu-dropdown" id="sidebarCategory">
                 <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
-                        <a href="~/Category/Index" class="nav-link" data-key="t-analytics"><span>Danh mục</span></a>
+                        <a href="@Url.Action( "Index", "Category")" class="nav-link" data-key="t-analytics"><span class="menu-text">Danh mục</span></a>
                     </li>
                     <li class="nav-item">
-                        <a href="~/ProductCategory/Index" class="nav-link" data-key="t-crm"><span>Danh mục sản phẩm</span></a>
+                        <a href="@Url.Action("Index", "ProductCategory")" class="nav-link" data-key="t-crm"><span class="menu-text">Danh mục sản phẩm</span></a>
                     </li>
                 </ul>
             </div>
@@ -41,18 +42,24 @@
             <div class="collapse menu-dropdown" id="sidebarProduct">
                 <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
-                        <a href="~/Products/Index" class="nav-link" data-key="t-analytics"><span>Sản phẩm</span></a>
+                        <a href="@Url.Action("Index", "Products")" class="nav-link" data-key="t-analytics"><span>Sản phẩm</span></a>
                     </li>
                     <li class="nav-item">
-                        <a href="~/FlashSale/Index" class="nav-link" data-key="t-crm"><span>FlashSale</span></a>
+                        <a href="@Url.Action("Index", "FlashSale")" class="nav-link" data-key="t-crm"><span>FlashSale</span></a>
                     </li>
                     <li class="nav-item">
-                        <a href="~/Voucher/Index" class="nav-link" data-key="t-analytics"> <span>Voucher</span></a>
+                        <a href="@Url.Action("Index", "Voucher")" class="nav-link" data-key="t-analytics"> <span>Voucher</span></a>
                     </li>
                 </ul>
             </div>
         </li>
-        <li class="nav-item">
+        <li>
+            <a href="@Url.Action("Index", "NhapKho")" class="nav-link">
+                <i class="fa fa-warehouse"></i>
+                <span class="menu-text"> Nhập kho</span>
+            </a>
+        </li>
+        @*<li class="nav-item">
             <a class="nav-link menu-link" href="#sidebarKho" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarCategory">
                 <i class="fa fa-warehouse"></i> <span data-key="t-dashboards">Quản lý Kho</span>
             </a>
@@ -65,25 +72,44 @@
                     </li>
                 </ul>
             </div>
-        </li>
-        @if (User.IsInRole("Admin"))
-        {
-            <li><a class="nav-link" href="~/NhanVien/Index"><i class="fa fa-user-tie"></i> <span>Quản lý nhân viên</span></a></li>
-        }
-        <li><a class="nav-link" href="~/KhachHang/Index"><i class="fa fa-user"></i> <span>Quản lý khách hàng</span></a></li>
-        <li><a class="nav-link" href="~/BaiViet/Index"><i class="fa fa-newspaper"></i> <span>Bài viết</span></a></li>
-        <li><a class="nav-link" href="~/ProductReview/Index"><i class="fa fa-comments"></i> <span>Đánh giá</span> </a></li>
-        <li><a class="nav-link" href="~/Order/Index"><i class="fa fa-receipt"></i> <span>Quản lý đơn hàng</span></a></li>
-
+        </li>*@
         <li>
-            <a class="nav-link" href="~/Shipping/Index">
-                <i class="fa fa-truck"></i>
-                <span class="menu-text"><span>Vận chuyển</span></span>
+            <a href="@Url.Action("Index", "Order")" class="nav-link">
+                <i class="fa fa-shopping-cart"></i>
+                <span class="menu-text">Đơn hàng</span>
             </a>
         </li>
-        @*@if (User.IsInRole("Admin"))
+
+        <li>
+            <a class="nav-link" href="@Url.Action("Index", "Shipping")">
+                <i class="fa fa-truck"></i>
+                <span class="menu-text">Vận chuyển</span>
+            </a>
+        </li>
+
+        @if (User.IsInRole("Admin"))
         {
-            <li><a class="nav-link" href="~/NhanVien/Index1"><i class="fa fa-calendar-check"></i> Lịch làm việc</a></li>
-        }*@
+            <li>
+                <a class="nav-link" href="@Url.Action("Index", "NhanVien")">
+                    <i class="fa fa-user-tie"></i>
+                    <span class="menu-text">Quản lý nhân viên</span>
+                </a>
+            </li>
+        }
+
+        <li>
+            <a class="nav-link" href="@Url.Action("Index", "KhachHang")">
+                <i class="fa fa-user"></i>
+                <span class="menu-text">Quản lý khách hàng</span>
+            </a>
+        </li>
+
+        <li>
+            <a class="nav-link" href="@Url.Action("Index", "BaiViet")">
+                <i class="fa fa-newspaper"></i>
+                <span class="menu-text">Bài viết</span>
+            </a>
+        </li>
+
     </ul>
 </div>

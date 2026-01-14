@@ -52,13 +52,13 @@
             {
                 <div class="d-flex align-items-center p-3 mb-2 bg-white border rounded shadow-sm hover-shadow transition">
                     <div class="position-relative">
-                        <img src="@p.HinhAnh" alt="@p.ProductName" class="rounded border" style="width:70px;height:70px;object-fit:cover;" />
+                        <img src="@p.HinhAnh" alt="@p.TenThuoc" class="rounded border" style="width:70px;height:70px;object-fit:cover;" />
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark border border-light">
                             x @p.Quantity
                         </span>
                     </div>
                     <div class="flex-grow-1 ms-4">
-                        <div class="fw-bold text-dark mb-1">@p.ProductName</div>
+                        <div class="fw-bold text-dark mb-1">@p.TenThuoc</div>
                         <div class="text-danger fw-bold small">@string.Format("{0:N0} đ", p.LineTotal)</div>
                     </div>
 

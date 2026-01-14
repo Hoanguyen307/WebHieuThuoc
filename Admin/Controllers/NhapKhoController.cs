@@ -13,7 +13,7 @@ using static Models.Post;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin, Employee")]*/
+    [Authorize(Roles = "Admin, Employee")]
     public class NhapKhoController : Controller
     {
         // GET: NhapKho

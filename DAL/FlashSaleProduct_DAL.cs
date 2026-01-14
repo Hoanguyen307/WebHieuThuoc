@@ -61,6 +61,7 @@ namespace DAL
                 param.Add("@FlashSaleId", obj.FlashSaleId);
                 param.Add("@ProductId", obj.ThuocId);
                 param.Add("@DiscountPercent", obj.DiscountPercent);
+                param.Add("@FlashStock", obj.FlashStock);
 
                 return Connection.getConnection().Execute(
                     "sp_FlashSale_AddProduct",
@@ -82,6 +83,7 @@ namespace DAL
                 param.Add("@Id", obj.Id);
                 param.Add("@DiscountPercent", obj.DiscountPercent);
                 param.Add("@FlashPrice", obj.FlashPrice);
+                param.Add("@FlashStock", obj.FlashStock);
 
                 return Connection.getConnection().Execute(
                     "sp_FlashSale_UpdateProduct",

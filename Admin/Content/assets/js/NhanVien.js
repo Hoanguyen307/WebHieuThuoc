@@ -42,7 +42,6 @@ function renderPagination(totalPages, currentPage) {
     });
 }
 function formatDate(dateStr, includeTime = false) {
-    console.log(dateStr);
     const match = /\/Date\((\d+)\)\//.exec(dateStr);
     const timestamp = match ? parseInt(match[1], 10) : null;
 
@@ -55,7 +54,7 @@ function formatDate(dateStr, includeTime = false) {
 
 function LoadForm() {
     $.ajax({
-        url: '/NhanVien/Add',
+        url: rootPath + 'NhanVien/Add',
         type: 'Get',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -74,7 +73,7 @@ function handleFormUpdateNhanVien(id) {
     }
 
     $.ajax({
-        url: '/NhanVien/Edit',
+        url: rootPath + 'NhanVien/Edit',
         type: 'GET',
         data: { Id: id },
         success: function (res) {
@@ -97,7 +96,7 @@ function loadNhanVien(page = 1) {
     const chucvu = $('#chucvu').val();
 
     $.ajax({
-        url: '/NhanVien/GetNhanVien',
+        url: rootPath + 'NhanVien/GetNhanVien',
         type: 'GET',
         data: {
             Month: month,
@@ -124,11 +123,8 @@ function loadNhanVien(page = 1) {
             <td>${item.Phone}</td>
             <td>${item.PositionName}</td>
             <td>${item.ShiftName}</td>
-            <td>${formatDate(item.StartDate, true)}</td>
+            <td>${formatDate(item.StartDate, false)}</td>
             <td>
-                <button type="button" class="btn btn-outline-success btn-sm" onclick="handleSchedule('${item.Id}'); event.stopPropagation();">
-                    <i class="fas fa-calendar-alt"></i>
-                </button>
                 <button type="button" class="btn btn-outline-primary btn-sm" onclick="handleFormUpdateNhanVien('${item.Id}'); event.stopPropagation();">
                     <i class="fas fa-edit"></i>
                 </button>
@@ -160,7 +156,7 @@ function SaveNhanVien() {
         alert('Vui lòng nhập họ tên!');
         return;
     }
-    var url = (id != null && parseInt(id) > 0) ? '/NhanVien/Update' : '/NhanVien/Add';
+    var url = (id != null && parseInt(id) > 0) ? rootPath + 'NhanVien/Update' : rootPath + 'NhanVien/Add';
 
     $.ajax({
         url: url,
@@ -187,7 +183,7 @@ function handleSchedule(id) {
     }
 
     $.ajax({
-        url: '/NhanVien/XepLich',
+        url: rootPath + 'NhanVien/XepLich',
         type: 'GET',
         data: { Id: id },
         success: function (res) {
@@ -201,54 +197,10 @@ function handleSchedule(id) {
     });
 }
 
-function SaveLichLamViec() {
-    const id = $('#form-XepLich #Id').val();
-    const lichList = [];
-
-    $('input[name="lichTrongTuan"]:checked').each(function () {
-        const value = $(this).val(); 
-        const parts = value.split('|');
-
-        if (parts.length === 2) {
-            lichList.push({
-                NgayLam: parts[0],
-                ShiftId: parseInt(parts[1])
-            });
-        }
-    });
-
-    if (lichList.length === 0) {
-        toastr.warning("Vui lòng chọn ít nhất một ca làm!");
-        return;
-    }
-
-    $.ajax({
-        url: '/NhanVien/XepLich',
-        method: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({
-            nhanVienId: id,
-            lichTrongTuan: lichList
-        }),
-        success: function (res) {
-            if (res.code === 200) {
-                toastr.success(res.msg);
-                $('#modalXepLich').modal('hide');
-                loadNhanVien(1);
-            } else {
-                toastr.error(res.msg || "Xếp lịch thất bại");
-            }
-        },
-        error: function () {
-            toastr.error("Lỗi khi lưu lịch");
-        }
-    });
-}
-
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/NhanVien/DeleteAccount',
+            url: rootPath + 'NhanVien/DeleteAccount',
             type: 'POST',
             data: { Id: id },
             success: function (res) {
@@ -261,32 +213,6 @@ function handleDelete(id) {
             }
         });
     }
-}
-function loadLichSuChucVu(nhanVienId) {
-    $.ajax({
-        url: '/NhanVien/LichSuChucVu',
-        type: 'GET',
-        data: { id: nhanVienId },
-        success: function (res) {
-            var html = '';
-            if (res.data.length > 0) {
-                $.each(res.data, function (i, item) {
-                    html += `<tr>
-                        <td>${i + 1}</td>
-                        <td>${item.PositionName}</td>
-                        <td>${formatDate(item.TuNgay, false)}</td>
-                        <td>${item.DenNgay != null ? formatDate(item.DenNgay, false) : 'Hiện tại'}</td>
-                    </tr>`;
-                });
-            } else {
-                html = '<tr><td colspan="4" class="text-center">Không có lịch sử chức vụ</td></tr>';
-            }
-            $('#lichSuBody').html(html);
-        }
-
-    });
-    window.selectedNhanVienId = nhanVienId;
-
 }
 function showChiTiet() {
     if (!window.selectedNhanVienId) {
@@ -302,7 +228,7 @@ function loadThongTinChiTiet(nhanVienId) {
     $('#chiTietBody').html('<tr><td colspan="10" class="text-center">Vui lòng chọn nhân viên</td></tr>');
     $('#chiTietContainer').hide();
     $.ajax({
-        url: '/NhanVien/ChiTietNhanVien',
+        url: rootPath + 'NhanVien/ChiTietNhanVien',
         type: 'GET',
         data: { id: nhanVienId },
         success: function (res) {

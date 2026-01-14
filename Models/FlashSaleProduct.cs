@@ -19,6 +19,8 @@ namespace Models
         public decimal SalePrice { get; set; }
         public byte? DiscountPercent { get; set; }
         public decimal? FlashPrice { get; set; }
+        public int? FlashStock { get; set; }
+        public int? SoldQuantity { get; set; }
         public bool IsSelected { get; set; }
     }
 }

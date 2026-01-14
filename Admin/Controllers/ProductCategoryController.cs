@@ -10,7 +10,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
-    //[Authorize(Roles = "Admin, Employee")]
+    [Authorize(Roles = "Admin, Employee")]
     public class ProductCategoryController : Controller
     {
         private DBConnect db = new DBConnect();

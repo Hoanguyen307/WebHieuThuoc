@@ -12,6 +12,7 @@ namespace Models
     public class KhachHang : BaseModel
     {
         public int Id { get; set; }
+        public int LoyaltyPoint { get; set; }
 
         public string FullName { get; set; }
 

@@ -58,7 +58,7 @@ function loadList(page = 1) {
     _page = page;
     showLoading(true);
 
-    $.getJSON("/Shipping/GetShippingOrders", {
+    $.getJSON(rootPath + "Shipping/GetShippingOrders", {
         keyword: $("#searchKeyword").val() || null,
         status: $("#filter-status").val() || null,
         deliveryServiceId: $("#filter-ds").val() || null,
@@ -131,7 +131,7 @@ function fillAssignDS(selectedId) {
     $("#assign-ds").empty().append(`<option value="">-- Chọn DVVC --</option>`);
 
     // Load DS
-    $.getJSON("/Shipping/GetDeliveryServices", res => {
+    $.getJSON(rootPath + "Shipping/GetDeliveryServices", res => {
         if (res.code === 200) {
             res.data.forEach(x => {
                 $("#assign-ds").append(`<option value="${x.Id}">${x.Name}</option>`);
@@ -158,7 +158,7 @@ function onOpenAssign(e) {
 
     if (dsId) {
         console.log("Đang gọi lấy tài xế cho dsId:", dsId);
-        $.getJSON("/Shipping/GetDrivers", { deliveryServiceId: dsId }, res => {
+        $.getJSON(rootPath + "Shipping/GetDrivers", { deliveryServiceId: dsId }, res => {
             console.log("Kết quả GetDrivers từ Server:", res); 
 
             if (res.code === 200) {
@@ -199,7 +199,7 @@ $("#assign-ds").on("change", function () {
     $("#assign-driver").html(`<option value="">-- Chọn tài xế --</option>`);
     if (!dsId) return;
 
-    $.getJSON("/Shipping/GetDrivers", { deliveryServiceId: dsId }, res => {
+    $.getJSON(rootPath + "Shipping/GetDrivers", { deliveryServiceId: dsId }, res => {
         console.log("Kết quả nạp lại tài xế:", res);
         if (res.code === 200) {
             (res.data || []).forEach(d => {
@@ -220,7 +220,7 @@ $("#btnAssignSave").on("click", function () {
     if (!whId) { toastr.warning("Vui lòng chọn Kho xuất"); return; }
 
     showLoading(true);
-    $.post("/Shipping/Assign", { shippingOrderId, deliveryServiceId: dsId, driverId, warehouseId: whId }, res => {
+    $.post(rootPath + "Shipping/Assign", { shippingOrderId, deliveryServiceId: dsId, driverId, warehouseId: whId }, res => {
         showLoading(false);
         if (res.code === 200) {
             toastr.success("Đã bàn giao cho DVVC (Assigned)");
@@ -242,7 +242,7 @@ function onOpenTimeline(e) {
     $("#tl-body").html(`<div class="text-muted">Đang tải...</div>`);
     const modal = new bootstrap.Modal("#modalTimeline"); modal.show();
 
-    $.getJSON("/Shipping/GetHistory", { shippingOrderId: shippingId }, res => {
+    $.getJSON(rootPath + "Shipping/GetHistory", { shippingOrderId: shippingId }, res => {
         if (res.code !== 200) { $("#tl-body").html(`<div class="text-danger">Không tải được lịch sử</div>`); return; }
         const items = res.data || [];
         if (items.length === 0) { $("#tl-body").html(`<div class="text-muted">Chưa có lịch sử</div>`); return; }
@@ -279,7 +279,7 @@ $("#btnAutoDemo").on("click", function () {
     $(this).text("Đang chạy... (nhấn để dừng)");
     _autoTimer = setInterval(() => {
         const st = seq[idx++];
-        $.post("/Shipping/UpdateStatus", { shippingOrderId: sid, status: st, location: null, note: `Auto set to ${STATUS_TEXT[st]}` }, () => {
+        $.post(rootPath + "Shipping/UpdateStatus", { shippingOrderId: sid, status: st, location: null, note: `Auto set to ${STATUS_TEXT[st]}` }, () => {
             // reload timeline nhanh
             $.getJSON("/Shipping/GetHistory", { shippingOrderId: sid }, res => {
                 if (res.code === 200) {
@@ -329,7 +329,7 @@ function onOpenMap(e) {
         ensureMap();
         // Lấy danh sách kho từ server nếu chưa có
         if (_warehouses.length === 0) {
-            $.getJSON("/Shipping/GetWarehouses", res => {
+            $.getJSON(rootPath + "Shipping/GetWarehouses", res => {
                 if (res.code === 200) { _warehouses = res.data || []; drawRoute(_warehouses); }
             });
         } else {
@@ -347,7 +347,7 @@ $("#filter-ds").on("change", function () {
     $("#filter-driver").html(`<option value="">-- Tất cả --</option>`);
 
     if (id !== "") {
-        $.get("/Shipping/GetDrivers", { deliveryServiceId: id }, function (res) {
+        $.get(rootPath + "Shipping/GetDrivers", { deliveryServiceId: id }, function (res) {
             if (res.code === 200) {
                 res.data.forEach(d => {
                     $("#filter-driver").append(

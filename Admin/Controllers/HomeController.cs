@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin, Employee")]*/
+    [Authorize(Roles = "Admin, Employee")]
     public class HomeController : Controller
     {
         private readonly DBConnect db = new DBConnect();

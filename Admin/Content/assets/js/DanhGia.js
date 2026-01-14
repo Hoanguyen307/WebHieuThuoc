@@ -71,7 +71,7 @@ function loadReview(page = 1) {
     var rating = $("#Rating").val();
 
     $.ajax({
-        url: '/ProductReview/GetReview',
+        url: rootPath + 'ProductReview/GetReview',
         type: 'GET',
         data: {
             searchString: searchString,
@@ -128,7 +128,7 @@ function loadReview(page = 1) {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/ProductReview/DeleteAccount',
+            url: rootPath + 'ProductReview/DeleteAccount',
             type: 'POST',
             data: { Id: id },
             success: function (res) {

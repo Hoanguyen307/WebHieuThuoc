@@ -3,7 +3,7 @@
 }
 function LoadForm() {
     $.ajax({
-        url: '/Category/Add',     
+        url: rootPath + 'Category/Add',     
         type: 'Get',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -22,7 +22,7 @@ function handleFormUpdateDanhMuc(id) {
     }
 
     $.ajax({
-        url: '/Category/Edit',
+        url: rootPath + 'Category/Edit',
         type: 'GET',
         data: { ID: id },
         success: function (res) {
@@ -79,7 +79,7 @@ function loadDanhMuc(page = 1) {
     $("#loadingOverlay").show();
 
     $.ajax({
-        url: '/Category/GetDanhSachDanhMuc',
+        url: rootPath + 'Category/GetDanhSachDanhMuc',
         type: 'GET',
         data: {
             page: page,
@@ -132,7 +132,7 @@ function SaveDanhMuc() {
     formData.delete("IsActive");
     formData.append("IsActive", $('#IsActive').is(':checked'));
 
-    var url = (id != null && parseInt(id) > 0) ? '/Category/Update' : '/Category/Add';
+    var url = (id != null && parseInt(id) > 0) ? rootPath + 'Category/Update' : rootPath + 'Category/Add';
 
     $.ajax({
         url: url,
@@ -158,7 +158,7 @@ function SaveDanhMuc() {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/Category/DeleteAccount',
+            url: rootPath + 'Category/DeleteAccount',
             type: 'POST',
             data: { ID: id },
             success: function (res) {

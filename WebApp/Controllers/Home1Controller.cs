@@ -83,7 +83,9 @@ namespace WebApp.Controllers
                 DiscountPercent = p.DiscountPercent,
                 HinhAnh = p.HinhAnh,
                 DonViTinh = p.DonViTinh,
-                SalePrice = p.SalePrice
+                SalePrice = p.SalePrice,
+                FlashStock = p.FlashStock ?? 0,
+                SoldQuantity = p.SoldQuantity ?? 0
             }).ToList();
 
             return PartialView("_FlashSaleProducts", list);

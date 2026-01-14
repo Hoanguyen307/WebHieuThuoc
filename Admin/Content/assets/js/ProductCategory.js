@@ -7,7 +7,7 @@ function closeModal() {
 }
 function LoadForm() {
     $.ajax({
-        url: '/ProductCategory/Add',
+        url: rootPath + 'ProductCategory/Add',
         type: 'Get',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -26,7 +26,7 @@ function handleFormUpdateDanhMuc(id) {
     }
 
     $.ajax({
-        url: '/ProductCategory/Edit',
+        url: rootPath + 'ProductCategory/Edit',
         type: 'GET',
         data: { DanhMucId: id },
         success: function (res) {
@@ -82,7 +82,7 @@ function loadDanhMuc(page = 1) {
     $("#loadingOverlay").show();
 
     $.ajax({
-        url: '/ProductCategory/GetDanhSachDanhMuc',
+        url: rootPath + 'ProductCategory/GetDanhSachDanhMuc',
         type: 'GET',
         data: {
             page: page,
@@ -136,7 +136,7 @@ function SaveDanhMuc() {
     formData.delete("KichHoat");
     formData.append("KichHoat", $('#KichHoat').is(':checked'));
 
-    var url = (id != null && parseInt(id) > 0) ? '/ProductCategory/Update' : '/ProductCategory/Add';
+    var url = (id != null && parseInt(id) > 0) ? rootPath + 'ProductCategory/Update' : rootPath + 'ProductCategory/Add';
 
     $.ajax({
         url: url,
@@ -162,7 +162,7 @@ function SaveDanhMuc() {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/ProductCategory/DeleteAccount',
+            url: rootPath + 'ProductCategory/DeleteAccount',
             type: 'POST',
             data: { Id: id },
             success: function (res) {

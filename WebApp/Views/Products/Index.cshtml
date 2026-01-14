@@ -50,21 +50,6 @@
             </div>
 
 
-            <h3 class="filter-title mt-4">Nhà cung cấp</h3>
-            <div class="filter-section">
-                <ul>
-                    @foreach (var ncc in ViewBag.NhaCungCaps as List<Models.NhaCungCap>)
-                    {
-                        <li>
-                            <a href="@Url.Action("Index", "Products", new { NhaCungCapId = ncc.NhaCungCapId, sortOrder = ViewBag.SortOrder })"
-                               class="@(ViewBag.SelectedBrandId == ncc.NhaCungCapId ? "active" : "")">
-                                @ncc.TenNhaCungCap
-                            </a>
-                        </li>
-                    }
-                </ul>
-            </div>
-
             <h3 class="filter-title mt-4">Khoảng giá</h3>
             <div class="filter-section">
                 <div class="price-range">
@@ -204,7 +189,7 @@
                                             <small>Cần dược sĩ tư vấn</small>
                                         </div>
                                         <a href="@Url.Action("Details", "Products", new { id = product.ThuocId })"
-                                           class="btn btn-sm btn-light w-100 btn-view-detail">
+                                           class="btn btn-sm btn-light w-100 btn-view-detail" style="background-color: #a1efab;">
                                             Xem chi tiết
                                         </a>
                                     </div>
@@ -222,7 +207,6 @@
                                             <span class="product-price-sale">@((product.GiaGoc ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
                                         }
                                     </div>
-                                    <button class="btn btn-sm btn-primary w-100 mt-2">Thêm vào giỏ hàng</button>
                                 }
 
 

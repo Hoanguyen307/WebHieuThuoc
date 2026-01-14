@@ -17,7 +17,7 @@ using static Models.NhanVien;
 
 namespace Admin.Controllers
 {
-    //[Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class NhanVienController : Controller
     {
         // GET: Admin/NhanVien

@@ -20,7 +20,7 @@ function closeModal() {
 
 function LoadForm() {
     $.ajax({
-        url: '/Voucher/Add',
+        url: rootPath + 'Voucher/Add',
         type: 'GET',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -40,7 +40,7 @@ function handleFormUpdateVoucher(id) {
     }
 
     $.ajax({
-        url: '/Voucher/Edit',
+        url: rootPath + 'Voucher/Edit',
         type: 'GET',
         data: { ID: id },
         success: function (res) {
@@ -98,7 +98,7 @@ function loadVoucher(page = 1) {
     $("#loadingOverlay").show();
 
     $.ajax({
-        url: '/Voucher/GetDanhSachVoucher',
+        url: rootPath + 'Voucher/GetDanhSachVoucher',
         type: 'GET',
         data: {
             page: page,
@@ -156,7 +156,7 @@ function loadVoucher(page = 1) {
                 const trangThai = $(this).is(':checked');
 
                 $.ajax({
-                    url: '/Voucher/ToggleHienThi',
+                    url: rootPath + 'Voucher/ToggleHienThi',
                     type: 'POST',
                     data: { Id: id, isActive: trangThai },
                     success: function (res) {
@@ -192,7 +192,7 @@ function SaveVoucher() {
     formData.delete("IsActive");
     formData.append("IsActive", $('#IsActive').is(':checked'));
 
-    const url = (id && parseInt(id) > 0) ? '/Voucher/Update' : '/Voucher/Add';
+    const url = (id && parseInt(id) > 0) ? rootPath + 'Voucher/Update' : rootPath + 'Voucher/Add';
 
     $.ajax({
         url: url,
@@ -217,7 +217,7 @@ function SaveVoucher() {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa voucher này không?')) {
         $.ajax({
-            url: '/Voucher/Delete',
+            url: rootPath + 'Voucher/Delete',
             type: 'POST',
             data: { ID: id },
             success: function (res) {

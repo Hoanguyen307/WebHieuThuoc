@@ -49,7 +49,7 @@ namespace DAL
 
                         if (product != null)
                         {
-                            orderEntry.listProduct.Add(product); // đưa tất cả sản phẩm vào listProduct
+                            orderEntry.listProduct.Add(product); 
                         }
 
                         return orderEntry;
@@ -108,18 +108,16 @@ namespace DAL
 
                 // Tạo DataTable tương ứng OrderDetailType (ProductId, Quantity, UnitPrice, Discount)
                 var dt = new DataTable();
-                dt.Columns.Add("ProductId", typeof(int));
-                dt.Columns.Add("Quantity", typeof(int));
-                dt.Columns.Add("UnitPrice", typeof(decimal));
-                dt.Columns.Add("Discount", typeof(decimal));
+                dt.Columns.Add("ProductId", typeof(int)); 
+                dt.Columns.Add("SoLuong", typeof(int));    
+                dt.Columns.Add("Gia", typeof(decimal));  
+                dt.Columns.Add("GiamGia", typeof(decimal));
 
                 if (details != null)
                 {
                     foreach (var d in details)
                     {
-                        var unitPrice = d.UnitPrice;
-                        var discount = d.Discount;
-                        dt.Rows.Add(d.ProductId, d.Quantity, unitPrice, discount);
+                        dt.Rows.Add(d.ProductId, d.Quantity, d.UnitPrice, d.Discount);
                     }
                 }
 
@@ -150,7 +148,7 @@ namespace DAL
                 param.Add("@OrderId", orderId);
 
                 return Connection.getConnection().QuerySingleOrDefault<decimal>(
-                    "SELECT TotalAmount FROM Orders WHERE Id = @OrderId",
+                    "SELECT TotalAmount FROM DonHang WHERE Id = @OrderId",
                     param,
                     commandType: System.Data.CommandType.Text);
             }

@@ -20,7 +20,7 @@ function closeModal() {
 
 function LoadForm() {
     $.ajax({
-        url: '/FlashSale/Add',
+        url: rootPath + 'FlashSale/Add',
         type: 'GET',
         success: function (res) {
             if ($('#form-addFlashSale').length > 0) {
@@ -40,7 +40,7 @@ function handleFormUpdateFlashSale(id) {
     }
 
     $.ajax({
-        url: '/FlashSale/Edit',
+        url: rootPath + 'FlashSale/Edit',
         type: 'GET',
         data: { ID: id },
         success: function (res) {
@@ -98,7 +98,7 @@ function loadFlashSale(page = 1) {
     $("#loadingOverlay").show();
 
     $.ajax({
-        url: '/FlashSale/GetFlashSale',
+        url: rootPath + 'FlashSale/GetFlashSale',
         type: 'GET',
         data: {
             page: page,
@@ -147,7 +147,7 @@ function loadFlashSale(page = 1) {
                 const trangThai = $(this).is(':checked');
 
                 $.ajax({
-                    url: '/FlashSale/ToggleHienThi',
+                    url: rootPath + 'FlashSale/ToggleHienThi',
                     type: 'POST',
                     data: { Id: id, isActive: trangThai },
                     success: function (res) {
@@ -185,7 +185,7 @@ function SaveFlashSale() {
     formData.delete("IsActive");
     formData.append("IsActive", $('#IsActive').is(':checked'));
 
-    const url = (id && parseInt(id) > 0) ? '/FlashSale/Update' : '/FlashSale/Add';
+    const url = (id && parseInt(id) > 0) ? rootPath + 'FlashSale/Update' : rootPath + 'FlashSale/Add';
 
     $.ajax({
         url: url,
@@ -210,7 +210,7 @@ function SaveFlashSale() {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa chương trình FlashSale này không?')) {
         $.ajax({
-            url: '/FlashSale/Delete',
+            url: rootPath + 'FlashSale/Delete',
             type: 'POST',
             data: { ID: id },
             success: function (res) {
@@ -269,7 +269,7 @@ function openSelectProducts(flashSaleId) {
 }
 
 function loadProducts(keyword = "", page = 1) {
-    $.get("/FlashSaleProduct/GetProducts", {
+    $.get(rootPath + "FlashSaleProduct/GetProducts", {
             flashSaleId:
             currentFlashSaleId,
             keyword: keyword,
@@ -279,11 +279,19 @@ function loadProducts(keyword = "", page = 1) {
         let html = "";
         if (res.items && res.items.length > 0) {
             res.items.forEach(p => {
+
+                let stockValue = p.FlashStock ? p.FlashStock : 10;
+                let isChecked = p.IsSelected ? "checked" : "";
                 html += `<tr>
                     <td><input type="checkbox" class="product-checkbox" value="${p.ThuocId}" ${p.IsSelected ? "checked" : ""}></td>
                     <td><img src="${p.HinhAnh}" alt="Ảnh" style="height:50px" /></td>
                     <td>${p.TenThuoc}</td>
                     <td>${formatCurrency(p.GiaGoc)}</td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm flash-stock-input"
+                               value="${stockValue}" min="1" 
+                               style="width:80px" ${!p.IsSelected ? 'disabled' : ''}>
+                    </td>
                 </tr>`;
             });
 
@@ -296,6 +304,9 @@ function loadProducts(keyword = "", page = 1) {
             html = `<tr><td colspan="3" class="text-center">Không có sản phẩm</td></tr>`;
         }
         $("#productList").html(html);
+        $('.product-checkbox').change(function () {
+            $(this).closest('tr').find('.flash-stock-input').prop('disabled', !this.checked);
+        });
     });
 }
 
@@ -307,11 +318,29 @@ $("#searchProduct").on("keyup", function () {
 });
 
 function saveSelectedProducts() {
-    const selected = $(".product-checkbox:checked").map(function () { return $(this).val(); }).get();
+    const productData = [];
+
+    $(".product-checkbox:checked").each(function () {
+        const row = $(this).closest('tr');
+        const productId = parseInt($(this).val());
+        const flashStock = parseFloat(row.find('.flash-stock-input').val());
+
+        if (!isNaN(productId)) {
+            productData.push({
+                ThuocId: productId,
+                FlashStock: isNaN(flashStock) ? 0 : flashStock
+            });
+        }
+    });
     $.ajax({
-        url: "/FlashSaleProduct/Add",
+        url: rootPath + "FlashSaleProduct/Add",
         type: "POST",
-        data: { flashSaleId: currentFlashSaleId, productIds: selected },
+        data: JSON.stringify({
+            flashSaleId: currentFlashSaleId,
+            products: productData
+        }),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
         traditional: true,
         success: function (res) {
             if (res.success) {

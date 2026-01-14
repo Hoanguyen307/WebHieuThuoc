@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin, Employee")]*/
+    [Authorize(Roles = "Admin, Employee")]
     public class FlashSaleProductController : Controller
     {
         private DBConnect db = new DBConnect();
@@ -38,20 +38,21 @@ namespace Admin.Controllers
 
         // Thêm sản phẩm vào FlashSale
         [HttpPost]
-        public JsonResult Add(int flashSaleId, List<int> productIds)
+        public JsonResult Add(int flashSaleId, List<FlashSaleProduct> products)
         {
             try
             {
                 int count = 0;
-                foreach (var pid in productIds)
+                if (products != null && products.Count > 0)
                 {
-                    var model = new FlashSaleProduct
+                    foreach (var item in products)
                     {
-                        FlashSaleId = flashSaleId,
-                        ThuocId = pid
-                    };
-                    var result = new FlashSaleProduct_DAL().Insert(model);
-                    if (result > 0) count++;
+                        item.FlashSaleId = flashSaleId;
+                        item.SoldQuantity = 0;
+
+                        var result = new FlashSaleProduct_DAL().Insert(item);
+                        if (result > 0) count++;
+                    }
                 }
 
                 if (count > 0)

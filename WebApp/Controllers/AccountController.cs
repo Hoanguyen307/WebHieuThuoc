@@ -14,6 +14,7 @@ using Microsoft.Owin.Security;
 using Models;
 using WebApp;
 using DAL;
+using System.Configuration;
 
 namespace Admin.Controllers
 {
@@ -205,9 +206,13 @@ namespace Admin.Controllers
         {
             try
             {
-                var fromAddress = new MailAddress("hoanguyen3072003@gmail.com", "Hệ thống");
+                string fromEmail = ConfigurationManager.AppSettings["Mail_From"];
+                string fromPassword = ConfigurationManager.AppSettings["Mail_Password"];
+                string host = ConfigurationManager.AppSettings["Mail_Host"];
+                int port = int.Parse(ConfigurationManager.AppSettings["Mail_Port"]);
+
+                var fromAddress = new MailAddress(fromEmail, "Hệ thống");
                 var toAddress = new MailAddress(toEmail);
-                string fromPassword = "grcb nutd uzan jzqc"; 
                 string subject = "Mã xác nhận đăng ký tài khoản";
                 string body = $"Mã OTP của bạn là: {otp}";
 

@@ -54,7 +54,7 @@ function renderPagination(totalPages, currentPage) {
         e.preventDefault();
         const page = parseInt($(this).data("page"));
         if (!isNaN(page) && page !== currentPage) {
-            loadData(page);
+            loadDonHang(page);
         }
     });
 }
@@ -69,7 +69,7 @@ function loadDonHang(page = 1) {
     const minDelay = 500;
 
     $.ajax({
-        url: '/Order/GetDonHang',
+        url: rootPath + 'Order/GetDonHang',
         type: 'GET',
         data: {
             Month: month,
@@ -176,12 +176,13 @@ function updateStatus(ID, statusElm, carrierElm = null) {
     const carrierName = carrierElm ? $(carrierElm).val() : "";
 
     $.ajax({
-        url: '/Order/UpdateStatus',
+        url: rootPath + 'Order/UpdateStatus',
         type: 'POST',
         data: { id: ID, status: newStatus, carrierName: carrierName },
         success: function (res) {
             if (res.code === 200) {
                 toastr.success(res.msg || "Cập nhật thành công");
+                loadDonHang(1);
                 carrierDropdown.data("selected-carrier", carrierName);
             } else {
                 toastr.error(res.msg || "Cập nhật thất bại");
@@ -194,7 +195,7 @@ function updateStatus(ID, statusElm, carrierElm = null) {
 function handleDelete(ID) {
     if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
         $.ajax({
-            url: '/Order/DeleteAccount',
+            url: rootPath + 'Order/DeleteAccount',
             type: 'POST',
             data: { Id: ID },
             success: function (res) {
@@ -234,7 +235,7 @@ function renderDropdown(selectSelector, data, defaultOptionText = "") {
 }
 
 function loadAllDropdowns() {
-    $.get('/Order/GetDropdownData', function (res) {
+    $.get(rootPath + 'Order/GetDropdownData', function (res) {
         if (!res.success) {
             alert("Không thể tải dropdown");
             return;
@@ -253,7 +254,7 @@ function loadAllDropdowns() {
 }
 function loadChiTietDonHang(ID) {
     $.ajax({
-        url: '/Order/ChiTietDonHang',
+        url: rootPath + 'Order/ChiTietDonHang',
         type: 'GET',
         data: { id: ID },
         success: function (html) {
@@ -271,7 +272,7 @@ function loadDeliveryServicesForRow(orderId, selectedCarrier) {
     const ddl = $(`.carrier-select[data-order-id="${orderId}"]`);
 
     $.ajax({
-        url: '/Shipping/GetDeliveryServices',
+        url: rootPath + 'Shipping/GetDeliveryServices',
         type: 'GET',
         success: function (res) {
             if (res.code !== 200) return;

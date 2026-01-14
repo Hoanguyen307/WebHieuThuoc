@@ -14,7 +14,7 @@ using System.Configuration;
 
 namespace Admin.Controllers
 {
-    //[Authorize(Roles = "Admin, Employee")]
+    [Authorize(Roles = "Admin, Employee")]
     public class BaiVietController : Controller
     {
         // GET: Admin/BaiViet

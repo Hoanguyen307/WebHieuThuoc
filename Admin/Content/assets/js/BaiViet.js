@@ -3,7 +3,7 @@
 }
 function LoadForm() {
     $.ajax({
-        url: '/BaiViet/Add',
+        url: rootPath + 'BaiViet/Add',
         type: 'Get',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -22,7 +22,7 @@ function handleFormUpdateBaiViet(id) {
     }
 
     $.ajax({
-        url: '/BaiViet/Edit',
+        url: rootPath + 'BaiViet/Edit',
         type: 'GET',
         data: { Id: id },
         success: function (res) {
@@ -89,7 +89,7 @@ function loadBaiViet(page = 1) {
     const year = $('#year').val();
     const tieude = $('#searchString').val();
     $.ajax({
-        url: '/BaiViet/GetBaiViet',
+        url: rootPath + 'BaiViet/GetBaiViet',
         type: 'GET',
         data: {
             Month: month,
@@ -168,7 +168,7 @@ function SaveBaiViet() {
     if (!id || id === "") {
         formData.set("Id", "0");
     }
-    var url = (id != null && parseInt(id) > 0) ? '/BaiViet/Update' : '/BaiViet/Add';
+    var url = (id != null && parseInt(id) > 0) ? rootPath + 'BaiViet/Update' : rootPath + 'BaiViet/Add';
 
     $.ajax({
         url: url,
@@ -207,7 +207,7 @@ function SaveBaiViet() {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
         $.ajax({
-            url: '/BaiViet/DeleteAccount',
+            url: rootPath + 'BaiViet/DeleteAccount',
             type: 'POST',
             data: { Id: id },
             success: function (res) {
@@ -225,7 +225,7 @@ function handleDelete(id) {
 function toggleStatus(id) {
 
     $.ajax({
-        url: '/BaiViet/ToggleStatus',
+        url: rootPath + 'BaiViet/ToggleStatus',
         type: 'POST',
         data: { Id: id },
         success: function (res) {

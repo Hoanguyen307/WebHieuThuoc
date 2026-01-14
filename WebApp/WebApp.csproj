@@ -373,6 +373,8 @@
     <Content Include="Views\Shared\_LatestBlogPartial.cshtml" />
     <Content Include="Views\BaiViet\Details.cshtml" />
     <Content Include="Views\Shared\_ChiTietDonHangPartial.cshtml" />
+    <None Include="Properties\PublishProfiles\hoango3072003-001-site1 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\hoango3072003-001-site1 - Web Deploy.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj">

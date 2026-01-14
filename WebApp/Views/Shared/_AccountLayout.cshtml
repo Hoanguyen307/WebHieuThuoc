@@ -50,13 +50,18 @@
                             Đơn hàng của tôi
                         </a>
                     </li>
+                    <li class="list-group-item @(currentController=="KhachHang" && currentAction=="SoDiaChi" ? "active-menu" : "")">
+                        <a href="@Url.Action("Index", "DiaChiGiaoHang")" class="text-decoration-none text-dark">
+                            Sổ địa chỉ
+                        </a>
+                    </li>
                     <li class="list-group-item @(currentController=="KhachHang" && currentAction=="MuaLai" ? "active-menu" : "")">
-                        <a href="@Url.Action("MuaLai", "KhachHang")" class="text-decoration-none text-dark">
+                        <a href="#" class="text-decoration-none text-dark">
                             Mua lại
                         </a>
                     </li>
                     <li class="list-group-item @(currentController=="KhachHang" && currentAction=="HoiDap" ? "active-menu" : "")">
-                        <a href="@Url.Action("HoiDap", "KhachHang")" class="text-decoration-none text-dark">
+                        <a href="#" class="text-decoration-none text-dark">
                             Hỏi đáp
                         </a>
                     </li>

@@ -22,6 +22,7 @@ namespace Models
 
         public string FullName { get; set; }
         public string Address { get; set; }
+        public string Email { get; set; }
         public decimal UnitPrice { get; set; }
         public decimal Discount { get; set; }
         public decimal LineTotal { get; set; }

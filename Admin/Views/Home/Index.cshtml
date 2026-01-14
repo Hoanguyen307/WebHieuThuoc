@@ -503,7 +503,7 @@
 
         async function taiThongKeTongQuan(tuNgay = '', denNgay = '') {
             try {
-                const url = `/Home/LayThongKeTongQuan?tuNgay=${tuNgay}&denNgay=${denNgay}`;
+                const url = rootPath +`Home/LayThongKeTongQuan?tuNgay=${tuNgay}&denNgay=${denNgay}`;
                 const stats = await guiYeuCauAjax(url);
 
                 document.getElementById('totalProfit').textContent = dinhDangTienTe(stats.TongLoiNhuan);
@@ -524,7 +524,7 @@
 
         async function taiDuLieuBanHang(thoiGian, tuNgay = '', denNgay = '') {
             try {
-                const url = `/Home/LayDuLieuBanHang?kyHan=${thoiGian}&tuNgay=${tuNgay}&denNgay=${denNgay}`;
+                const url = rootPath +`Home/LayDuLieuBanHang?kyHan=${thoiGian}&tuNgay=${tuNgay}&denNgay=${denNgay}`;
                 const salesData = await guiYeuCauAjax(url);
 
                 if (salesChart) { salesChart.destroy(); }
@@ -563,7 +563,7 @@
 
         async function taiTongKetTaiChinh(tuNgay = '', denNgay = '') {
             try {
-                const url = `/Home/LayTongKetTaiChinh?tuNgay=${tuNgay}&denNgay=${denNgay}`;
+                const url = rootPath +`Home/LayTongKetTaiChinh?tuNgay=${tuNgay}&denNgay=${denNgay}`;
                 const financial = await guiYeuCauAjax(url);
 
                 document.getElementById('financialTotalSales').textContent = dinhDangTienTe(financial.TongBanHang);

@@ -6,11 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using static Models.Order;
 using static Models.Post;
+using System.Configuration;
 
 namespace Admin.Controllers
 {
@@ -61,7 +64,7 @@ namespace Admin.Controllers
             };
 
             var processes = new Order_DAL().Select_Order_All(filter);
-            var pagedList = processes.OrderBy(x => x.CreatedDate).ToPagedList(page, pageSize);
+            var pagedList = processes.OrderByDescending(x => x.CreatedDate).ToPagedList(page, pageSize);
 
             return Json(new
             {
@@ -161,11 +164,35 @@ namespace Admin.Controllers
         {
             try
             {
-                string TenNguoiThucHien = CurrentUserName;
-               
+                string TenNguoiThucHien = User?.Identity?.Name ?? "Unknown";
                 var result = new Order_DAL().ToggleStatus(id, TenNguoiThucHien, status, carrierName);
                 if (result)
                 {
+                    var orderInfo = new Order_DAL().GetOrderDetails(id);
+
+                    if (orderInfo != null && !string.IsNullOrEmpty(orderInfo.Email))
+                    {
+                        string subject = $"Cập nhật đơn hàng #{orderInfo.OrderCode} - Nhà thuốc Thanh Tứ";
+
+                        string statusColor = status == "Hủy" ? "red" : "blue";
+                        string body = $@"
+                            <div style='font-family: Segoe UI, Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; border: 1px solid #eee; padding: 20px;'>
+                                <h2 style='color: #444;'>Thông báo trạng thái đơn hàng</h2>
+                                <p>Chào <b>{orderInfo.FullName}</b>,</p>
+                                <p>Đơn hàng <b>#{orderInfo.OrderCode}</b> của bạn đã được cập nhật trạng thái mới:</p>
+                                <div style='background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;'>
+                                    <p style='margin: 5px 0;'>Trạng thái: <span style='color: {statusColor}; font-weight: bold;'>{status}</span></p>
+                                    <p style='margin: 5px 0;'>Tổng tiền: <b>{orderInfo.TotalAmount:N0} ₫</b></p>
+                                    {(string.IsNullOrEmpty(carrierName) ? "" : $"<p style='margin: 5px 0;'>Đơn vị vận chuyển: {carrierName}</p>")}
+                                </div>
+                                <p>Cảm ơn bạn đã tin tưởng lựa chọn <b>Nhà thuốc Thanh Tứ</b>!</p>
+                                <hr style='border: 0; border-top: 1px solid #eee;' />
+                                <p style='font-size: 12px; color: #888;'>Đây là email tự động, vui lòng không phản hồi email này.</p>
+                            </div>";
+
+                        // Gửi mail bất đồng bộ
+                        Task.Run(() => SendEmailNotification(orderInfo.Email, subject, body));
+                    }
                     return Json(new { code = 200, msg = "Cập nhật thành công" }, JsonRequestBehavior.AllowGet);
                 }
                 return Json(new { code = 500, msg = "Cập nhật thất bại" }, JsonRequestBehavior.AllowGet);
@@ -218,5 +245,43 @@ namespace Admin.Controllers
             return Json(new { latestOrderId = latestOrderId }, JsonRequestBehavior.AllowGet);
         }
 
+        private bool SendEmailNotification(string toEmail, string subject, string body)
+        {
+            try
+            {
+                string fromEmail = ConfigurationManager.AppSettings["Mail_From"];
+                string fromPassword = ConfigurationManager.AppSettings["Mail_Password"];
+                string host = ConfigurationManager.AppSettings["Mail_Host"];
+                int port = int.Parse(ConfigurationManager.AppSettings["Mail_Port"]);
+
+                var fromAddress = new MailAddress(fromEmail, "Nhà thuốc Thanh Tứ");
+                var toAddress = new MailAddress(toEmail);
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com",
+                    Port = 587,
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword),
+                    EnableSsl = true,
+                    Timeout = 20000,
+                };
+
+                using (var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                })
+                {
+                    smtp.Send(message);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

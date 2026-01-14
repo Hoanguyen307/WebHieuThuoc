@@ -59,7 +59,7 @@ function formatDate(dateStr) {
 }
 function LoadForm() {
     $.ajax({
-        url: '/Products/Add',
+        url: rootPath + 'Products/Add',
         type: 'Get',
         success: function (res) {
             if ($('#formAdd').length > 0) {
@@ -78,7 +78,7 @@ function handleFormUpdateProduct(id) {
     }
 
     $.ajax({
-        url: '/Products/Edit',
+        url: rootPath + 'Products/Edit',
         type: 'GET',
         data: { Id: id },
         success: function (res) {
@@ -101,7 +101,7 @@ function loadData(page = 1) {
     const minPrice = $('#MinPrice').val();
     const maxPrice = $('#MaxPrice').val();
     $.ajax({
-        url: '/Products/GetProduct',
+        url: rootPath + 'Products/GetProduct',
         type: 'GET',
         data: {
             Month: month,
@@ -128,7 +128,7 @@ function loadData(page = 1) {
             <td style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${item.TenThuoc}</td>
             <td>${item.DonViTinh}</td>
             <td class="${item.CanhBaoHetHang ? 'text-danger' : ''}">${item.SoLuong}</td>
-            <td>${item.TenNhaCungCap || ""}</td>
+            <td>${item.DaBan ?? 0}</td>
             <td>${formatCurrency(item.GiaGoc)}</td>
             <td>${formatCurrency(item.GiaBan)}</td>
             <td>${item.ProductCategoryName || ''}</td>
@@ -156,7 +156,7 @@ function loadData(page = 1) {
                 const trangThai = $(this).is(':checked');
 
                 $.ajax({
-                    url: '/Products/ToggleHienThi',
+                    url: rootPath + 'Products/ToggleHienThi',
                     type: 'POST',
                     data: { Id: id, isActive: trangThai },
                     success: function (res) {
@@ -199,7 +199,7 @@ function SaveProduct() {
     formData.delete("ThuocKeDon");
     formData.append("ThuocKeDon", $('#ThuocKeDon').is(':checked'));
 
-    var url = (id != null && parseInt(id) > 0) ? '/Products/Update' : '/Products/Add';
+    var url = (id != null && parseInt(id) > 0) ? rootPath + 'Products/Update' : rootPath + 'Products/Add';
     $.ajax({
         url: url,
         type: 'POST',
@@ -223,7 +223,7 @@ function SaveProduct() {
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
         $.ajax({
-            url: '/Products/DeleteAccount',
+            url: rootPath + 'Products/DeleteAccount',
             type: 'POST',
             data: { ID: id },
             success: function (res) {

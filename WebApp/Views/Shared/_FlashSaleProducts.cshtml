@@ -1,5 +1,36 @@
 ﻿@model List<Models.ProductFlashSaleViewModel>
 
+<style>
+    .flashsale-progress {
+        position: relative;
+        height: 18px;
+        background-color: #ffebd7;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 5px;
+        text-align: center;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #f02000, #ff8a00);
+        border-radius: 10px;
+        transition: width 0.5s ease;
+    }
+
+    .progress-text {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        top: 0;
+        font-size: 11px;
+        color: #fff;
+        font-weight: bold;
+        line-height: 18px;
+        text-transform: uppercase;
+        z-index: 2;
+    }
+</style>
 <!-- Danh sách sản phẩm Flash Sale -->
 <div class="flashsale-products d-flex gap-3 mt-4">
     @if (Model != null && Model.Any())
@@ -7,6 +38,10 @@
         foreach (var p in Model)
         {
             decimal? discount = 0;
+            if (p.GiaGoc.HasValue && p.SalePrice.HasValue && p.SalePrice < p.GiaGoc)
+            {
+                discount = ((p.GiaGoc - p.SalePrice) / p.GiaGoc) * 100;
+            }
             <div class="product-card" @*style="height: 370px;"*@>
                 <div class="discount-badge">-@p.DiscountPercent%</div>
                 <div class="product-image-box" style="height: 200px;">
@@ -14,6 +49,17 @@
                         <img src="@p.HinhAnh" alt="@p.TenThuoc" class="product-img" />
                     </a>
                 </div>
+                @{
+                    decimal stock = p.FlashStock ?? 0;
+                    decimal sold = p.SoldQuantity ?? 0;
+                    decimal remaining = stock - sold;
+                    if (remaining < 0) { remaining = 0; }
+
+                    decimal totalStock = stock > 0 ? stock : 1;
+                    decimal percentRemaining = (remaining / totalStock) * 100;
+
+                    string colorWidth = ((decimal)percentRemaining).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) + "%";
+                }
                 <div class="product-info">
                     <a class="product-title" href="@Url.Action("Details", "Products", new { id = p.ProductId, flashSalePrice = p.SalePrice })">
                         @p.TenThuoc
@@ -27,15 +73,36 @@
                             <span class="original-price">@((p.GiaGoc ?? 0).ToString("N0")) đ</span>
                         }
                     </div>
-
-                    <button class="btn btn-sm btn-success w-100 mt-2 btn-buy-now-flashsale"
-                            data-product-id="@p.ProductId"
-                            data-sale-price="@p.SalePrice"
-                            @(ViewBag.SaleComing == true ? "disabled" : "")>
-                        @(ViewBag.SaleComing == true ? "Sắp diễn ra" : "Mua ngay")
-                    </button>
+                    <div class="flashsale-progress-container mt-2">
+                        <div class="d-flex justify-content-between mb-1" style="font-size: 12px; color: #ff5722;">
+                            <span class="fw-bold">
+                                <i class="fas fa-fire"></i>
+                                @(remaining <= 0 ? "Hết hàng" : "Chỉ còn " + (int)remaining + " sản phẩm")
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px; border-radius: 10px; background-color: #ffebd7;">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: @colorWidth;background: linear-gradient(90deg, #ff2000, #ff8a00);height: 100%;border-radius: 10px;transition: width 0.5s ease-in-out;">
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
+
+                <button class="btn btn-sm w-100 mt-2 btn-buy-now-flashsale @(remaining <= 0 ? "btn-secondary" : "btn-success")"
+                        data-product-id="@p.ThuocId"
+                        data-sale-price="@((p.SalePrice ?? 0).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))"
+                        @(ViewBag.SaleComing == true || remaining <= 0 ? "disabled" : "")>
+
+                    @if (remaining <= 0)
+                    {
+                        <span>Hết hàng</span>
+                    }
+                    else
+                    {
+                        @(ViewBag.SaleComing == true ? "Sắp diễn ra" : "Mua ngay")
+                    }
+                </button>
             </div>
         }
     }
@@ -46,15 +113,17 @@
 </div>
 <script>
     $(document).ready(function () {
-
         $('.btn-buy-now-flashsale').on('click', function () {
-            var productId = $(this).data('product-id');
-            var quantity = $('.quantity-selector input').val() || 1;
-            var salePrice = $(this).data('sale-price');
+            const productId = $(this).data('product-id');
+            const quantity = 1;
 
-            window.location.href = '/Cart/BuyNow?productId=' + productId +
-                '&quantity=' + quantity +
-                '&salePrice=' + salePrice;
+            let salePrice = $(this).attr('data-sale-price');
+
+            if (productId && salePrice) {
+                window.location.href = `/Cart/BuyNow?productId=${productId}&quantity=${quantity}&salePrice=${salePrice}`;
+            } else {
+                alert("Không tìm thấy thông tin sản phẩm hoặc giá sale!");
+            }
         });
-});
+    });
 </script>

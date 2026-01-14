@@ -28,7 +28,7 @@ function loadPhieuNhap(page = 1) {
     const maPhieu = $('#searchString').val();
 
     $.ajax({
-        url: '/NhapKho/GetNhapKho',
+        url: rootPath + 'NhapKho/GetNhapKho',
         type: 'GET',
         data: {
             searchString: maPhieu,
@@ -124,7 +124,7 @@ function parseCurrency(str) {
     return isNaN(n) ? 0 : n;
 }
 function LoadForm() {
-    $.get('/NhapKho/Add', function (res) {
+    $.get(rootPath + 'NhapKho/Add', function (res) {
         $('#modalNhapKho .modal-body').html(res);
 
         selectedProducts = [];
@@ -139,7 +139,7 @@ function LoadForm() {
 function handleFormUpdateNhapKho(id) {
     if (!id || id <= 0) return toastr.warning('ID không hợp lệ!');
 
-    $.get('/NhapKho/Edit', { NhapKhoId: id }, function (res) {
+    $.get(rootPath + 'NhapKho/Edit', { NhapKhoId: id }, function (res) {
         $('#modalNhapKho .modal-body').html(res);
 
         allProducts = window.tempProducts || [];
@@ -196,7 +196,7 @@ function openProductModal() {
     renderProductTable(1);
 }
 function loadAllProductsFromServer() {
-    return $.get('/NhapKho/GetAllProducts', function (res) {
+    return $.get(rootPath + 'NhapKho/GetAllProducts', function (res) {
         allProducts = res;
     });
 }
@@ -301,9 +301,9 @@ function addProductToList(productId) {
         ProductName: productOriginal.TenThuoc,
         SoLuong: soLuong,
         DonGiaNhap: donGia,
-        NgaySanXuat: ngaySanXuat ? ngaySanXuat : null, // Đảm bảo gửi null nếu trống
+        NgaySanXuat: ngaySanXuat ? ngaySanXuat : null, 
         HanSuDung: hanSuDung,
-        GhiChu: "" // Thêm trường này cho đủ bộ Model
+        GhiChu: "" 
     };
     if (existing) {
         Object.assign(existing, item);
@@ -430,7 +430,7 @@ function SavePhieuNhap() {
 
 
     $.ajax({
-        url: idValue > 0 ? '/NhapKho/Update' : '/NhapKho/Add',
+        url: idValue > 0 ? rootPath + 'NhapKho/Update' : rootPath + 'NhapKho/Add',
         type: 'POST',
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
@@ -456,7 +456,7 @@ function SavePhieuNhap() {
 }
 function handleDelete(id) {
     if (confirm('Bạn có chắc chắn muốn xóa phiếu nhập này không?')) {
-        $.post('/NhapKho/DeleteAccount', { Id: id }, function (res) {
+        $.post(rootPath + 'NhapKho/DeleteAccount', { Id: id }, function (res) {
             if (res.code === 200) {
                 toastr.success(res.msg);
                 loadPhieuNhap();
@@ -477,7 +477,7 @@ function viewDetail(id) {
     }
 
     $.ajax({
-        url: "/NhapKho/Detail",
+        url: rootPath + "NhapKho/Detail",
         type: "GET",
         data: { NhapKhoId: id },
         success: function (res) {

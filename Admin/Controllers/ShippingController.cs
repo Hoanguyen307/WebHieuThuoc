@@ -5,6 +5,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
+    [Authorize(Roles = "Admin, Employee")]
     public class ShippingController : Controller
     {
         private readonly Shipping_DAL _dal = new Shipping_DAL();

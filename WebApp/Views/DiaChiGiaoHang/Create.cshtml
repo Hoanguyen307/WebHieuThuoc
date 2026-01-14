@@ -21,14 +21,12 @@
         <input type="text" class="form-control" id="DiaChiChiTiet" name="DiaChiChiTiet"
                placeholder="Địa chỉ chi tiết" value="@Model.DiaChiChiTiet" />
     </div>
-
     <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" name="MacDinh" id="chkMacDinh" value="true" @(Model.MacDinh ? "checked" : "") />
+
         <input type="hidden" name="MacDinh" value="false" />
-        <input class="form-check-input" type="checkbox" id="MacDinh" name="MacDinh"
-               value="true" @(Model.MacDinh ? "checked" : "") />
-        <label class="form-check-label" for="MacDinh">
-            Đặt làm mặc định
-        </label>
+
+        <label class="form-check-label" for="chkMacDinh">Đặt làm địa chỉ mặc định</label>
     </div>
 
     <div class="modal-footer d-flex justify-content-end">

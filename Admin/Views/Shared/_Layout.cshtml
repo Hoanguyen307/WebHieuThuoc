@@ -2,6 +2,14 @@
 <html lang="vi" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg">
 <head>
     <meta charset="utf-8" />
+    @if (HttpContext.Current.Request.Url.Host.Contains("localhost"))
+    {
+        <base href="/">
+    }
+    else
+    {
+        <base href="/admin/">
+    }
     <title>QUẢN LÝ HIỆU THUỐC</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="Quản lý hiệu thuốc" name="description" />
@@ -288,6 +296,7 @@
 
     <script src="~/Content/assets/libs/swiper/swiper-bundle.min.js"></script>
     <script>
+        var rootPath = '@(HttpContext.Current.Request.Url.Host.Contains("localhost") ? "/" : "/admin/")';
         $(document).ready(function () {
             $('#sidebarToggleInternal').on('click', function () {
                 $('body').toggleClass('sidebar-collapsed');
@@ -298,7 +307,7 @@
 
         function initLastOrderId() {
             $.ajax({
-                url: '/Order/GetLatestOrderId',
+                url: rootPath + 'Order/GetLatestOrderId',
                 type: 'GET',
                 success: function (res) {
                     lastOrderIdGlobal = res.latestOrderId || 0;
@@ -312,7 +321,7 @@
 
         function checkNewOrdersGlobal() {
             $.ajax({
-                url: '/Order/GetNewOrders',
+                url: rootPath + 'Order/GetNewOrders',
                 type: 'GET',
                 data: { lastOrderId: lastOrderIdGlobal },
                 success: function (res) {
@@ -332,7 +341,7 @@
                         }).then((result) => {
                             if (result.isConfirmed) {
                                 localStorage.setItem('lastViewedOrderId', res.newestOrderId);
-                                window.location.href = '/Order/Index';
+                                window.location.href = rootPath + 'Order/Index';
                             }
                         });
                     }

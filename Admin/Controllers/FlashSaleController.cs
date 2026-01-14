@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin, Employee")]*/
+    [Authorize(Roles = "Admin, Employee")]
     public class FlashSaleController : Controller
     {
         private DBConnect db = new DBConnect();

@@ -31,7 +31,8 @@ namespace Models
         public decimal? GiaBan { get; set; }
         public bool KichHoat { get; set; }
         public bool ThuocKeDon { get; set; }
-        public int SoLuong { get; set; }
+        public int? SoLuong { get; set; }
+        public int? DaBan { get; set; }
 
         public virtual ProductCategory DanhMuc { get; set; }
         public virtual NhaCungCap NhaCungCap { get; set; }

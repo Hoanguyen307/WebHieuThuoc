@@ -18,7 +18,7 @@ using System.Configuration;
 
 namespace Admin.Controllers
 {
-    /*[Authorize(Roles = "Admin, Employee")]*/
+    [Authorize(Roles = "Admin, Employee")]
     public class ProductsController : Controller
     {
         private DBConnect db = new DBConnect(); 
@@ -77,8 +77,10 @@ namespace Admin.Controllers
                 p.HinhAnh,
                 p.TenThuoc,
                 p.ProductCategoryName,
+                p.GiaGoc,
                 p.GiaBan,
                 p.SoLuong,
+                p.DaBan,
                 p.DonViTinh,
                 p.TenNhaCungCap,
                 p.KichHoat,

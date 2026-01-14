@@ -1,14 +1,14 @@
 ﻿@model IEnumerable<Models.DiaChiGiaoHang>
 @{
     ViewBag.Title = "Quản lý địa chỉ giao hàng";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
 
 <h2 class="mb-3">Địa chỉ giao hàng của tôi</h2>
 
-<a href="@Url.Action("Create", "DiaChiGiaoHang")" class="btn btn-primary mb-3">
+<button type="button" onclick="OpenDiaChiModal(0)" class="btn btn-primary mb-3">
     <i class="fa fa-plus"></i> Thêm địa chỉ mới
-</a>
+</button>
 
 <table class="table table-bordered table-striped">
     <thead>
@@ -36,16 +36,16 @@
                         }
                         else
                         {
-                            <button class="btn btn-sm btn-outline-primary btn-set-default" data-id="@item.DiaChiId">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    onclick="SetDefault(@item.DiaChiId)">
                                 Đặt mặc định
                             </button>
                         }
                     </td>
-                    <td>
-                        <a href="@Url.Action("Edit", "DiaChiGiaoHang", new { id = item.DiaChiId })" class="btn btn-sm btn-warning">
-                            Sửa
-                        </a>
-                        <button class="btn btn-sm btn-danger btn-delete" data-id="@item.DiaChiId">Xóa</button>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-warning" onclick="OpenDiaChiModal(@item.DiaChiId)">Sửa</button>
+                        <button class="btn btn-sm btn-danger" onclick="DeleteDiaChi(@item.DiaChiId)">Xóa</button>
                     </td>
                 </tr>
             }
@@ -56,75 +56,97 @@
         }
     </tbody>
 </table>
-<div class="modal fade" id="modalDiaChi" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="modalDiaChi" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalDiaChiTitle">Thêm/Sửa địa chỉ</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="modalTitle">Địa chỉ giao hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="modalDiaChiBody">
-                <!-- Nội dung form sẽ load ở đây -->
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-success" id="btnSave">Lưu</button>
+            <div class="modal-body" id="modalBody">
             </div>
         </div>
     </div>
 </div>
 @section scripts {
     <script>
-    $(document).on("click", ".btn-delete", function () {
-        if (!confirm("Bạn có chắc muốn xóa địa chỉ này?")) return;
-        let id = $(this).data("id");
-        $.post("@Url.Action("Delete", "DiaChiGiaoHang")", { id: id }, function (res) {
-            alert(res.msg);
-            if (res.code === 200) location.reload();
-        });
-    });
+        // 1. Hàm mở Modal (Thêm mới/Sửa)
+        function OpenDiaChiModal(id) {
+        let url = id > 0 ? "/DiaChiGiaoHang/Edit" : "/DiaChiGiaoHang/Create";
 
-    $(document).on("click", ".btn-set-default", function () {
-        let id = $(this).data("id");
-        $.post("@Url.Action("SetDefault", "DiaChiGiaoHang")", { id: id }, function (res) {
-            alert(res.msg);
-            if (res.code === 200) location.reload();
-        });
-    });
+        $.ajax({
+            url: url,
+            type: "GET",
+            data: { DiaChiId: id },
+            success: function (res) {
+                $("#modalTitle").text(id > 0 ? "Chỉnh sửa địa chỉ" : "Thêm địa chỉ mới");
+                $("#modalBody").html(res);
 
-    // Mở modal thêm mới
-    $("#btnAdd").click(function () {
-        $("#modalDiaChiTitle").text("Thêm địa chỉ mới");
-        $.get("@Url.Action("Create", "DiaChiGiaoHang")", function (html) {
-            $("#modalDiaChiBody").html(html);
-            $("#modalDiaChi").modal("show");
-        });
-    });
-
-    // Mở modal sửa
-    $(document).on("click", ".btn-edit", function () {
-        let id = $(this).data("id");
-        $("#modalDiaChiTitle").text("Sửa địa chỉ");
-        $.get("@Url.Action("Edit", "DiaChiGiaoHang")", { id: id }, function (html) {
-            $("#modalDiaChiBody").html(html);
-            $("#modalDiaChi").modal("show");
-        });
-    });
-
-    // Lưu (Create hoặc Edit)
-    $("#btnSave").click(function () {
-        let form = $("#formDiaChi");
-        let actionUrl = form.find("input[name='DiaChiId']").val() > 0
-            ? "@Url.Action("Edit", "DiaChiGiaoHang")"
-            : "@Url.Action("Create", "DiaChiGiaoHang")";
-
-        $.post(actionUrl, form.serialize(), function (res) {
-            alert(res.msg);
-            if (res.code === 200) {
-                $("#modalDiaChi").modal("hide");
-                location.reload();
+                var myModalEl = document.getElementById('modalDiaChi');
+                var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
+                modal.show();
+            },
+            error: function (xhr) {
+                console.error(xhr.responseText);
+                Swal.fire('Lỗi!', 'Không thể tải dữ liệu: ' + xhr.status, 'error');
             }
         });
-    });
+        }
+
+        // 2. Hàm Lưu địa chỉ (Gọi từ nút Lưu trong form)
+        function SaveDiaChi() {
+            let form = $("#form-addDiaChi");
+            let data = form.serialize();
+            let id = $("input[name='DiaChiId']").val();
+            let url = id > 0 ? "@Url.Action("Edit", "DiaChiGiaoHang")" : "@Url.Action("Create", "DiaChiGiaoHang")";
+
+            $.post(url, data, function (res) {
+                if (res.code === 200) {
+                    $("#modalDiaChi").modal("hide");
+                    Swal.fire('Thành công!', res.msg, 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Lỗi!', res.msg, 'error');
+                }
+            });
+        }
+
+        // 3. Hàm Xóa (Thay thế confirm bằng SweetAlert2)
+        function DeleteDiaChi(id) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Địa chỉ này sẽ bị xóa vĩnh viễn!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Đồng ý xóa',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post("@Url.Action("Delete", "DiaChiGiaoHang")", { DiaChiId: id }, function (res) {
+                        if (res.code === 200) {
+                            Swal.fire('Đã xóa!', res.msg, 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Thất bại!', res.msg, 'error');
+                        }
+                    });
+                }
+            });
+        }
+
+        // 4. Hàm đặt mặc định
+        function SetDefault(id) {
+            $.post("@Url.Action("SetDefault", "DiaChiGiaoHang")", { DiaChiId: id }, function (res) {
+                if (res.code === 200) {
+                    Swal.fire('Thành công!', res.msg, 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Lỗi!', res.msg, 'error');
+                }
+            });
+        }
     </script>
 }
