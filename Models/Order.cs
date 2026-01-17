@@ -29,6 +29,8 @@ namespace Models
         public string PaymentMethod { get; set; }
         public string Note { get; set; }
         public string Status { get; set; }
+        public int? OrderType { get; set; }
+        public string HinhAnhDonThuoc { get; set; }
         [NotMapped]
         public string DeliveryServiceName { get; set; }
         [NotMapped]

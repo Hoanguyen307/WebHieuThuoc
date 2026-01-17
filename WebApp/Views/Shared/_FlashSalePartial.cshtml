@@ -1,4 +1,5 @@
 ﻿@model List<Models.ProductFlashSaleViewModel>
+@using Common;
 <style>
     .flashsale-tabs {
         background-color: #f1f5f9; 
@@ -62,7 +63,7 @@
                     foreach (var fs in (List<Models.FlashSale>)ViewBag.AllFlashSales)
                     {
                         var status = "Sắp diễn ra";
-                        if (DateTime.Now >= fs.StartTime && DateTime.Now < fs.EndTime)
+                        if (DateHelper.Now >= fs.StartTime && DateHelper.Now < fs.EndTime)
                         {
                             status = "Đang diễn ra";
                         }
@@ -84,6 +85,9 @@
             <!-- Countdown -->
             <div class="countdown mt-3" style="margin-left:10px; font-size: 18px;">
                 <span class="countdown-label">Bắt đầu sau</span>
+                <span id="days-area" style="display:none;">
+                    <span id="days" style="border-radius: 5px; background-color: red; color: white; font-weight: bold; padding: 4px;">00</span> ngày :
+                </span>
                 <span id="hours" style=" border-radius: 5px; background-color: red; color: white; font-weight: bold; padding: 4px;">00</span> :
                 <span id="minutes" style=" border-radius: 5px; background-color: red; color: white; font-weight: bold; padding: 4px;">00</span> :
                 <span id="seconds" style="border-radius: 5px; background-color: red; color: white; font-weight: bold; padding: 4px; ">00</span>

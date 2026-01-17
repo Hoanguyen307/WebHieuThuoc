@@ -19,6 +19,7 @@ namespace Models
         public int SoLuong { get; set; }
         public decimal DonGiaNhap { get; set; }
         public DateTime? NgaySanXuat { get; set; }
+        public DateTime? NgayHH { get; set; }
         public int? HanSuDung { get; set; }
         public string GhiChu { get; set; }
         [ForeignKey("NhapKhoId")]

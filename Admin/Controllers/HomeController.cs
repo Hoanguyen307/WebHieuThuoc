@@ -83,7 +83,19 @@ namespace Admin.Controllers
             }
         }
 
-
+        [HttpGet]
+        public JsonResult LayCanhBaoHetHan()
+        {
+            try
+            {
+                var duLieu = new Dashboard_DAL().LayDanhSachLoSapHetHan(30);
+                return Json(new { code = 200, data = duLieu }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);

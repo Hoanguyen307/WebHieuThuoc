@@ -293,6 +293,8 @@
 
         let activeTab = null;
         const countdownEl = {
+            dArea: document.getElementById("days-area"),
+            d: document.getElementById("days"),
             h: document.getElementById("hours"),
             m: document.getElementById("minutes"),
             s: document.getElementById("seconds"),
@@ -319,6 +321,15 @@
             }
 
             const duration = dayjs.duration(diff);
+            const days = Math.floor(duration.asDays());
+            const hours = duration.hours();
+
+            if (days > 0) {
+                countdownEl.dArea.style.display = "inline";
+                countdownEl.d.innerText = String(days).padStart(2, "0");
+            } else {
+                countdownEl.dArea.style.display = "none";
+            }
             countdownEl.h.innerText = String(duration.hours()).padStart(2, "0");
             countdownEl.m.innerText = String(duration.minutes()).padStart(2, "0");
             countdownEl.s.innerText = String(duration.seconds()).padStart(2, "0");

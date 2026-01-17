@@ -82,6 +82,7 @@
     <Compile Include="LichLamViecViewModel\XepLichNhanVienModel.cs" />
     <Compile Include="LichSu_ChucVu.cs" />
     <Compile Include="ChatMessage.cs" />
+    <Compile Include="LoSapHetHanDto.cs" />
     <Compile Include="Menu.cs" />
     <Compile Include="myConnection.cs" />
     <Compile Include="NhaCungCap.cs" />

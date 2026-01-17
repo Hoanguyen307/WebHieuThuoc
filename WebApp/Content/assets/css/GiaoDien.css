@@ -1,4 +1,62 @@
-﻿.bg-pink {
+﻿
+.address-scroll-container, .modal-address-scroll {
+    max-height: 250px;
+    overflow-y: auto;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fcfcfc;
+}
+
+.address-item-card, .modal-address-card {
+    display: flex;
+    align-items: flex-start; 
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+    position: relative;
+}
+
+    .address-item-card input[type="radio"],
+    .modal-address-card input[type="radio"] {
+        margin-top: 4px; 
+        margin-right: 12px; 
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0; 
+        position: static;
+        transform: none;
+    }
+
+.address-info-content {
+    flex-grow: 1; 
+}
+
+    .address-info-content b {
+        font-size: 15px;
+        color: #333;
+        display: inline-block;
+        margin-bottom: 2px;
+    }
+
+    .address-info-content p {
+        font-size: 13.5px;
+        color: #666;
+        margin-bottom: 0;
+        line-height: 1.4;
+    }
+
+.address-item-card.active, .modal-address-card.active {
+    border-color: #198754;
+    background-color: #f0fff4;
+    box-shadow: 0 2px 4px rgba(25, 135, 84, 0.1);
+}
+
+.bg-pink {
     background-color: #ff4fa4;
 }
 

@@ -27,7 +27,7 @@
     <header class="header">
         <div class="container-fluid">
             <div class="d-flex justify-content-between align-items-center">
-                <a href="@Url.Action("Index", "Home1")" class="logo logo-dark" >
+                <a href="@Url.Action("Index", "Home1")" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="~/Content/assets/images/Logo/Logo4.png" alt="" height="80">
                     </span>
@@ -50,8 +50,11 @@
                         }
                     </div>
 
-                    <div class="header-item">
-                        <i class="fas fa-ellipsis-h"></i>
+                    <div class="header-item action-prescription" title="Gửi đơn thuốc nhanh">
+                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#modalQuickPrescription" class="text-decoration-none text-white">
+                            <i class="fas fa-file-medical fs-4"></i>
+                            <span class="d-none d-lg-inline ms-1 small">Gửi đơn thuốc</span>
+                        </a>
                     </div>
                     <div class="divider"></div>
                     @if (Session["Login"] != null)
@@ -75,10 +78,10 @@
                                     </a>
                                 </li>
                                 @*<li>
-                                    <a class="dropdown-item" href="@Url.Action("Wishlist", "KhachHang")">
-                                        <i class="fas fa-heart me-2"></i> Sản phẩm yêu thích
-                                    </a>
-                                </li>*@
+                                        <a class="dropdown-item" href="@Url.Action("Wishlist", "KhachHang")">
+                                            <i class="fas fa-heart me-2"></i> Sản phẩm yêu thích
+                                        </a>
+                                    </li>*@
                                 <li>
                                     <a class="dropdown-item" href="@Url.Action("Index", "DiaChiGiaoHang")">
                                         <i class="fas fa-map-marker-alt me-2"></i> Địa chỉ giao hàng
@@ -239,6 +242,64 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalQuickPrescription" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title"><i class="fas fa-prescription me-2"></i>Gửi đơn thuốc cho Dược sĩ</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formQuickPrescription" enctype="multipart/form-data">
+                        <div class="text-center mb-3">
+                            <p class="text-muted small">Dược sĩ sẽ xem đơn thuốc, soạn đầy đủ các loại thuốc có trong đơn và báo giá lại cho bạn.</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-map-marker-alt text-success me-1"></i> Chọn địa chỉ nhận hàng</label>
+
+                            <div id="quickOrderAddressList" class="modal-address-scroll">
+                                <div class="text-center py-3">
+                                    <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                                    <span class="ms-2 small">Đang tải địa chỉ...</span>
+                                </div>
+                            </div>
+                            <button type="button" class="small text-success text-decoration-none text-end mt-1" onclick="LoadForm()">
+                                <i class="fas fa-plus"></i>
+                                Thêm địa chỉ
+                            </button>
+                            @*<div class="text-end mt-1">
+                                    <a href="@Url.Action("Index", "DiaChiGiaoHang")" class="small text-success text-decoration-none">+ Thêm địa chỉ mới</a>
+                                </div>*@
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">1. Chụp hoặc chọn ảnh đơn thuốc</label>
+                            <input type="file" name="prescriptionFile" class="form-control" accept="image/*" required id="quickFile">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">2. Ghi chú (không bắt buộc)</label>
+                            <textarea name="note" class="form-control" rows="3" placeholder="Ví dụ: Lấy cho tôi liều 5 ngày, hoặc lấy thêm bông băng..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 py-2">
+                            <i class="fas fa-paper-plane me-2"></i>Gửi ngay cho Dược sĩ
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="modalDiaChi" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalDiaChiTitle">Thêm/Sửa địa chỉ</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" style="color: black">
+                    <!-- Nội dung form sẽ load ở đây -->
+                </div>
+            </div>
+        </div>
+    </div>
     @RenderSection("Scripts", required: false)
     <script>
     var currentUserName = "@(Session["CustomerName"] ?? "Khách")";
@@ -247,14 +308,112 @@
     let hieuThuocIsOpen = false;
     let isMessageSending = false;
     let messagePollingInterval = null;
+        function LoadForm() {
+            $.get('/DiaChiGiaoHang/Create', function (res) {
+                $('#modalDiaChi .modal-body').html(res);
+                $('#modalDiaChi').modal('show');
+            });
+        }
+        function SaveDiaChi() {
+            var form = $('#form-addDiaChi')[0];
+            var formData = new FormData(form);
+            var id = $('#DiaChiId').val();
+            var url = (id && parseInt(id) > 0) ? '/DiaChiGiaoHang/Edit' : '/DiaChiGiaoHang/Create';
 
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    if (res.code === 200) {
+                        $('#modalDiaChi').modal('hide');
+                        Swal.fire("Thành công", res.msg, "success").then(() => location.reload());
+                    } else {
+                        Swal.fire("Lỗi", res.msg || "Cập nhật thất bại", "error");
+                    }
+                }
+            });
+        }
+    function selectQuickAddressCard(element) {
+        $('#quickOrderAddressList .modal-address-card').removeClass('active');
+        $(element).addClass('active');
+        $(element).find('input[type="radio"]').prop('checked', true);
+    }
         function updateCartCount() {
             $.get("/Cart/GetCartCount", function (res) {
                 $("#cart-count").text(res.count);
             });
         }
 
-    $(document).ready(function () {
+        $(document).ready(function () {
+            $('#modalQuickPrescription').on('show.bs.modal', function () {
+                const $container = $('#quickOrderAddressList');
+
+            if ("@Session["Login"]" == "") {
+                $container.html('<div class="text-center py-3 small text-danger">Vui lòng đăng nhập để xem địa chỉ</div>');
+                return;
+            }
+
+        $.get('/DiaChiGiaoHang/GetListAddressAjax', function (res) {
+            if (res && res.data && res.data.length > 0) {
+                let html = '';
+                res.data.forEach(addr => {
+                    const isActive = (addr.DiaChiId == res.selectedId);
+                    html += `
+                        <div class="modal-address-card ${isActive ? 'active' : ''}" onclick="selectQuickAddressCard(this)">
+                    <input type="radio" name="diaChiId" value="${addr.DiaChiId}" ${isActive ? 'checked' : ''}>
+
+                    <div class="address-info-content">
+                        <span class="fw-bold">${addr.TenNguoiNhan}</span> | <span class="text-muted">${addr.SoDienThoai}</span>
+                        <p class="small text-muted">${addr.DiaChiChiTiet}</p>
+                        ${addr.MacDinh ? '<span class="badge bg-success" style="font-size:9px">Mặc định</span>' : ''}
+                    </div>
+                </div>`;
+                });
+                $container.html(html);
+            } else {
+                $container.html('<div class="text-center py-3 small text-muted">Bạn chưa có địa chỉ nào</div>');
+            }
+        });
+    });
+            $('#formQuickPrescription').on('submit', function (e) {
+                e.preventDefault();
+
+        if ("@Session["Login"]" == "") {
+            Swal.fire('Thông báo', 'Vui lòng đăng nhập để gửi đơn thuốc.', 'warning');
+            return;
+        }
+                var selectedDiaChiId = $('#quickOrderAddressList input[name="diaChiId"]:checked').val();
+                var formData = new FormData(this);
+                formData.append('diaChiId', selectedDiaChiId);
+
+        Swal.fire({
+            title: 'Đang xử lý...',
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+        });
+
+        $.ajax({
+            url: '/Cart/QuickPrescriptionOrder',
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                if (res.success) {
+                    $('#modalQuickPrescription').modal('hide');
+                    Swal.fire('Thành công!', 'Đơn thuốc đã được gửi. Dược sĩ sẽ soạn đơn và liên hệ bạn qua Zalo/SĐT ngay.', 'success');
+                } else {
+                    Swal.fire('Lỗi', res.message, 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Lỗi', 'Có lỗi xảy ra trong quá trình gửi.', 'error');
+            }
+        });
+    });
         const $chatboxBtn = $('#chatbox-btn');
         const $chatboxContainer = $('#hieuThuocChatboxContainer');
         const $closeChatBtn = $('#hieuThuocCloseChatBtn');

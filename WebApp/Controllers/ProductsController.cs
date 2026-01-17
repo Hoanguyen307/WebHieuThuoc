@@ -12,6 +12,18 @@ namespace WebApp.Controllers
 {
     public class ProductsController : Controller
     {
+        public int CurrentUserId
+        {
+            get
+            {
+                var kh = Session["Login"] as Models.KhachHang;
+                if (kh == null)
+                {
+                    return 0;
+                }
+                return kh.Id;
+            }
+        }
         // GET: Products
         public ActionResult Index(int? ProductCategoryId, int? NhaCungCapId, string sortOrder = "newest", bool ThuocKeDon = false, int pageSize = 40)
         {
@@ -38,7 +50,7 @@ namespace WebApp.Controllers
             ViewBag.ThuocKeDon = ThuocKeDon;
             return View(product);
         }
-        public ActionResult Details(int? id, int? rating = null)
+        public ActionResult Details(int? id, int? diaChiId, int? rating = null)
         {
             var product = new Product_DAL().SelectById(id.Value); 
             if (product == null)
@@ -56,13 +68,25 @@ namespace WebApp.Controllers
             {
                 totalReviews = new ProductReview_DAL().ReviewGetByProduct(id.Value, null).Count;
             }
+
+            List<DiaChiGiaoHang> addresses = new List<DiaChiGiaoHang>();
+            int? selectedId = null;
+
+            if (Session["Login"] != null)
+            {
+                addresses = new DiaChiGiaoHang_DAL().GetByKhachHang(CurrentUserId);
+                var defaultAddress = new DiaChiGiaoHang_DAL().GetDefault(CurrentUserId);
+                selectedId = defaultAddress?.DiaChiId ?? addresses.FirstOrDefault()?.DiaChiId;
+            }
             var viewModel = new ProductViewModel
             {
                 Product = product,
                 RelatedProducts = relatedProducts,
                 productReviews = reviews,
                 AverageRating = averageRating,
-                TotalReviews = totalReviews
+                TotalReviews = totalReviews,
+                Addresses = addresses, 
+                SelectedAddressId = selectedId
             };
 
             ViewBag.SelectedRating = rating;

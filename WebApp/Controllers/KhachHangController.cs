@@ -123,6 +123,29 @@ namespace WebApp.Controllers
 
             return View(pagedOrders);
         }
+
+        [HttpPost]
+        public JsonResult KhachHangXacNhanDon(int id)
+        {
+            try
+            {
+                var kh = Session["Login"] as Models.KhachHang;
+                if (kh == null) return Json(new { success = false, message = "Phiên đăng nhập hết hạn" });
+
+                bool result = new Order_DAL().ToggleStatus(id, "Khách hàng", "Đã xác nhận", "");
+
+                if (result)
+                {
+                    return Json(new { success = true });
+                }
+                return Json(new { success = false, message = "Không thể cập nhật trạng thái đơn hàng." });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         [HttpGet]
         public JsonResult Track(string tracking)
         {

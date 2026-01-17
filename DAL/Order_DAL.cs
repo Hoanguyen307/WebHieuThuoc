@@ -105,6 +105,8 @@ namespace DAL
                 param.Add("@DiaChiId", obj.DiaChiId);
                 param.Add("@CreatedBy", obj.CreatedBy);
                 param.Add("@PaymentMethod", obj.PaymentMethod ?? "COD");
+                param.Add("@OrderType", obj.OrderType);
+                param.Add("@HinhAnhDonThuoc", obj.HinhAnhDonThuoc);
 
                 // Tạo DataTable tương ứng OrderDetailType (ProductId, Quantity, UnitPrice, Discount)
                 var dt = new DataTable();
@@ -189,6 +191,38 @@ namespace DAL
             catch (Exception)
             {
                 return false;
+            }
+        }
+        public bool UpdateOrderItems(int orderId, List<OrderDetail> details, decimal totalAmount)
+        {
+            using (var conn = Connection.getConnection())
+            {
+                conn.Open();
+                using (var trans = conn.BeginTransaction())
+                {
+                    try
+                    {
+                        conn.Execute("DELETE FROM DonHangChiTiet WHERE Order_ID = @OrderId", new { OrderId = orderId }, trans);
+
+                        foreach (var d in details)
+                        {
+                            conn.Execute(@"INSERT INTO DonHangChiTiet(Order_ID, ProductId, Quantity, UnitPrice, Discount) 
+                                   VALUES (@orderId, @ProductId, @Quantity, @UnitPrice, 0)",
+                                           new { orderId, d.ProductId, d.Quantity, d.UnitPrice }, trans);
+                        }
+
+                        conn.Execute(@"UPDATE DonHang SET TotalAmount = @totalAmount, Status = N'Đã báo giá' 
+                               WHERE Id = @orderId", new { totalAmount, orderId }, trans);
+
+                        trans.Commit();
+                        return true;
+                    }
+                    catch
+                    {
+                        trans.Rollback();
+                        return false;
+                    }
+                }
             }
         }
     }

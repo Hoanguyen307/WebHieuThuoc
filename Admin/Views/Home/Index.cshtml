@@ -410,6 +410,18 @@
                 </div>
                 <div class="stat-change" id="usersChange">Thay đổi: 0%</div>
             </div>
+            <div class="stat-card orders"
+                 style="background: #fffbeb; border-left: 4px solid #f59e0b; cursor: pointer;"
+                 onclick="cuonDenCanhBao()">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-title" style="color: #92400e;">Lô Hàng Sắp Hết Hạn</div>
+                        <div class="stat-subtitle">Trong 30 ngày tới</div>
+                    </div>
+                </div>
+                <div class="stat-value" id="totalExpiring" style="color: #b45309;">0</div>
+                <div class="stat-change" id="expiringStatus">Nhấn để xem chi tiết</div>
+            </div>
         </div>
 
         <div class="charts-section">
@@ -451,7 +463,28 @@
                 </div>
             </div>
         </div>
-
+        <div id="vungCanhBaoHetHan" class="regional-table" style="margin-top: 30px; border-top: 4px solid #ef4444;">
+            <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="table-title">Danh sách chi tiết lô hàng sắp hết hạn (30 ngày tới)</div>
+                <span id="expiryCountBadge" style="background: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">0 lô hàng</span>
+            </div>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table class="table" id="tableExpiry">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Mã Lô</th>
+                            <th style="text-align: center;">Hạn sử dụng</th>
+                            <th style="text-align: right;">Số lượng tồn</th>
+                            <th style="text-align: right;">Ngày còn lại</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="5" style="text-align:center; padding: 40px; color: #64748b;">Đang tải dữ liệu cảnh báo...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     @if (ViewBag.AntiForgeryToken != null)
@@ -462,15 +495,31 @@
     <script>
         let salesChart;
         let currentPeriod = 'ngay';
+        function cuonDenCanhBao() {
+            const vungCanhBao = document.getElementById('vungCanhBaoHetHan');
+            if (vungCanhBao) {
+                vungCanhBao.scrollIntoView({
+                    behavior: 'smooth', 
+                    block: 'start'      
+                });
 
+                vungCanhBao.style.backgroundColor = '#fff5f5';
+                setTimeout(() => {
+                    vungCanhBao.style.backgroundColor = 'white';
+                }, 1000);
+            }
+        }
         async function taiTatCaDuLieu() {
             const tuNgay = document.getElementById('commonFromDate').value;
             const denNgay = document.getElementById('commonToDate').value;
 
+            document.querySelector('#tableExpiry tbody').innerHTML = '<tr><td colspan="5" class="table-loading"><div class="loading"></div></td></tr>';
+
             await Promise.all([
                 taiThongKeTongQuan(tuNgay, denNgay),
                 taiDuLieuBanHang(currentPeriod, tuNgay, denNgay),
-                taiTongKetTaiChinh(tuNgay, denNgay)
+                taiTongKetTaiChinh(tuNgay, denNgay),
+                taiCanhBaoHetHan()
             ]);
         }
         function layTokenChongGiaMao() {
@@ -572,6 +621,48 @@
                 document.getElementById('financialGrowth').textContent = dinhDangTienTe(financial.TangTruong);
             } catch (error) {
                 hienThiLoi(`Lỗi tài chính: ${error.message}`);
+            }
+        }
+
+        async function taiCanhBaoHetHan() {
+            try {
+                const url = rootPath + 'Home/LayCanhBaoHetHan'; // Đảm bảo Controller đã có Action này
+                const data = await guiYeuCauAjax(url);
+
+                const tbody = document.querySelector('#tableExpiry tbody');
+                const totalExpiringEl = document.getElementById('totalExpiring');
+                const badgeEl = document.getElementById('expiryCountBadge');
+
+                tbody.innerHTML = '';
+                totalExpiringEl.textContent = data.length;
+                badgeEl.textContent = `${data.length} lô hàng`;
+
+                if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Không có lô hàng nào sắp hết hạn.</td></tr>';
+                    return;
+                }
+
+                data.forEach(item => {
+                    const rawDate = item.HanSuDung.replace(/\/Date\((\d+)\)\//, '$1');
+                    const date = new Date(parseInt(rawDate));
+
+                    const color = item.SoNgayConLai <= 7 ? '#ef4444' : '#f59e0b';
+                    const fontWeight = item.SoNgayConLai <= 7 ? 'bold' : '500';
+
+                    tbody.innerHTML += `
+                <tr>
+                    <td><strong>${item.ProductName}</strong></td>
+                    <td><span class="chart-tab">${item.MaLo}</span></td>
+                    <td style="text-align: center;">${date.toLocaleDateString('vi-VN')}</td>
+                    <td style="text-align: right; font-weight: bold;">${dinhDangSo(item.SoLuongTon)}</td>
+                    <td style="text-align: right; color: ${color}; font-weight: ${fontWeight};">
+                        ${item.SoNgayConLai <= 0 ? 'Đã hết hạn' : 'Còn ' + item.SoNgayConLai + ' ngày'}
+                    </td>
+                </tr>
+            `;
+                });
+            } catch (error) {
+                console.error("Lỗi cảnh báo:", error);
             }
         }
 

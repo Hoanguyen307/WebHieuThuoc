@@ -1,4 +1,172 @@
-﻿function closeModal() {
+﻿var currentPickingOrderId = 0;
+var pickedMedicines = [];
+
+function openAddProductModal(orderId, orderCode, imageUrl) {
+    currentPickingOrderId = orderId;
+    pickedMedicines = [];
+
+    $('#lblOrderCode').text(orderCode);
+    $('#imgPrescription').attr('src', imageUrl);
+    $('#totalPrescriptionAmount').text('0 đ');
+    $('#tablePickedMedicines tbody').empty();
+
+    $('#modalPrescriptionPicker').modal('show');
+
+    // Khởi tạo autocomplete sau khi modal mở để đảm bảo phần tử input đã tồn tại
+    initMedicineAutocomplete();
+}
+
+// Đảm bảo khởi tạo Autocomplete khi modal đã hiển thị
+$(document).on('shown.bs.modal', '#modalPrescriptionPicker', function () {
+    initMedicineAutocomplete();
+});
+
+function initMedicineAutocomplete() {
+    // Kiểm tra xem input đã tồn tại chưa
+    const $input = $("#searchMedicine");
+    if ($input.length === 0) return;
+
+    // Hủy autocomplete cũ nếu có để tránh trùng lặp
+    if ($input.data("ui-autocomplete")) {
+        $input.autocomplete("destroy");
+    }
+
+    $input.autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: rootPath + "Order/SearchProductAdmin", // Kiểm tra lại chính xác URL này
+                type: "GET",
+                dataType: "json",
+                data: { term: request.term },
+                success: function (data) {
+                    console.log("Dữ liệu nhận được:", data); // Log ra để kiểm tra
+                    // Map dữ liệu về định dạng label/value của jQuery UI
+                    response($.map(data, function (item) {
+                        return {
+                            label: item.TenThuoc,
+                            value: item.TenThuoc,
+                            id: item.ThuocId,
+                            price: item.GiaBan || item.GiaGoc,
+                            stock: item.SoLuongTon
+                        };
+                    }));
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi gọi API tìm kiếm:", error);
+                }
+            });
+        },
+        minLength: 2,
+        select: function (event, ui) {
+            addToPickedList({
+                ThuocId: ui.item.id,
+                TenThuoc: ui.item.label,
+                GiaBan: ui.item.price,
+                HinhAnh: ui.item.image
+            });
+            $(this).val('');
+            return false;
+        }
+    }).autocomplete("instance")._renderItem = function (ul, item) {
+        return $("<li>")
+            .append(`<div class="p-2 border-bottom" style="cursor:pointer">
+                        <div class="fw-bold text-primary">${item.label}</div>
+                        <small class="text-muted">Kho: ${item.stock} | Giá: <span class="text-danger">${formatCurrency(item.price)}</span></small>
+                     </div>`)
+            .appendTo(ul);
+    };
+}
+
+function addToPickedList(item) {
+    let existing = pickedMedicines.find(x => x.ProductId === item.ThuocId);
+    if (existing) {
+        existing.Quantity++;
+    } else {
+        pickedMedicines.push({
+            ProductId: item.ThuocId,
+            ProductName: item.TenThuoc,
+            Quantity: 1,
+            UnitPrice: item.GiaBan || item.GiaGoc || 0,
+            ProductImage: item.HinhAnh
+        });
+    }
+    renderPickedTable();
+    toastr.success("Đã thêm: " + item.TenThuoc);
+}
+
+function renderPickedTable() {
+    let tbody = $('#tablePickedMedicines tbody');
+    tbody.empty();
+    let total = 0;
+
+    if (pickedMedicines.length === 0) {
+        tbody.append('<tr><td colspan="5" class="text-center text-muted">Chưa có thuốc nào được chọn</td></tr>');
+    } else {
+        pickedMedicines.forEach((m, index) => {
+            let subtotal = m.Quantity * m.UnitPrice;
+            total += subtotal;
+            tbody.append(`
+                <tr>
+                    <td class="small">${m.ProductName}</td>
+                    <td><input type="number" class="form-control form-control-sm w-100" value="${m.Quantity}" min="1" onchange="updateQty(${index}, this.value)"></td>
+                    <td class="small">${formatCurrency(m.UnitPrice)}</td>
+                    <td class="text-end fw-bold">${formatCurrency(subtotal)}</td>
+                    <td class="text-center"><button class="btn btn-sm text-danger" onclick="removePicked(${index})"><i class="fas fa-trash"></i></button></td>
+                </tr>`);
+        });
+    }
+    $('#totalPrescriptionAmount').text(formatCurrency(total));
+}
+
+function updateQty(index, val) {
+    let qty = parseInt(val);
+    if (isNaN(qty) || qty < 1) qty = 1;
+    pickedMedicines[index].Quantity = qty;
+    renderPickedTable();
+}
+
+function removePicked(index) {
+    pickedMedicines.splice(index, 1);
+    renderPickedTable();
+}
+
+function savePrescriptionItems() {
+    if (pickedMedicines.length === 0) {
+        Swal.fire('Cảnh báo', "Vui lòng chọn ít nhất 1 loại thuốc!", 'warning');
+        return;
+    }
+
+    Swal.fire({
+        title: 'Xác nhận báo giá?',
+        text: "Hệ thống sẽ cập nhật sản phẩm và gửi thông báo báo giá đến khách hàng.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Kiểm tra lại'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: '/Order/UpdateOrderPrescription',
+                type: 'POST',
+                data: JSON.stringify({
+                    orderId: currentPickingOrderId,
+                    details: pickedMedicines
+                }),
+                contentType: 'application/json',
+                success: function (res) {
+                    if (res.code === 200) {
+                        toastr.success(res.msg);
+                        $('#modalPrescriptionPicker').modal('hide');
+                        loadDonHang(1);
+                    } else {
+                        Swal.fire('Lỗi', res.msg, 'error');
+                    }
+                }
+            });
+        }
+    });
+}
+function closeModal() {
     $('#modalNhanVien').modal('hide');
 }
 function formatCurrency(totalAmount) {
@@ -89,40 +257,60 @@ function loadDonHang(page = 1) {
                 let i = 1;
                 const statusOrder = {
                     "Chờ xác nhận": 1,
-                    "Đã xác nhận": 2,
-                    "Người bán đang chuẩn bị đơn hàng": 3,
-                    "Đã giao cho đơn vị vận chuyển": 4,
-                    "Hoàn thành": 5,
-                    "Hủy": 6
+                    "Chờ xác nhận đơn thuốc": 1,
+                    "Chờ dược sĩ soạn đơn": 1,
+                    "Đã báo giá": 2,
+                    "Đã xác nhận": 3,
+                    "Người bán đang chuẩn bị đơn hàng": 4,
+                    "Đã giao cho đơn vị vận chuyển": 5,
+                    "Hoàn thành": 6,
+                    "Hủy": 7
                 };
                 res.items.forEach(item => {
                     const currentLevel = statusOrder[item.Status] || 0;
+                    let statusOptions = '';
+
+                    if (item.OrderType === 1 || item.OrderType === 2) {
+                        // LUỒNG ĐƠN THUỐC
+                        const initialLabel = item.OrderType === 1 ? "Chờ xác nhận đơn thuốc" : "Chờ dược sĩ soạn đơn";
+                        statusOptions = `
+                            <option value="${initialLabel}" ${item.Status === initialLabel ? "selected" : ""} ${currentLevel > 1 ? "disabled" : ""}>${initialLabel}</option>
+                            <option value="Đã báo giá" ${item.Status === "Đã báo giá" ? "selected" : ""} ${currentLevel > 2 ? "disabled" : ""}>Đã báo giá</option>
+                            <option value="Đã xác nhận" ${item.Status === "Đã xác nhận" ? "selected" : ""} ${currentLevel > 3 ? "disabled" : ""}>Đã xác nhận (Khách đồng ý)</option>
+                        `;
+                    } else {
+                        // LUỒNG ĐƠN THƯỜNG
+                        statusOptions = `
+                            <option value="Chờ xác nhận" ${item.Status === "Chờ xác nhận" ? "selected" : ""} ${currentLevel > 1 ? "disabled" : ""}>Chờ xác nhận</option>
+                            <option value="Đã xác nhận" ${item.Status === "Đã xác nhận" ? "selected" : ""} ${currentLevel > 3 ? "disabled" : ""}>Đã xác nhận</option>
+                        `;
+                    }
+
+                    // CÁC TRẠNG THÁI CHUNG PHÍA SAU
+                    statusOptions += `
+                        <option value="Người bán đang chuẩn bị đơn hàng" ${item.Status === "Người bán đang chuẩn bị đơn hàng" ? "selected" : ""} ${currentLevel > 4 ? "disabled" : ""}>Người bán đang chuẩn bị đơn hàng</option>
+                        <option value="Đã giao cho đơn vị vận chuyển" ${item.Status === "Đã giao cho đơn vị vận chuyển" ? "selected" : ""} ${currentLevel > 5 ? "disabled" : ""}>Đã giao cho đơn vị vận chuyển</option>
+                        <option value="Hoàn thành" ${item.Status === "Hoàn thành" ? "selected" : ""} ${currentLevel > 6 ? "disabled" : ""}>Hoàn thành</option>
+                        <option value="Hủy" ${item.Status === "Hủy" ? "selected" : ""} ${(currentLevel >= 5 || currentLevel === 7) ? "disabled" : ""}>Hủy</option>
+                        `;
+                    const prescriptionBadge = item.HinhAnhDonThuoc
+                        ? `<a href="${item.HinhAnhDonThuoc}" target="_blank" class="ms-1 text-danger" title="Xem đơn thuốc">
+                        <i class="fas fa-file-prescription"></i>
+                        </a>`
+                        : "";
+                    const orderTypeLabel = item.OrderType === 2
+                        ? '<span class="badge bg-warning text-dark">Gửi nhanh</span>'
+                        : (item.OrderType === 1 ? '<span class="badge bg-info">Đặt lẻ</span>' : '');
                     const row = `
                 <tr>
             <td></td>
             <td>${i++}</td>
-            <td>${item.OrderCode}</td>
+            <td>${item.OrderCode} ${prescriptionBadge}</td>
             <td>${item.CustomerName}</td>
             <td>${formatCurrency(item.TotalAmount)}</td>
             <td>
                 <select class="form-select form-select-sm" onchange="updateStatus(${item.ID}, this)">
-                    <option value="Chờ xác nhận" ${item.Status === "Chờ xác nhận" ? "selected" : ""} 
-                        ${currentLevel > 1 ? "disabled" : ""}>Chờ xác nhận</option>
-            
-                    <option value="Đã xác nhận" ${item.Status === "Đã xác nhận" ? "selected" : ""} 
-                        ${currentLevel > 2 ? "disabled" : ""}>Đã xác nhận</option>
-            
-                    <option value="Người bán đang chuẩn bị đơn hàng" ${item.Status === "Người bán đang chuẩn bị đơn hàng" ? "selected" : ""} 
-                        ${currentLevel > 3 ? "disabled" : ""}>Người bán đang chuẩn bị đơn hàng</option>
-            
-                    <option value="Đã giao cho đơn vị vận chuyển" ${item.Status === "Đã giao cho đơn vị vận chuyển" ? "selected" : ""} 
-                        ${currentLevel > 4 ? "disabled" : ""}>Đã giao cho đơn vị vận chuyển</option>
-            
-                    <option value="Hoàn thành" ${item.Status === "Hoàn thành" ? "selected" : ""} 
-                        ${currentLevel > 5 ? "disabled" : ""}>Hoàn thành</option>
-            
-                    <option value="Hủy" ${item.Status === "Hủy" ? "selected" : ""} 
-                        ${(currentLevel >= 4 || currentLevel === 6) ? "disabled" : ""}>Hủy</option>
+                    ${statusOptions}
                 </select>
                 <select class="form-select form-select-sm carrier-select mt-1"
                     data-order-id="${item.ID}"
@@ -136,6 +324,8 @@ function loadDonHang(page = 1) {
             <td>${formatDate(item.CreatedDate, true)}</td>
             <td>
                 <button type="button" class="btn btn-outline-info btn-sm" onclick="loadChiTietDonHang('${item.ID}'); event.stopPropagation();"><i class="fas fa-eye"></i></button>
+                ${item.OrderType === 2 && item.TotalAmount === 0 ?
+                `<button title="Soạn thuốc & Báo giá" class="btn btn-outline-warning btn-sm" onclick="openAddProductModal(${item.ID}, '${item.OrderCode}', '${item.HinhAnhDonThuoc}')"><i class="fas fa-pills"></i></button>` : ''}
                 <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.ID}'); event.stopPropagation();"><i class="fas fa-trash-alt"></i></button>
             </td>
         </tr>`;

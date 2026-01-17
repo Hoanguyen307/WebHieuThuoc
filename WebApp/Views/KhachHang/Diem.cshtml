@@ -69,18 +69,26 @@
             {
                 foreach (var item in lichSuDiem)
                 {
-                    bool isEarn = item.Type?.ToLower() == "earn";
+                    bool isEarn = item.Type?.Trim() == "Cộng điểm" ||
+                        item.Type?.Trim() == "Đã cộng" ||
+                        item.Type?.ToLower() == "earn";
+
                     string sign = isEarn ? "+" : "-";
                     string colorClass = isEarn ? "text-success" : "text-danger";
+                    string badgeClass = isEarn ? "bg-success" : "bg-primary";
+                    string statusText = isEarn ? "Đã cộng" : "Đã dùng";
                     <tr>
                         <td class="text-center">@item.CreatedDate.ToString("dd/MM/yyyy")</td>
                         <td>@item.Description</td>
 
                         <td class="text-end @colorClass fw-bold">
-                            @sign@item.Points.ToString("#,##0.00")
+                            @sign@Math.Abs(item.Points).ToString("#,##0.00")
+                            @*@sign@item.Points.ToString("#,##0.00")*@
                         </td>
-
                         <td class="text-center">
+                            <span class="badge @badgeClass">@statusText</span>
+                        </td>
+                        @*<td class="text-center">
                             @if (isEarn)
                             {
                                 <span class="badge bg-success">Đã cộng</span>
@@ -93,7 +101,7 @@
                             {
                                 <span class="badge bg-secondary">@item.Type</span>
                             }
-                        </td>
+                        </td>*@
                     </tr>
                 }
             }

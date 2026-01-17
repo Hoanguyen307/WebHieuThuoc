@@ -36,6 +36,7 @@
                                 case "Đã xác nhận": bgClass = "bg-primary"; break;
                                 case "Người bán đang chuẩn bị đơn hàng":
                                 case "Đã giao cho đơn vị vận chuyển": bgClass = "bg-info"; textClass = "text-dark"; break;
+                                case "Đã báo giá": bgClass = "bg-warning"; textClass = "text-dark"; break;
                             }
                         }
                         <span class="badge rounded-pill @bgClass @textClass px-3 py-2 shadow-sm">@statusText</span>

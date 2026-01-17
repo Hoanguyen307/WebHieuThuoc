@@ -87,6 +87,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DateHelper.cs" />
     <Compile Include="EncryptionHelper.cs" />
     <Compile Include="myConnection.cs" />
     <Compile Include="myExtension.cs" />

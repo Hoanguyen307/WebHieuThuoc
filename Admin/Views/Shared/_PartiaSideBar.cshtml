@@ -87,7 +87,7 @@
             </a>
         </li>
 
-        @if (User.IsInRole("Admin"))
+        @*@if (User.IsInRole("Admin"))
         {
             <li>
                 <a class="nav-link" href="@Url.Action("Index", "NhanVien")">
@@ -95,7 +95,7 @@
                     <span class="menu-text">Quản lý nhân viên</span>
                 </a>
             </li>
-        }
+        }*@
 
         <li>
             <a class="nav-link" href="@Url.Action("Index", "KhachHang")">

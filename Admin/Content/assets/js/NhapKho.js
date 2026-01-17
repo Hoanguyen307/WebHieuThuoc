@@ -410,7 +410,11 @@ function SavePhieuNhap() {
         toastr.warning("Vui lòng thêm ít nhất một sản phẩm vào danh sách!");
         return;
     }
-
+    const invalidItem = selectedProducts.find(p => !p.NgaySanXuat || p.HanSuDung <= 0);
+    if (invalidItem) {
+        toastr.error("Vui lòng nhập đầy đủ NSX và HSD cho thuốc: " + invalidItem.ProductName);
+        return;
+    }
     var data = {
         Id: idValue,
         MaPhieu: $("#MaPhieu").val(),
@@ -500,6 +504,16 @@ function viewDetail(id) {
         }
     });
 }
+function formatDateToVN(dateStr) {
+    if (!dateStr) return "";
+
+    let parts = dateStr.split('T')[0].split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+
+    return dayjs(dateStr).format('DD/MM/YYYY');
+}
 function renderDetailTable(page = 1) {
     detailCurrentPage = page;
     var tbody = $("#detailBody").empty();
@@ -514,12 +528,14 @@ function renderDetailTable(page = 1) {
     var pagedItems = detailItems.slice(start, end);
 
     pagedItems.forEach(item => {
+        let displayExpDate = item.NgayHetHan ? dayjs(item.NgayHetHan).format('DD/MM/YYYY') : 'N/A';
         tbody.append(`
             <tr>
                 <td>${item.ProductName}</td>
                 <td>${item.SoLuong}</td>
                 <td>${formatCurrency(item.DonGiaNhap)}</td>
-                <td>${item.HanSuDung}</td>
+                <td class="text-center">${item.HanSuDung} tháng</td>
+                <td>${formatDateToVN(item.NgayHH)}</td>
             </tr>
         `);
     });

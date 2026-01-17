@@ -6,7 +6,57 @@
 @section Styles {
     <link href="~/Content/assets/css/common.css" rel="stylesheet" />
 }
+<style>
+    .ui-autocomplete {
+        z-index: 10000 !important;
+        background: #ffffff !important;
+        border: 1px solid #ced4da !important;
+        border-radius: 4px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        padding: 0 !important;
+        max-height: 300px;
+        overflow-y: auto;
+    }
 
+    .ui-menu-item {
+        list-style: none;
+    }
+
+        .ui-menu-item .ui-menu-item-wrapper {
+            display: block;
+            padding: 10px 15px !important;
+            border-bottom: 1px solid #f1f1f1;
+            color: #333 !important;
+            background-color: transparent !important; 
+        }
+            .ui-menu-item .ui-menu-item-wrapper.ui-state-active {
+                background-color: #e9ecef !important;
+                border: none !important;
+                color: #000 !important;
+                margin: 0 !important;
+            }
+
+    .item-suggestion-title {
+        font-weight: 600;
+        color: #0d6efd;
+        display: block;
+    }
+
+    .item-suggestion-info {
+        font-size: 12px;
+        color: #6c757d;
+    }
+
+    #modalPrescriptionPicker .modal-body {
+        height: calc(100vh - 120px);
+    }
+
+    #imgPrescription {
+        max-height: 100%;
+        object-fit: contain;
+        cursor: zoom-in;
+    }
+</style>
 <div class="container-wrapper" style=" display: flex; flex-direction: column;">
     <input type="hidden" id="Id" name="Id" />
     <div class="d-flex justify-content-between mb-3">
@@ -89,7 +139,56 @@
 
 
 </div>
+<div class="modal fade" id="modalPrescriptionPicker" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="fas fa-pills me-2"></i>Duyệt đơn & Soạn thuốc cho đơn hàng: <span id="lblOrderCode"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="d-flex h-100">
+                    <div class="col-md-5 border-end bg-dark d-flex align-items-center justify-content-center" style="overflow: auto;">
+                        <img id="imgPrescription" src="" class="img-fluid" alt="Đơn thuốc khách gửi" />
+                    </div>
 
+                    <div class="col-md-7 d-flex flex-column p-3 bg-white">
+                        <h6><i class="fas fa-search me-2"></i>Tìm kiếm thuốc trong kho</h6>
+                        <div class="input-group mb-3">
+                            <input type="text" id="searchMedicine" class="form-control" placeholder="Nhập tên thuốc để tìm...">
+                        </div>
+
+                        <div style="flex: 1; overflow-y: auto;">
+                            <table class="table table-bordered table-sm" id="tablePickedMedicines">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Tên thuốc</th>
+                                        <th width="100">SL</th>
+                                        <th width="150">Đơn giá</th>
+                                        <th width="150">Thành tiền</th>
+                                        <th width="50"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="border-top pt-3 mt-2">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="mb-0">TỔNG TIỀN BÁO GIÁ:</h5>
+                                <h4 class="text-danger mb-0" id="totalPrescriptionAmount">0 đ</h4>
+                            </div>
+                            <button type="button" class="btn btn-success w-100 py-2" onclick="savePrescriptionItems()">
+                                <i class="fas fa-check-circle me-2"></i>Hoàn tất soạn đơn & Báo giá cho khách
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts {
     <script src="~/Content/assets/js/DonHang.js?v=(@DateTime.Now.Ticks)"></script>
 }

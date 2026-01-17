@@ -14,6 +14,8 @@ namespace Models
         public List<ProductReview> productReviews { get; set; }
         public decimal AverageRating { get; set; }
         public int TotalReviews { get; set; }
+        public List<DiaChiGiaoHang> Addresses { get; set; }
+        public int? SelectedAddressId { get; set; }
 
     }
 }

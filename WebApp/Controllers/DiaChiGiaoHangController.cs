@@ -24,6 +24,23 @@ namespace WebApp.Controllers
             return View(list);
         }
 
+        [HttpGet]
+        public JsonResult GetListAddressAjax()
+        {
+            var kh = Session["Login"] as KhachHang;
+            if (kh == null) return Json(null, JsonRequestBehavior.AllowGet);
+
+            var list = _dal.GetByKhachHang(kh.Id);
+
+            var defaultAddress = _dal.GetDefault(kh.Id);
+
+            return Json(new
+            {
+                data = list,
+                selectedId = defaultAddress?.DiaChiId ?? list.FirstOrDefault()?.DiaChiId
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult Create()
         {
             var kh = Session["Login"] as KhachHang;

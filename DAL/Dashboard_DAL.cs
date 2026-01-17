@@ -3,6 +3,7 @@ using Dapper;
 using Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using System.Linq;
 using System.Text;
@@ -58,7 +59,7 @@ namespace DAL
         public ThongKeTongQuan LayThongKeTongQuan(DateTime? tuNgay, DateTime? denNgay)
         {
             DynamicParameters param = new DynamicParameters();
-            param.Add("@TuNgay", tuNgay); // Truyền tham số lọc
+            param.Add("@TuNgay", tuNgay); 
             param.Add("@DenNgay", denNgay);
 
             return SqlMapper.Query<ThongKeTongQuan>(Connection.getConnection(),
@@ -75,6 +76,16 @@ namespace DAL
             return SqlMapper.Query<TongKetTaiChinh>(Connection.getConnection(),
                 "Dashboard_LayTongKetTaiChinh", param,
                 commandType: System.Data.CommandType.StoredProcedure).FirstOrDefault();
+        }
+
+        public List<LoSapHetHanDto> LayDanhSachLoSapHetHan(int soNgay)
+        {
+            DynamicParameters param = new DynamicParameters();
+            param.Add("@SoNgayCanhBao", soNgay);
+
+            return SqlMapper.Query<LoSapHetHanDto>(Connection.getConnection(),
+                "sp_Dashboard_SapHetHan", param,
+                commandType: System.Data.CommandType.StoredProcedure).ToList();
         }
     }
 }

@@ -160,6 +160,55 @@ namespace Admin.Controllers
             }
         }
         [HttpPost]
+        public JsonResult UpdateOrderPrescription(int orderId, List<OrderDetail> details)
+        {
+            try
+            {
+                decimal newTotal = details.Sum(x => x.Quantity * x.UnitPrice);
+
+                bool success = new Order_DAL().UpdateOrderItems(orderId, details, newTotal);
+
+                if (success)
+                {
+                    var orderInfo = new Order_DAL().GetOrderDetails(orderId);
+
+                    if (orderInfo != null && !string.IsNullOrEmpty(orderInfo.Email))
+                    {
+                        string confirmationLink = "http://nguyentiendat18032003.id.vn/KhachHang/ChiTietDonHang/" + orderId;
+                        string subject = $"[Báo giá] Đơn thuốc #{orderInfo.OrderCode} đã có giá";
+                        string body = $@"
+                    <div style='font-family: Arial, sans-serif; max-width: 600px; padding: 20px; border: 1px solid #ddd;'>
+                        <h2 style='color: #28a745;'>Thông báo báo giá đơn thuốc</h2>
+                        <p>Chào <b>{orderInfo.FullName}</b>,</p>
+                        <p>Dược sĩ của <b>Nhà thuốc Thanh Tứ</b> đã xem đơn thuốc và soạn danh sách thuốc cho bạn.</p>
+                        <div style='background: #f8f9fa; padding: 15px; margin: 20px 0;'>
+                            <p>Mã đơn hàng: <b>#{orderInfo.OrderCode}</b></p>
+                            <p>Trạng thái: <b style='color: orange;'>Đã báo giá</b></p>
+                            <p style='font-size: 18px;'>Tổng tiền thanh toán: <b style='color: red;'>{newTotal:N0} ₫</b></p>
+                        </div>
+                        <p>Vui lòng nhấn vào nút bên dưới để xem danh sách thuốc chi tiết và xác nhận đơn hàng:</p>
+                        <div style='text-align: center; margin-top: 20px;'>
+                        <div style='text-align: center; margin-top: 20px;'>
+                            <a href='{confirmationLink}' style='background-color: #28a745; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>XEM CHI TIẾT & XÁC NHẬN</a>
+                        </div>
+                        <hr/>
+                        <p style='font-size: 12px; color: #888;'>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
+                    </div>";
+
+                        Task.Run(() => SendEmailNotification(orderInfo.Email, subject, body));
+                    }
+
+                    return Json(new { code = 200, msg = "Cập nhật đơn thuốc và gửi báo giá thành công" });
+                }
+                return Json(new { code = 500, msg = "Cập nhật thất bại" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { code = 500, msg = "Lỗi hệ thống: " + ex.Message });
+            }
+        }
+
+        [HttpPost]
         public JsonResult UpdateStatus(int id, string status, string carrierName)
         {
             try
@@ -202,7 +251,19 @@ namespace Admin.Controllers
                 return Json(new { code = 550, msg = "Lỗi: " + ex.Message }, JsonRequestBehavior.AllowGet);
             }
         }
-
+        [HttpGet]
+        public JsonResult SearchProductAdmin(string term)
+        {
+            var products = db.Products
+                .Where(p => p.TenThuoc.Contains(term))
+                .Select(p => new {
+                    ThuocId = p.ThuocId,
+                    TenThuoc = p.TenThuoc,
+                    GiaBan = p.GiaBan,
+                    GiaGoc = p.GiaGoc
+                }).Take(10).ToList();
+            return Json(products, JsonRequestBehavior.AllowGet);
+        }
         [HttpGet]
         public JsonResult GetNewOrders(int lastOrderId = 0)
         {

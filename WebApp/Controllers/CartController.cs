@@ -5,17 +5,32 @@ using Models.Payment;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using System.Configuration;
 
 namespace WebApp.Controllers
 {
     public class CartController : Controller
     {
         private DBConnect db = new DBConnect();
+        private readonly Cloudinary _cloudinary;
+
+        public CartController()
+        {
+            var account = new Account(
+                ConfigurationManager.AppSettings["Cloudinary_CloudName"],
+                ConfigurationManager.AppSettings["Cloudinary_ApiKey"],
+                ConfigurationManager.AppSettings["Cloudinary_ApiSecret"]
+            );
+            _cloudinary = new Cloudinary(account);
+        }
         // GET: Cart
         public int CurrentUserId
         {
@@ -24,7 +39,7 @@ namespace WebApp.Controllers
                 var kh = Session["Login"] as Models.KhachHang;
                 if (kh == null)
                 {
-                    return 0; 
+                    return 0;
                 }
                 return kh.Id;
             }
@@ -196,7 +211,8 @@ namespace WebApp.Controllers
             {
                 itemsToCheckout = new Cart_DAL().GetCartForCheckout(CurrentUserId);
             }
-            model.CartItems = new Cart_DAL().GetCartForCheckout(CurrentUserId);
+
+            model.CartItems = itemsToCheckout;
             if (model.CartItems == null || !model.CartItems.Any())
             {
                 return RedirectToAction("Index", "Cart");
@@ -267,10 +283,12 @@ namespace WebApp.Controllers
 
             try
             {
-                var order = new Models.Order
+                var order = new Order
                 {
                     OrderCode = "DH" + DateTime.Now.ToString("yyyyMMddHHmmss"),
                     CustomerId = CurrentUserId,
+                    OrderType = 0,
+                    HinhAnhDonThuoc = null,
                     Status = model.SelectedPaymentMethod == "COD" ? "Chờ xác nhận" : "Đã xác nhận",
                     Note = model?.Note ?? string.Empty,
                     CreatedBy = CurrentUserId.ToString(),
@@ -361,8 +379,119 @@ namespace WebApp.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+        [HttpPost]
+        public JsonResult OrderWithPrescription(int productId, int quantity, HttpPostedFileBase prescriptionFile, int diaChiId)
+        {
+            if (Session["Login"] == null)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập để đặt hàng." });
+            }
 
+            if (prescriptionFile == null || prescriptionFile.ContentLength == 0)
+            {
+                return Json(new { success = false, message = "Vui lòng tải lên ảnh đơn thuốc." });
+            }
 
+            try
+            {
+                string imageUrl = UploadToCloud(prescriptionFile);
+
+                if (string.IsNullOrEmpty(imageUrl))
+                {
+                    return Json(new { success = false, message = "Không thể tải ảnh lên máy chủ ảnh. Vui lòng thử lại." });
+                }
+
+                var kh = Session["Login"] as Models.KhachHang;
+                var order = new Models.Order
+                {
+                    OrderCode = "DT" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    CustomerId = kh.Id,
+                    OrderType = 1,
+                    DiaChiId = diaChiId,
+                    HinhAnhDonThuoc = imageUrl,
+                    Status = "Chờ xác nhận đơn thuốc",
+                    Note = "Đơn hàng chứa thuốc kê đơn",
+                    CreatedDate = DateTime.Now,
+                    PaymentMethod = "COD"
+                };
+
+                var product = new Product_DAL().SelectById(productId);
+                var details = new List<OrderDetail> {
+                    new OrderDetail {
+                        ProductId = productId,
+                        Quantity = quantity,
+                        UnitPrice = product.GiaBan ?? product.GiaGoc ?? 0,
+                        Discount = 0
+                    }
+                };
+
+                int newOrderId = new Order_DAL().Insert(order, details, null, 0);
+
+                return Json(new { success = true, message = "Đơn hàng đã được gửi thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Lỗi: " + ex.Message });
+            }
+        }
+        [HttpPost]
+        public JsonResult QuickPrescriptionOrder(HttpPostedFileBase prescriptionFile, string note, int diaChiId)
+        {
+            if (Session["Login"] == null)
+            {
+                return Json(new { success = false, message = "Vui lòng đăng nhập để đặt hàng." });
+            }
+
+            if (prescriptionFile == null || prescriptionFile.ContentLength == 0)
+            {
+                return Json(new { success = false, message = "Vui lòng tải lên ảnh đơn thuốc." });
+            }
+            string imageUrl = UploadToCloud(prescriptionFile);
+
+            var order = new Models.Order
+            {
+                OrderCode = "DTQ" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                CustomerId = CurrentUserId,
+                DiaChiId = diaChiId,
+                OrderType = 2, 
+                HinhAnhDonThuoc = imageUrl,
+                Status = "Chờ dược sĩ soạn đơn", 
+                Note = note, 
+                CreatedDate = DateTime.Now,
+                TotalAmount = 0 
+            };
+
+            int newOrderId = new Order_DAL().Insert(order, new List<OrderDetail>(), null, 0);
+
+            return Json(new { success = true, message = "Đơn thuốc đã gửi! Dược sĩ sẽ soạn đơn và báo giá cho bạn ngay." });
+        }
+        private string UploadToCloud(HttpPostedFileBase file)
+        {
+            if (file == null || file.ContentLength == 0) return null;
+
+            try
+            {
+                string fileNameWithExtension = Path.GetFileName(file.FileName);
+                string fileNameOnly = Path.GetFileNameWithoutExtension(file.FileName) + "_" + DateTime.Now.Ticks;
+
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(fileNameWithExtension, file.InputStream),
+                    PublicId = fileNameOnly,
+                    Folder = "NhaThuoc/DonThuoc",
+                    Overwrite = true,
+                    UseFilename = true,
+                    UniqueFilename = true
+                };
+
+                var result = _cloudinary.Upload(uploadParams);
+                return result.SecureUrl?.ToString();
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
         [HttpGet]
         public JsonResult GetCartCount()
         {
@@ -375,7 +504,7 @@ namespace WebApp.Controllers
         {
             if (Request.QueryString.Count > 0)
             {
-                string vnp_HashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"]; 
+                string vnp_HashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"];
                 var vnpayData = Request.QueryString;
                 VnPayLibrary vnpay = new VnPayLibrary();
 
@@ -580,10 +709,10 @@ namespace WebApp.Controllers
         public string UrlPayment(string paymentMethodCode, string orderCode, string vnPayType, decimal amount, DateTime createdDate)
         {
             //Get Config Info
-            string vnp_Returnurl = ConfigurationManager.AppSettings["vnp_Returnurl"]; 
-            string vnp_Url = ConfigurationManager.AppSettings["vnp_Url"]; 
-            string vnp_TmnCode = ConfigurationManager.AppSettings["vnp_TmnCode"]; 
-            string vnp_HashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"]; 
+            string vnp_Returnurl = ConfigurationManager.AppSettings["vnp_Returnurl"];
+            string vnp_Url = ConfigurationManager.AppSettings["vnp_Url"];
+            string vnp_TmnCode = ConfigurationManager.AppSettings["vnp_TmnCode"];
+            string vnp_HashSecret = ConfigurationManager.AppSettings["vnp_HashSecret"];
 
             //Build URL for VNPAY
             VnPayLibrary vnpay = new VnPayLibrary();
@@ -591,7 +720,7 @@ namespace WebApp.Controllers
             vnpay.AddRequestData("vnp_Version", VnPayLibrary.VERSION);
             vnpay.AddRequestData("vnp_Command", "pay");
             vnpay.AddRequestData("vnp_TmnCode", vnp_TmnCode);
-            vnpay.AddRequestData("vnp_Amount", Price.ToString()); 
+            vnpay.AddRequestData("vnp_Amount", Price.ToString());
 
             if (paymentMethodCode == "VNPAY")
             {
@@ -612,10 +741,10 @@ namespace WebApp.Controllers
             vnpay.AddRequestData("vnp_IpAddr", Utils.GetIpAddress());
             vnpay.AddRequestData("vnp_Locale", "vn");
             vnpay.AddRequestData("vnp_OrderInfo", "Thanh toán đơn hàng :" + orderCode);
-            vnpay.AddRequestData("vnp_OrderType", "other"); 
+            vnpay.AddRequestData("vnp_OrderType", "other");
 
             vnpay.AddRequestData("vnp_ReturnUrl", vnp_Returnurl);
-            vnpay.AddRequestData("vnp_TxnRef", orderCode); 
+            vnpay.AddRequestData("vnp_TxnRef", orderCode);
 
             //Add Params of 2.1.0 Version
             //Billing

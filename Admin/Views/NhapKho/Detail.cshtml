@@ -14,8 +14,6 @@
                 <tr><th>Mã phiếu</th><td>@Model.MaPhieu</td></tr>
                 <tr><th>Ngày nhập</th><td>@Model.NgayNhap.ToString("dd/MM/yyyy")</td></tr>
                 <tr><th>Người nhập</th><td>@Model.NguoiNhap</td></tr>
-                <tr><th>Ghi chú</th><td>@Model.GhiChu</td></tr>
-                <tr><th>Tổng tiền</th><td>@Model.TotalAmount.ToString("N0") VNĐ</td></tr>
             </table>
             <h6>Chi tiết sản phẩm</h6>
             <table class="table table-bordered" id="previewChiTiet">
@@ -25,6 +23,7 @@
                         <th>Số lượng</th>
                         <th>Đơn giá nhập</th>
                         <th>Hạn sử dụng</th>
+                        <th>Ngày hết hạn</th>
                     </tr>
                 </thead>
                 <tbody>

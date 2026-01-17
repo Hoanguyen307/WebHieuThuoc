@@ -220,15 +220,37 @@
                                                 default:
                                                     badgeClass = "bg-secondary";
                                                     break;
+                                                case "Đã báo giá":
+                                                    badgeClass = "bg-warning"; 
+                                                    textClass = "text-dark";
+                                                    break;
                                             }
                                         }
                                         <span class="badge @badgeClass @textClass">@statusText</span>
 
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-primary float-end btn-view-detail"
-                                                data-id="@order.ID">
-                                            Xem chi tiết
-                                        </button>
+                                        @if (order.Status == "Đã báo giá")
+                                        {
+                                            <div class="float-end">
+                                                <button type="button"
+                                                        class="btn btn-sm btn-success me-2 btn-confirm-order"
+                                                        data-id="@order.ID">
+                                                    <i class="fas fa-check me-1"></i> Xác nhận đặt hàng
+                                                </button>
+                                                <button type="button"
+                                                        class="btn btn-sm btn-outline-primary btn-view-detail"
+                                                        data-id="@order.ID">
+                                                    Xem chi tiết
+                                                </button>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-primary float-end btn-view-detail"
+                                                    data-id="@order.ID">
+                                                Xem chi tiết
+                                            </button>
+                                        }
                                     </div>
                                 }
                             </div>
@@ -318,6 +340,39 @@
                         );
                     });
             });
+
+            $('#order-list').on('click', '.btn-confirm-order', function() {
+        var orderId = $(this).data('id');
+
+        Swal.fire({
+            title: 'Xác nhận đặt hàng?',
+            text: "Bạn đồng ý với danh sách thuốc và báo giá của Dược sĩ?",
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Đồng ý đặt hàng',
+            cancelButtonText: 'Để tôi xem lại'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '@Url.Action("KhachHangXacNhanDon", "KhachHang")', 
+                    type: 'POST',
+                    data: { id: orderId },
+                    success: function(res) {
+                        if (res.success) {
+                            Swal.fire('Thành công!', 'Đơn hàng của bạn đã được chuyển cho bộ phận đóng gói.', 'success')
+                            .then(() => {
+                                location.reload(); 
+                            });
+                        } else {
+                            Swal.fire('Lỗi', res.message, 'error');
+                        }
+                    }
+                });
+            }
+        });
+    });
         });
     </script>
 }
