@@ -146,7 +146,7 @@ function savePrescriptionItems() {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: '/Order/UpdateOrderPrescription',
+                url: rootPath + '/Order/UpdateOrderPrescription',
                 type: 'POST',
                 data: JSON.stringify({
                     orderId: currentPickingOrderId,
@@ -383,7 +383,7 @@ function updateStatus(ID, statusElm, carrierElm = null) {
 
 
 function handleDelete(ID) {
-    if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
+    if (confirm('Bạn có chắc chắn muốn xóa đơn hàng này không?')) {
         $.ajax({
             url: rootPath + 'Order/DeleteAccount',
             type: 'POST',

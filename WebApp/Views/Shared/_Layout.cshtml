@@ -89,9 +89,12 @@
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item text-danger" href="@Url.Action("LogOff", "Account")">
-                                        <i class="fas fa-sign-out-alt me-2"></i> Thoát
-                                    </a>
+                                    <form action="@Url.Action("LogOff", "Account")" method="post" id="logOffForm" style="display: inline;">
+                                        @Html.AntiForgeryToken() <a href="javascript:document.getElementById('logOffForm').submit()"
+                                                                    class="dropdown-item text-danger">
+                                            <i class="fas fa-sign-out-alt me-2"></i> Thoát
+                                        </a>
+                                    </form>
                                 </li>
                             </ul>
                         </div>
@@ -156,7 +159,7 @@
                 <div class="col-md-6 col-lg-3 mb-4">
                     <h5 style="font-size:22px;">HỖ TRỢ KHÁCH HÀNG</h5>
                     <ul class="list-unstyled">
-                        <li><a href="tel:0979310351">📞 Hotline tư vấn: 0979.310.351</a></li>
+                        <li><a href="tel:0399522634">Hotline tư vấn: 0399.522.634</a></li>
                         <li><a href="/Page/FAQ">Các câu hỏi thường gặp</a></li>
                         <li><a href="/Page/OrderGuide">Hướng dẫn mua thuốc</a></li>
                         <li><a href="/Page/Shipping">Phương thức giao hàng</a></li>
@@ -200,7 +203,7 @@
 
     <!-- Chatbox Floating Button -->
     <div id="chatbox-btn" class="chatbox-btn">
-        <i class="fas fa-comment-dots"></i>
+        <i class="fas fa-headset"></i>
         <span id="chatbox-badge" class="chatbox-badge" style="display: none;">1</span>
     </div>
     <!-- Modal Chat Hỗ Trợ -->
@@ -213,7 +216,7 @@
                     <div class="hieuThuoc-status-indicator"></div>
                 </div>
                 <div class="hieuThuoc-chat-info">
-                    <h6>Tư vấn</h6>
+                    <h6>Hiệu thuốc Thanh Tứ</h6>
                     <p>Hỗ trợ 24/7</p>
                 </div>
             </div>
@@ -277,7 +280,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label fw-bold">2. Ghi chú (không bắt buộc)</label>
-                            <textarea name="note" class="form-control" rows="3" placeholder="Ví dụ: Lấy cho tôi liều 5 ngày, hoặc lấy thêm bông băng..."></textarea>
+                            <textarea name="note" class="form-control" rows="3" placeholder=""></textarea>
                         </div>
                         <button type="submit" class="btn btn-success w-100 py-2">
                             <i class="fas fa-paper-plane me-2"></i>Gửi ngay cho Dược sĩ
@@ -433,7 +436,7 @@
         $closeChatBtn.on('click', closehieuThuocChatbox);
 
         function openhieuThuocChatbox() {
-            $chatboxContainer.show();
+            $chatboxContainer.css('display', 'flex').hide().fadeIn(300);
             $chatboxBtn.addClass('active');
             $chatboxBtn.find('i').removeClass('fa-comments').addClass('fa-times');
             $chatboxBadge.hide();

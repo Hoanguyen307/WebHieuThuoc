@@ -216,7 +216,12 @@
                             @product.TenThuoc
                         </a>
                         <div class="product-prices">
-                            @if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
+                            @if (product.GiaBan.HasValue && product.GiaBan > product.GiaGoc)
+                            {
+                                <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
+
+                            }
+                            else if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
                             {
                                 <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
                                 <span class="product-price-original">@((product.GiaGoc ?? 0).ToString("N0")) đ</span>

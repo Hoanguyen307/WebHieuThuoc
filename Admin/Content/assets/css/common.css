@@ -21,7 +21,7 @@
 
 .pagination {
 	display: flex;
-	justify-content: flex-end;
+	justify-content: center !important;
 	list-style: none;
 	padding-left: 0;
 }

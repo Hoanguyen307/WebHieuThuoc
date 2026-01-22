@@ -113,7 +113,6 @@ function renderTable(rows) {
             <div class="btn-group btn-group-sm">
                 <button class="btn btn-outline-primary btn-assign">Phân công</button>
                 <button class="btn btn-outline-secondary btn-history">Hành trình</button>
-                <button class="btn btn-outline-success btn-map">Bản đồ</button>
             </div>
         </td>
       </tr>

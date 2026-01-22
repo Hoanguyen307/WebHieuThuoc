@@ -1,4 +1,30 @@
-﻿
+﻿#chatbox-btn.chatbox-btn {
+    position: fixed;
+    bottom: 105px;
+    right: 30px;
+    z-index: 999;
+    /* 2. Giao diện (lấy từ code mới) */
+    width: 65px !important;
+    height: 65px !important;
+    background-color: #ffffff !important; /* Nền trắng */
+    border: 2px solid #28a745 !important; /* Viền xanh */
+    border-radius: 18px !important; /* Bo góc vuông mềm */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
+    /* 3. Căn chỉnh */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+#chatbox-btn i {
+    color: #28a745 !important; /* Màu icon xanh lá */
+    font-size: 30px !important; /* Kích thước to rõ */
+}
+#chatbox-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3) !important;
+}
 .address-scroll-container, .modal-address-scroll {
     max-height: 250px;
     overflow-y: auto;
@@ -504,37 +530,6 @@ body {
         font-size: 20px;
     }
 
-
-/* Chatbox Button */
-.chatbox-btn {
-    position: fixed;
-    bottom: 105px;
-    right: 30px;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, #4CAF50, #45a049);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-    z-index: 999;
-    transition: all 0.3s ease;
-    border: none;
-}
-
-    .chatbox-btn:hover {
-        transform: scale(1.1);
-        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.6);
-    }
-
-    .chatbox-btn.active {
-        background: linear-gradient(135deg, #f44336, #e53935);
-    }
-
 .chatbox-badge {
     position: absolute;
     top: -5px;
@@ -552,7 +547,7 @@ body {
     animation: pulse 2s infinite;
 }
 
-@@keyframes pulse {
+@keyframes pulse {
     0% {
         transform: scale(1);
     }
@@ -570,7 +565,7 @@ body {
     animation: shake 0.5s ease-in-out infinite alternate;
 }
 
-@@keyframes shake {
+@keyframes shake {
     0% {
         transform: rotate(-2deg);
     }
@@ -583,21 +578,21 @@ body {
 /* Chatbox Container */
 .hieuThuoc-chatbox-container {
     position: fixed;
-    bottom: 100px;
-    right: 30px;
+    bottom: 20px !important; /* Cách đáy 20px */
+    right: 20px !important;
     width: 380px;
     height: 500px;
     background: white;
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-    display: none;
-    flex-direction: column;
+    /* QUAN TRỌNG: Thiết lập layout Flex */
+    display: none; /* Mặc định ẩn, JS sẽ bật thành flex */
+    flex-direction: column; /* Xếp dọc: Header -> Body -> Input */
     overflow: hidden;
-    z-index: 1000;
-    animation: slideUp 0.3s ease-out;
+    z-index: 9999;
 }
 
-@@keyframes slideUp {
+@keyframes slideUp {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -828,10 +823,12 @@ body {
 
 /* Chat Input */
 .hieuThuoc-chat-input {
-    padding: 20px;
+    flex-shrink: 0; 
     background: white;
     border-top: 1px solid #e1e1e1;
-    flex-shrink: 0; /* Prevent input from shrinking */
+    padding: 15px;
+    position: relative;
+    z-index: 10;
 }
 
 .hieuThuoc-input-group {
@@ -1083,7 +1080,7 @@ header {
     }
 }
 
-@@media (max-width: 480px) {
+@media (max-width: 480px) {
     header {
         padding: 8px 15px;
     }
@@ -1102,7 +1099,7 @@ header {
 }
 
 
-@@media (max-width: 480px) {
+@media (max-width: 480px) {
     .header-item {
         padding: 0 4px;
     }

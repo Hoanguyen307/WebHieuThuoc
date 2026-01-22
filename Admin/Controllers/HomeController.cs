@@ -88,7 +88,7 @@ namespace Admin.Controllers
         {
             try
             {
-                var duLieu = new Dashboard_DAL().LayDanhSachLoSapHetHan(30);
+                var duLieu = new Dashboard_DAL().LayDanhSachLoSapHetHan(60);
                 return Json(new { code = 200, data = duLieu }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

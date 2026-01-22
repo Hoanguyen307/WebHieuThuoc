@@ -142,9 +142,6 @@ function loadVoucher(page = 1) {
                             <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.Id}')">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
-                            <button type="button" class="btn btn-outline-success btn-sm" onclick="handleDistribute('${item.Id}')">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
                         </td>
                     </tr>
                 `;

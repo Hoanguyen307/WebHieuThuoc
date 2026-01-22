@@ -122,17 +122,17 @@
                             </li>
                         </ul>
                     </div>
-                    <form method="get" id="pageSizeForm" class="d-inline-block ms-3">
+                    <!--<form method="get" id="pageSizeForm" class="d-inline-block ms-3">
                         <select id="pageSize" name="pageSize" class="form-select form-select-sm" onchange="document.getElementById('pageSizeForm').submit();">
                             <option value="40" @(Request.QueryString["pageSize"] == "40" ? "selected" : "")>Hiển thị 40</option>
                             <option value="60" @(Request.QueryString["pageSize"] == "60" ? "selected" : "")>Hiển thị 60</option>
-                        </select>
+                        </select>-->
 
                         <!-- Giữ lại các tham số filter khi gửi form -->
-                        <input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedCategoryId" />
+                        <!--<input type="hidden" name="ProductCategoryId" value="@ViewBag.SelectedCategoryId" />
                         <input type="hidden" name="BrandId" value="@ViewBag.SelectedBrandId" />
                         <input type="hidden" name="sortOrder" value="@ViewBag.SortOrder" />
-                    </form>
+                    </form>-->
                 </div>
 
 
@@ -186,7 +186,12 @@
                                 else
                                 {
                                     <div class="product-prices">
-                                        @if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
+                                        @if (product.GiaBan.HasValue && product.GiaBan > product.GiaGoc)
+                                        {
+                                            <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
+
+                                        }
+                                        else if (product.GiaBan.HasValue && product.GiaBan < product.GiaGoc)
                                         {
                                             <span class="product-price-sale">@((product.GiaBan ?? 0).ToString("N0")) đ/@product.DonViTinh</span>
                                             <span class="product-price-original">@((product.GiaGoc ?? 0).ToString("N0")) đ</span>
@@ -239,7 +244,7 @@
                     position: 'center',
                     width: '500px',
                     backdrop: `rgba(0,0,0,0.4)`,
-                    allowOutsideClick: false 
+                    allowOutsideClick: false
                 });
             });
         </script>

@@ -164,7 +164,7 @@ namespace DAL
             try
             {
                 DynamicParameters param = new DynamicParameters();
-                param.Add("@Id", ID);
+                param.Add("@OrderId", ID);
                 param.Add("@DeletedBy", TenNguoiXoa);
                 Connection.getConnection().Execute("sp_Order_Delete", param, commandType: System.Data.CommandType.StoredProcedure);
                 return true;

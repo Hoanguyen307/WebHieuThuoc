@@ -38,7 +38,18 @@
                 transform: rotate(360deg);
             }
         }
+        #tableExpiry th,
+        #tableExpiry td {
+            white-space: nowrap;
+            vertical-align: middle; 
+        }
 
+            #tableExpiry td:first-child {
+                max-width: 350px; 
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
         .error-message {
             color: #ef4444;
             padding: 16px;
@@ -164,18 +175,21 @@
         /* Charts */
         .charts-section {
             display: grid;
-            grid-template-columns: 66% 3fr;
-            gap: 30px;
+            grid-template-columns: 75% 1fr;
+            gap: 24px;
             margin-bottom: 30px;
             width: 100%;
-            align-items: start; 
+            align-items: stretch;
         }
 
         .chart-card {
+            margin-top: 30px;
             background: white;
             padding: 24px;
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
         }
 
         .chart-header {
@@ -217,7 +231,9 @@
 
         .chart-container {
             position: relative;
-            height: 300px;
+            flex-grow: 1;
+            min-height: 300px;
+            width: 100%;
         }
 
 
@@ -225,14 +241,16 @@
         .summary-stats {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            flex-grow: 1;
+            justify-content: space-around;
+            gap: 0;
         }
 
         .summary-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 16px 0;
+            padding: 15px 0; 
             border-bottom: 1px solid #f1f5f9;
         }
 
@@ -291,7 +309,7 @@
             }
 
             .table td {
-                padding: 16px 24px;
+                padding: 16px 10px;
                 border-bottom: 1px solid #f1f5f9;
             }
 
@@ -347,20 +365,20 @@
     <div class="header">
         <div>
             <h1>Bảng Điều Khiển</h1>
-            <div class="header-subtitle">Thống kê và báo cáo tổng hợp</div>
+            <div class="header-subtitle">Thống kê tổng hợp</div>
         </div>
 
         <div class="header-controls">
             <div style="display: flex; gap: 10px; align-items: flex-end;">
                 <div>
-                    <label style="font-size: 11px; font-weight: 600; color: #64748b; display: block;">Từ ngày</label>
+                    <label style="font-size: 16px; font-weight: 600; color: #64748b; display: block;">Từ ngày</label>
                     <input type="date" id="commonFromDate" class="chart-tab" style="border: 1px solid #e2e8f0; padding: 5px 10px;">
                 </div>
                 <div>
-                    <label style="font-size: 11px; font-weight: 600; color: #64748b; display: block;">Đến ngày</label>
+                    <label style="font-size: 16px; font-weight: 600; color: #64748b; display: block;">Đến ngày</label>
                     <input type="date" id="commonToDate" class="chart-tab" style="border: 1px solid #e2e8f0; padding: 5px 10px;">
                 </div>
-                <button onclick="taiTatCaDuLieu()" class="chart-tab active" style="background: #3b82f6; color: white; border: none; cursor: pointer; height: 32px;">
+                <button onclick="taiTatCaDuLieu()" class="chart-tab active" style="background: #0000FF; color: white; border: none; cursor: pointer; ">
                     <i class="fas fa-filter"></i> Lọc
                 </button>
             </div>
@@ -373,7 +391,7 @@
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Tổng Lợi Nhuận</div>
-                        <div class="stat-subtitle">Tổng giá trị đơn hàng</div>
+                        <div class="stat-subtitle">Tổng giá trị lãi</div>
                     </div>
                 </div>
                 <div class="stat-value" id="totalProfit">0</div>
@@ -401,7 +419,7 @@
                 <div class="stat-header">
                     <div>
                         <div class="stat-title">Người Dùng Mới</div>
-                        <div class="stat-subtitle">Số người dùng mới tham gia</div>
+                        <div class="stat-subtitle">Số người dùng mới đăng ký</div>
                     </div>
                 </div>
                 <div class="stat-value" id="totalUsers">0</div>
@@ -410,7 +428,7 @@
                 </div>
                 <div class="stat-change" id="usersChange">Thay đổi: 0%</div>
             </div>
-            <div class="stat-card orders"
+            @*<div class="stat-card orders"
                  style="background: #fffbeb; border-left: 4px solid #f59e0b; cursor: pointer;"
                  onclick="cuonDenCanhBao()">
                 <div class="stat-header">
@@ -421,68 +439,55 @@
                 </div>
                 <div class="stat-value" id="totalExpiring" style="color: #b45309;">0</div>
                 <div class="stat-change" id="expiringStatus">Nhấn để xem chi tiết</div>
-            </div>
+            </div>*@
         </div>
 
         <div class="charts-section">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <div class="chart-title">Tổng Quan Bán Hàng</div>
-                    <div class="chart-tabs">
-                        <button class="chart-tab active" onclick="chuyenTab(event, 'ngay')">Hàng Ngày</button>
-                        <button class="chart-tab" onclick="chuyenTab(event, 'tuan')">Hàng Tuần</button>
-                        <button class="chart-tab" onclick="chuyenTab(event, 'thang')">Hàng Tháng</button>
-                    </div>
+
+            <div id="vungCanhBaoHetHan" class="regional-table" style="margin-top: 30px; border-top: 4px solid #0000FF; ">
+                <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="table-title">Danh sách chi tiết lô hàng sắp hết hạn (30 ngày tới)</div>
+                    <span id="expiryCountBadge" style="background: #0000FF; color: white; padding: 4px 12px; border-radius: 20px; font-size: 16px; font-weight: bold; ">0 lô hàng</span>
                 </div>
-                <div class="chart-container">
-                    <canvas id="salesChart"></canvas>
+                <div style="max-height: 450px; max-width: fit-content; overflow-y: auto;">
+                    <table class="table" id="tableExpiry">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center;">Sản phẩm</th>
+                                <th style="text-align: center;">Mã Lô</th>
+                                <th style="text-align: center;">Hạn sử dụng</th>
+                                <th style="text-align: center;">Số lượng</th>
+                                <th style="text-align: center;">Ngày còn lại</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="5" style="text-align:center; padding: 30px; color: #64748b;">Đang tải dữ liệu cảnh báo...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-
             <div class="chart-card">
                 <div class="chart-header">
-                    <div class="chart-title">Tóm Tắt Tài Chính</div>
+                    <div class="chart-title">Tổng quan</div>
                 </div>
                 <div class="summary-stats" id="financialSummary">
                     <div class="summary-item">
-                        <span class="summary-label">Tổng Bán Hàng</span>
+                        <span class="summary-label">Tổng Tiền Bán</span>
                         <span class="summary-value" id="financialTotalSales"></span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Doanh Thu</span>
+                        <span class="summary-label">Tổng Thu</span>
                         <span class="summary-value" id="financialRevenue"></span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Chi Phí</span>
+                        <span class="summary-label">Tổng Tiền Nhập</span>
                         <span class="summary-value" id="financialExpenses"></span>
                     </div>
                     <div class="summary-item">
-                        <span class="summary-label">Tăng Trưởng</span>
+                        <span class="summary-label">Tổng Tiền Lãi</span>
                         <span class="summary-value" id="financialGrowth"></span>
                     </div>
                 </div>
-            </div>
-        </div>
-        <div id="vungCanhBaoHetHan" class="regional-table" style="margin-top: 30px; border-top: 4px solid #ef4444;">
-            <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <div class="table-title">Danh sách chi tiết lô hàng sắp hết hạn (30 ngày tới)</div>
-                <span id="expiryCountBadge" style="background: #ef4444; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold;">0 lô hàng</span>
-            </div>
-            <div style="max-height: 400px; overflow-y: auto;">
-                <table class="table" id="tableExpiry">
-                    <thead>
-                        <tr>
-                            <th>Sản phẩm</th>
-                            <th>Mã Lô</th>
-                            <th style="text-align: center;">Hạn sử dụng</th>
-                            <th style="text-align: right;">Số lượng tồn</th>
-                            <th style="text-align: right;">Ngày còn lại</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td colspan="5" style="text-align:center; padding: 40px; color: #64748b;">Đang tải dữ liệu cảnh báo...</td></tr>
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
@@ -517,7 +522,6 @@
 
             await Promise.all([
                 taiThongKeTongQuan(tuNgay, denNgay),
-                taiDuLieuBanHang(currentPeriod, tuNgay, denNgay),
                 taiTongKetTaiChinh(tuNgay, denNgay),
                 taiCanhBaoHetHan()
             ]);
@@ -571,44 +575,6 @@
             }
         }
 
-        async function taiDuLieuBanHang(thoiGian, tuNgay = '', denNgay = '') {
-            try {
-                const url = rootPath +`Home/LayDuLieuBanHang?kyHan=${thoiGian}&tuNgay=${tuNgay}&denNgay=${denNgay}`;
-                const salesData = await guiYeuCauAjax(url);
-
-                if (salesChart) { salesChart.destroy(); }
-                const ctx = document.getElementById('salesChart').getContext('2d');
-                salesChart = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: salesData.NhanThoiGian,
-                        datasets: [{
-                            label: 'Doanh số',
-                            data: salesData.BanHang,
-                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                            borderColor: 'rgba(59, 130, 246, 1)',
-                            fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6
-                        }, {
-                            label: 'Lợi nhuận',
-                            data: salesData.LoiNhuan,
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderColor: 'rgba(16, 185, 129, 1)',
-                            fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: true, position: 'top' } },
-                        scales: {
-                            y: { beginAtZero: true, ticks: { callback: (val) => dinhDangSo(val) } }
-                        }
-                    }
-                });
-            } catch (error) {
-                hienThiLoi(`Lỗi biểu đồ: ${error.message}`);
-            }
-        }
 
         async function taiTongKetTaiChinh(tuNgay = '', denNgay = '') {
             try {
@@ -626,43 +592,60 @@
 
         async function taiCanhBaoHetHan() {
             try {
-                const url = rootPath + 'Home/LayCanhBaoHetHan'; // Đảm bảo Controller đã có Action này
+                const url = rootPath + 'Home/LayCanhBaoHetHan';
                 const data = await guiYeuCauAjax(url);
+
+                console.log("Dữ liệu cảnh báo hết hạn:", data);
 
                 const tbody = document.querySelector('#tableExpiry tbody');
                 const totalExpiringEl = document.getElementById('totalExpiring');
                 const badgeEl = document.getElementById('expiryCountBadge');
 
                 tbody.innerHTML = '';
-                totalExpiringEl.textContent = data.length;
-                badgeEl.textContent = `${data.length} lô hàng`;
 
-                if (data.length === 0) {
+                if (!data || data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 20px;">Không có lô hàng nào sắp hết hạn.</td></tr>';
+                    if (totalExpiringEl) totalExpiringEl.textContent = 0;
+                    if (badgeEl) badgeEl.textContent = `0 lô hàng`;
                     return;
                 }
 
+                if (totalExpiringEl) totalExpiringEl.textContent = data.length;
+                if (badgeEl) badgeEl.textContent = `${data.length} lô hàng`;
+
                 data.forEach(item => {
-                    const rawDate = item.HanSuDung.replace(/\/Date\((\d+)\)\//, '$1');
-                    const date = new Date(parseInt(rawDate));
+                    let dateString = "";
+                    try {
+                        if (item.HanSuDung) {
+                            if (typeof item.HanSuDung === 'string' && item.HanSuDung.includes('/Date(')) {
+                                const rawDate = item.HanSuDung.replace(/\/Date\((\d+)\)\//, '$1');
+                                dateString = new Date(parseInt(rawDate)).toLocaleDateString('vi-VN');
+                            } else {
+                                dateString = new Date(item.HanSuDung).toLocaleDateString('vi-VN');
+                            }
+                        }
+                    } catch (e) {
+                        dateString = "Lỗi ngày";
+                    }
 
                     const color = item.SoNgayConLai <= 7 ? '#ef4444' : '#f59e0b';
                     const fontWeight = item.SoNgayConLai <= 7 ? 'bold' : '500';
 
                     tbody.innerHTML += `
-                <tr>
-                    <td><strong>${item.ProductName}</strong></td>
-                    <td><span class="chart-tab">${item.MaLo}</span></td>
-                    <td style="text-align: center;">${date.toLocaleDateString('vi-VN')}</td>
-                    <td style="text-align: right; font-weight: bold;">${dinhDangSo(item.SoLuongTon)}</td>
-                    <td style="text-align: right; color: ${color}; font-weight: ${fontWeight};">
-                        ${item.SoNgayConLai <= 0 ? 'Đã hết hạn' : 'Còn ' + item.SoNgayConLai + ' ngày'}
-                    </td>
-                </tr>
-            `;
+                        <tr>
+                            <td><strong>${item.ProductName || item.TenThuoc || 'N/A'}</strong></td>
+                            <td><span class="chart-tab" style="text-align: center;">${item.MaLo || ''}</span></td>
+                            <td style="text-align: center;">${dateString}</td>
+                            <td style="text-align: center; font-weight: bold;">${dinhDangSo(item.SoLuongTon)}</td>
+                            <td style="text-align: center; color: ${color}; font-weight: ${fontWeight};">
+                                ${item.SoNgayConLai <= 0 ? 'Đã hết hạn' : 'Còn ' + item.SoNgayConLai + ' ngày'}
+                            </td>
+                        </tr>
+                    `;
                 });
             } catch (error) {
-                console.error("Lỗi cảnh báo:", error);
+                console.error("Lỗi hiển thị cảnh báo:", error);
+                document.querySelector('#tableExpiry tbody').innerHTML = `<tr><td colspan="5" style="color:red; text-align:center">Lỗi tải dữ liệu: ${error.message}</td></tr>`;
             }
         }
 
@@ -679,7 +662,6 @@
 
 
         function dinhDangSo(so) { return new Intl.NumberFormat('vi-VN').format(so); }
-        /*function dinhDangTienTe(soTien) { return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(soTien); }*/
         function dinhDangTienTe(soTien) {
             return new Intl.NumberFormat('vi-VN', {
                 style: 'currency',
@@ -719,12 +701,15 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             const date = new Date();
-            // Mặc định từ ngày 1 đầu tháng đến ngày hiện tại
+
             const firstDay = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0];
-            const today = date.toISOString().split('T')[0];
+
+            const nextDay = new Date(date); 
+            nextDay.setDate(date.getDate() + 1); 
+            const toDateVal = nextDay.toISOString().split('T')[0];
 
             document.getElementById('commonFromDate').value = firstDay;
-            document.getElementById('commonToDate').value = today;
+            document.getElementById('commonToDate').value = toDateVal; 
 
             taiTatCaDuLieu();
         });

@@ -11,26 +11,29 @@
         max-width: none;
         box-sizing: border-box;
     }
+
     .prescription-actions {
         display: flex;
-        gap: 10px; 
+        gap: 10px;
         margin-top: 10px;
     }
 
         .prescription-actions .btn {
-            flex: 1; 
+            flex: 1;
             padding: 8px 5px;
             font-size: 13px;
             font-weight: bold;
             white-space: nowrap;
         }
+
     .btn-upload-small {
         border: 1px solid #0d6efd;
         color: #0d6efd;
         background: #fff;
     }
+
     .address-scroll-container {
-        max-height: 180px; 
+        max-height: 180px;
         overflow-y: auto;
         border: 1px solid #eee;
         border-radius: 8px;
@@ -108,6 +111,7 @@
         border-radius: 3px;
         display: inline-block;
     }
+
     .review-avatar {
         width: 48px;
         height: 48px;
@@ -217,9 +221,9 @@
 
 
                     @*<div class="flash-deal-section mb-3">
-            <div class="flash-deal-badge">FLASH DEAL</div>
-            <div class="flash-deal-timer">KẾT THÚC TRONG <span>01</span>:<span>14</span>:<span>47</span></div>
-        </div>*@
+                            <div class="flash-deal-badge">FLASH DEAL</div>
+                            <div class="flash-deal-timer">KẾT THÚC TRONG <span>01</span>:<span>14</span>:<span>47</span></div>
+                        </div>*@
                     <div class="product-price-info mt-3">
                         @if (Model.Product.ThuocKeDon)
                         {
@@ -227,7 +231,12 @@
                         }
                         else
                         {
-                            if (Model.Product.GiaBan.HasValue && Model.Product.GiaBan < Model.Product.GiaGoc)
+                            if (Model.Product.GiaBan.HasValue && Model.Product.GiaBan > Model.Product.GiaGoc)
+                            {
+                                <span class="product-price-sale">@((Model.Product.GiaBan ?? 0).ToString("N0")) đ/@Model.Product.DonViTinh</span>
+
+                            }
+                            else if (Model.Product.GiaBan.HasValue && Model.Product.GiaBan < Model.Product.GiaGoc)
                             {
                                 <span class="product-price-sale">@((Model.Product.GiaBan ?? 0).ToString("N0")) đ/@Model.Product.DonViTinh</span>
                                 <span class="product-price-original ms-2">@((Model.Product.GiaGoc ?? 0).ToString("N0")) đ</span>
@@ -248,154 +257,82 @@
                             </div>
                         </div>
                     }
-                <div class="product-actions-minimal mt-4 d-flex gap-4">
-                    @if (Model.Product.ThuocKeDon)
-                    {
-                        <div class="prescription-box p-3 border rounded bg-white shadow-sm">
-                            <h6 class="text-danger fw-bold mb-3"><i class="fas fa-file-prescription me-2"></i>Đặt thuốc theo đơn</h6>
+                    <div class="product-actions-minimal mt-4 d-flex gap-4">
+                        @if (Model.Product.ThuocKeDon)
+                        {
+                            <div class="prescription-box p-3 border rounded bg-white shadow-sm">
+                                <h6 class="text-danger fw-bold mb-3"><i class="fas fa-file-prescription me-2"></i>Đặt thuốc theo đơn</h6>
 
-                            @if (Session["Login"] == null)
-                            {
-                                <div class="text-center py-3 border rounded bg-light mb-3">
-                                    <p class="small text-muted mb-2">Đăng nhập để chọn địa chỉ và gửi đơn thuốc</p>
-                                    <a href="@Url.Action("Login", "Account", new { returnUrl = Request.RawUrl })" class="btn btn-sm btn-primary px-4">Đăng nhập ngay</a>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="address-selection-section mb-2">
-                                    <label class="form-label fw-bold small text-secondary">Địa chỉ nhận hàng:</label>
-                                    <div class="address-scroll-container">
-                                        @if (Model.Addresses != null && Model.Addresses.Any())
-                                        {
-                                            foreach (var addr in Model.Addresses)
-                                            {
-                                                <div class="address-item-card @(addr.DiaChiId == Model.SelectedAddressId ? "active" : "")" onclick="selectAddressCard(this)">
-                                                    <input type="radio" name="diaChiId" value="@addr.DiaChiId" @(addr.DiaChiId == Model.SelectedAddressId ? "checked" : "")>
-                                                    <div class="address-info-content">
-                                                        <div>
-                                                            <span class="user-name">@addr.TenNguoiNhan</span>
-                                                            <span class="text-muted small mx-1">|</span>
-                                                            <span class="phone-num">@addr.SoDienThoai</span>
-                                                            @if (addr.MacDinh)
-                                                            {<span class="badge-default ms-1">Mặc định</span>}
-                                                        </div>
-                                                        <div class="detail-addr text-truncate" title="@addr.DiaChiChiTiet">@addr.DiaChiChiTiet</div>
-                                                    </div>
-                                                </div>
-                                            }
-                                        }
-                                    </div>
-                                    <div class="text-end mt-1">
-                                        <a href="@Url.Action("Index", "DiaChiGiaoHang")" class="small text-decoration-none">+ Thêm địa chỉ</a>
-                                    </div>
-                                </div>
-
-                                <div class="upload-section">
-                                    <span id="fileNameDisplay">Chưa chọn ảnh</span>
-
-                                    <div class="prescription-actions">
-                                        <input type="file" id="prescriptionInput" accept="image/*" style="display:none" />
-                                        <button type="button" class="btn btn-upload-small" onclick="document.getElementById('prescriptionInput').click()">
-                                            <i class="fas fa-camera me-1"></i> Tải ảnh đơn
-                                        </button>
-
-                                        <button type="button" id="btnSubmitPrescription" class="btn btn-danger" disabled title="Vui lòng tải ảnh đơn thuốc trước">
-                                            GỬI & ĐẶT HÀNG
-                                        </button>
-                                    </div>
-
-                                    <div class="text-center mt-2">
-                                        <a href="https://zalo.me/0971830166" target="_blank" class="small text-decoration-none" style="color: #0068ff;">
-                                            <i class="fab fa-whatsapp me-1"></i> Gửi qua Zalo cho Dược sĩ
-                                        </a>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
-                    @*@if (Model.Product.ThuocKeDon)
-        {
-            <div class="prescription-box p-3 border rounded bg-white mt-3 shadow-sm">
-                <h6 class="text-danger fw-bold mb-3"><i class="fas fa-file-prescription me-2"></i>Đặt thuốc theo đơn</h6>
-
-                @if (Session["Login"] == null)
-                {
-                    <div class="text-center py-3 border rounded bg-light mb-3">
-                        <p class="small text-muted mb-2">Đăng nhập để chọn địa chỉ và gửi đơn thuốc</p>
-                        <a href="@Url.Action("Login", "Account", new { returnUrl = Request.RawUrl })" class="btn btn-sm btn-primary px-4">
-                            <i class="fas fa-sign-in-alt me-1"></i> Đăng nhập ngay
-                        </a>
-                    </div>
-                }
-                else
-                {
-                    <div class="address-selection-section mb-3">
-                        <label class="form-label fw-bold small">Địa chỉ nhận hàng:</label>
-                        <div class="address-scroll-container">
-                            @if (Model.Addresses != null && Model.Addresses.Any())
-                            {
-                                foreach (var addr in Model.Addresses)
+                                @if (Session["Login"] == null)
                                 {
-                                    <div class="address-item-card @(addr.DiaChiId == Model.SelectedAddressId ? "active" : "")"
-                                         onclick="selectAddressCard(this)">
-
-                                        <input type="radio" name="diaChiId" value="@addr.DiaChiId"
-                                               @(addr.DiaChiId == Model.SelectedAddressId ? "checked" : "")>
-
-                                        <div class="address-info-content">
-                                            <div>
-                                                <span class="user-name">@addr.TenNguoiNhan</span>
-                                                <span class="text-muted mx-1">|</span>
-                                                <span class="phone-num">@addr.SoDienThoai</span>
-                                            </div>
-                                            <div class="detail-addr">@addr.DiaChiChiTiet</div>
-                                            @if (addr.MacDinh)
+                                    <div class="text-center py-3 border rounded bg-light mb-3">
+                                        <p class="small text-muted mb-2">Đăng nhập để chọn địa chỉ và gửi đơn thuốc</p>
+                                        <a href="@Url.Action("Login", "Account", new { returnUrl = Request.RawUrl })" class="btn btn-sm btn-primary px-4">Đăng nhập ngay</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="address-selection-section mb-2">
+                                        <label class="form-label fw-bold small text-secondary">Địa chỉ nhận hàng:</label>
+                                        <div class="address-scroll-container">
+                                            @if (Model.Addresses != null && Model.Addresses.Any())
                                             {
-                                                <div class="badge-default">Mặc định</div>
+                                                foreach (var addr in Model.Addresses)
+                                                {
+                                                    <div class="address-item-card @(addr.DiaChiId == Model.SelectedAddressId ? "active" : "")" onclick="selectAddressCard(this)">
+                                                        <input type="radio" name="diaChiId" value="@addr.DiaChiId" @(addr.DiaChiId == Model.SelectedAddressId ? "checked" : "")>
+                                                        <div class="address-info-content">
+                                                            <div>
+                                                                <span class="user-name">@addr.TenNguoiNhan</span>
+                                                                <span class="text-muted small mx-1">|</span>
+                                                                <span class="phone-num">@addr.SoDienThoai</span>
+                                                                @if (addr.MacDinh)
+                                                                {<span class="badge-default ms-1">Mặc định</span>}
+                                                            </div>
+                                                            <div class="detail-addr text-truncate" title="@addr.DiaChiChiTiet">@addr.DiaChiChiTiet</div>
+                                                        </div>
+                                                    </div>
+                                                }
                                             }
+                                        </div>
+                                        <div class="text-end mt-1">
+                                            <a href="@Url.Action("Index", "DiaChiGiaoHang")" class="small text-decoration-none">+ Thêm địa chỉ</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="upload-section">
+                                        <span id="fileNameDisplay">Chưa chọn ảnh</span>
+
+                                        <div class="prescription-actions">
+                                            <input type="file" id="prescriptionInput" accept="image/*" style="display:none" />
+                                            <button type="button" class="btn btn-upload-small" onclick="document.getElementById('prescriptionInput').click()">
+                                                <i class="fas fa-camera me-1"></i> Tải ảnh đơn
+                                            </button>
+
+                                            <button type="button" id="btnSubmitPrescription" class="btn btn-danger" disabled title="Vui lòng tải ảnh đơn thuốc trước">
+                                                GỬI & ĐẶT HÀNG
+                                            </button>
+                                        </div>
+
+                                        <div class="text-center mt-2">
+                                            <a href="https://zalo.me/0971830166" target="_blank" class="small text-decoration-none" style="color: #0068ff;">
+                                                <i class="fab fa-whatsapp me-1"></i> Gửi qua Zalo cho Dược sĩ
+                                            </a>
                                         </div>
                                     </div>
                                 }
-                            }
-                            else
-                            {
-                                <div class="text-center py-2">
-                                    <p class="small text-muted mb-1">Chưa có địa chỉ nào</p>
-                                    <a href="@Url.Action("Index", "DiaChiGiaoHang")" class="btn btn-sm btn-outline-success py-0">Thêm mới</a>
-                                </div>
-                            }
-                        </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <button class="btn btn-action-minimal btn-add-to-cart">
+                                <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng
+                            </button>
+                            <button class="btn btn-action-minimal btn-buy-now">
+                                Mua ngay
+                            </button>
+                        }
                     </div>
-
-                    <div class="upload-section">
-                        <input type="file" id="prescriptionInput" accept="image/*" style="display:none" />
-                        <button type="button" class="btn btn-outline-primary w-100 mb-2" onclick="document.getElementById('prescriptionInput').click()">
-                            <i class="fas fa-camera me-2"></i>Tải ảnh đơn thuốc
-                        </button>
-                        <div id="fileNameDisplay" class="alert alert-success py-1 small mb-2" style="display:none"></div>
-                        <button type="button" id="btnSubmitPrescription" class="btn btn-danger w-100 fw-bold py-2" disabled>
-                            GỬI ĐƠN & ĐẶT HÀNG
-                        </button>
-                        <div class="text-center my-1 small text-muted">Hoặc</div>
-
-                        <a href="https://zalo.me/0971830166" target="_blank" class="btn btn-outline-info w-100" style="color: #0068ff; border-color: #0068ff;">
-                            <i class="fab fa-whatsapp me-2"></i>Gửi qua Zalo cho Dược sĩ
-                        </a>
-                    </div>
-                }
-            </div>
-        }*@
-                    else
-                    {
-                        <button class="btn btn-action-minimal btn-add-to-cart">
-                            <i class="fas fa-shopping-cart me-2"></i>Giỏ hàng
-                        </button>
-                        <button class="btn btn-action-minimal btn-buy-now">
-                            Mua ngay
-                        </button>
-                    }
-                </div>
                 </div>
             </div>
 
@@ -647,7 +584,7 @@
             success: function (res) {
                 if (res.success) {
                     Swal.fire('Thành công!', res.message, 'success').then(() => {
-                        window.location.href = '/KhachHang/DonHang'; 
+                        window.location.href = '/KhachHang/DonHang';
                     });
                 } else {
                     Swal.fire('Lỗi', res.message, 'error');
@@ -661,7 +598,6 @@
         $('.btn-add-to-cart').on('click', function () {
         var productId = '@Model.Product.ThuocId';
         var quantity = $('.quantity-selector input').val();
-
         $.ajax({
             url: '/Cart/AddToCart',
             type: 'POST',
@@ -727,7 +663,8 @@
             var productId = '@Model.Product.ThuocId';
             var quantity = $('.quantity-selector input').val() || 1;
 
-            var salePriceText = $('#productSalePrice').text().replace(/\D/g, '');
+            var salePriceText = $('.product-price-sale').first().text().replace(/\D/g, '');
+
             var salePrice = parseFloat(salePriceText) || 0;
 
             window.location.href = '/Cart/BuyNow?productId=' + productId +

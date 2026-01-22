@@ -84,7 +84,7 @@ namespace DAL
             param.Add("@SoNgayCanhBao", soNgay);
 
             return SqlMapper.Query<LoSapHetHanDto>(Connection.getConnection(),
-                "sp_Dashboard_SapHetHan", param,
+                "sp_ThongKe_SapHetHan", param,
                 commandType: System.Data.CommandType.StoredProcedure).ToList();
         }
     }

@@ -92,13 +92,15 @@
 
 <script>
     $(document).ready(function () {
-        $('.menu-wrapper').hover(function () {
-            const $wrapper = $(this);
-            const $btn = $wrapper.find('.menu-link');
-            const menuId = $btn.data('id');
+        $('.menu-link').on('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation(); 
+
+            const menuId = $(this).data('id');
             const $megaMenu = $('#mega-menu-' + menuId);
 
-            // Load Ajax nếu chưa có dữ liệu
+            $('.mega-dropdown-menu').not($megaMenu).hide();
+
             if ($megaMenu.is(':empty')) {
                 $.ajax({
                     url: '@Url.Action("GetCategoriesByMenuId", "Home1")',
@@ -106,23 +108,17 @@
                     data: { menuId: menuId },
                     success: function (result) {
                         $megaMenu.html(result);
-                        $megaMenu.stop(true, true).fadeIn(200);
-                        showMenu($megaMenu);
+                        $megaMenu.stop(true, true).fadeToggle(200);
+                        checkPosition($megaMenu); 
                     }
                 });
             } else {
-                $megaMenu.stop(true, true).fadeIn(200);
-                showMenu($megaMenu);
+                $megaMenu.stop(true, true).fadeToggle(200);
+                checkPosition($megaMenu);
             }
-        }, function () {
-            // Khi chuột ra ngoài, ẩn ngay lập tức
-            $(this).find('.mega-dropdown-menu').stop(true, true).fadeOut(100);
         });
 
-        function showMenu($menu) {
-            $menu.stop(true, true).fadeIn(200);
-
-            // Xử lý chống tràn màn hình
+        function checkPosition($menu) {
             const rect = $menu[0].getBoundingClientRect();
             const winW = $(window).width();
 
@@ -133,5 +129,15 @@
                 $menu.css({ 'left': '0', 'transform': 'none' });
             }
         }
+
+        $(document).on('click', function (e) {
+            if (!$(e.target).closest('.menu-wrapper').length) {
+                $('.mega-dropdown-menu').fadeOut(200);
+            }
+        });
+
+        $(document).on('click', '.mega-dropdown-menu', function (e) {
+            e.stopPropagation();
+        });
     });
 </script>
