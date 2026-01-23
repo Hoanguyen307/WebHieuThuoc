@@ -79,7 +79,7 @@ namespace WebApp.Controllers
                 ThuocId = p.ThuocId,
                 ProductId = p.ProductId,
                 TenThuoc = p.TenThuoc,
-                GiaGoc = p.GiaGoc,
+                GiaBan = p.GiaBan,
                 DiscountPercent = p.DiscountPercent,
                 HinhAnh = p.HinhAnh,
                 DonViTinh = p.DonViTinh,

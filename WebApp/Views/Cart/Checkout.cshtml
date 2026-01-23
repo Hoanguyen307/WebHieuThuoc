@@ -137,16 +137,18 @@
                         <h5 class="mb-0">Tóm tắt đơn hàng</h5>
                     </div>
                     <div class="card-body">
-                        <div class="mb-3">
+                        @*<div class="mb-3">
                             <label class="form-label">Mã giảm giá</label>
+
                             <select id="voucherSelect" name="SelectedVoucherId" class="form-select">
                                 <option value="">-- Chọn voucher --</option>
                                 @foreach (var voucher in Model.Vouchers)
                                 {
                                     <option value="@voucher.VoucherCustomerId"
                                             data-discount-type="@voucher.Percentage"
-                                            data-discount-value="@voucher.DiscountValue">
-
+                                            data-discount-value="@voucher.DiscountValue"
+                                            /* Thêm logic để giữ lại lựa chọn khi reload trang nếu validation lỗi * /
+                                            @(Model.SelectedVoucherId.ToString() == voucher.VoucherCustomerId.ToString() ? "selected" : "")>
                                         @voucher.Code -
                                         @if (voucher.Percentage.Equals("Percentage", StringComparison.OrdinalIgnoreCase))
                                         {
@@ -160,7 +162,7 @@
                                 }
                             </select>
 
-                        </div>
+                        </div>*@
                         <hr />
                         <div class="d-flex justify-content-between mb-2">
                             <span>Tạm tính:</span>
@@ -226,6 +228,7 @@
         const chkUsePoints = document.getElementById("chkUsePoints");
         const pointsHiddenInput = document.getElementById("PointsToUse");
         const voucherSelect = document.getElementById("voucherSelect");
+        const hiddenVoucherInput = document.getElementById("hiddenVoucherId");
         const subtotalElem = document.querySelector(".tam-tinh");
         const discountElem = document.querySelector(".giam-gia");
         const totalElem = document.querySelector(".tong-tien");
@@ -249,6 +252,7 @@
                 // Voucher
                 let selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
                 if (selectedOption && selectedOption.value) {
+                   
                     let discountType = selectedOption.dataset.discountType;
                     let discountValue = parseFloat(selectedOption.dataset.discountValue) || 0;
 
@@ -257,6 +261,7 @@
                     } else {
                         totalDiscount += discountValue;
                     }
+                } else {
                 }
 
                 if (totalDiscount > subtotalBase) totalDiscount = subtotalBase;

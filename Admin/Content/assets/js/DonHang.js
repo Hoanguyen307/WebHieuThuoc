@@ -12,21 +12,17 @@ function openAddProductModal(orderId, orderCode, imageUrl) {
 
     $('#modalPrescriptionPicker').modal('show');
 
-    // Khởi tạo autocomplete sau khi modal mở để đảm bảo phần tử input đã tồn tại
     initMedicineAutocomplete();
 }
 
-// Đảm bảo khởi tạo Autocomplete khi modal đã hiển thị
 $(document).on('shown.bs.modal', '#modalPrescriptionPicker', function () {
     initMedicineAutocomplete();
 });
 
 function initMedicineAutocomplete() {
-    // Kiểm tra xem input đã tồn tại chưa
     const $input = $("#searchMedicine");
     if ($input.length === 0) return;
 
-    // Hủy autocomplete cũ nếu có để tránh trùng lặp
     if ($input.data("ui-autocomplete")) {
         $input.autocomplete("destroy");
     }
@@ -34,13 +30,11 @@ function initMedicineAutocomplete() {
     $input.autocomplete({
         source: function (request, response) {
             $.ajax({
-                url: rootPath + "Order/SearchProductAdmin", // Kiểm tra lại chính xác URL này
+                url: rootPath + "Order/SearchProductAdmin", 
                 type: "GET",
                 dataType: "json",
                 data: { term: request.term },
                 success: function (data) {
-                    console.log("Dữ liệu nhận được:", data); // Log ra để kiểm tra
-                    // Map dữ liệu về định dạng label/value của jQuery UI
                     response($.map(data, function (item) {
                         return {
                             label: item.TenThuoc,
@@ -326,7 +320,6 @@ function loadDonHang(page = 1) {
                 <button type="button" class="btn btn-outline-info btn-sm" onclick="loadChiTietDonHang('${item.ID}'); event.stopPropagation();"><i class="fas fa-eye"></i></button>
                 ${item.OrderType === 2 && item.TotalAmount === 0 ?
                 `<button title="Soạn thuốc & Báo giá" class="btn btn-outline-warning btn-sm" onclick="openAddProductModal(${item.ID}, '${item.OrderCode}', '${item.HinhAnhDonThuoc}')"><i class="fas fa-pills"></i></button>` : ''}
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="handleDelete('${item.ID}'); event.stopPropagation();"><i class="fas fa-trash-alt"></i></button>
             </td>
         </tr>`;
                     tbody.append(row);

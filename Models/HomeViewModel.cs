@@ -24,6 +24,7 @@ namespace Models
         public string TenThuoc { get; set; }
         public string HinhAnh { get; set; } = "";
         public decimal? GiaGoc { get; set; }
+        public decimal? GiaBan { get; set; }
         public string DonViTinh { get; set; } = "";
 
         public byte? DiscountPercent { get; set; } 

@@ -30,6 +30,19 @@
         text-transform: uppercase;
         z-index: 2;
     }
+    .original-price {
+        text-decoration: line-through; /* Tạo đường gạch ngang */
+        color: #999; /* Màu xám nhạt cho chìm xuống */
+        font-size: 13px; /* Cỡ chữ nhỏ hơn giá sale */
+        margin-left: 8px; /* Cách giá sale một chút */
+        font-weight: normal; /* Chữ thường, không đậm */
+    }
+
+    .sale-price {
+        color: #f02000;
+        font-weight: bold;
+        font-size: 16px;
+    }
 </style>
 <!-- Danh sách sản phẩm Flash Sale -->
 <div class="flashsale-products d-flex gap-3 mt-4">
@@ -38,9 +51,10 @@
         foreach (var p in Model)
         {
             decimal? discount = 0;
-            if (p.GiaGoc.HasValue && p.SalePrice.HasValue && p.SalePrice < p.GiaGoc)
+            
+            if (p.GiaBan.HasValue && p.SalePrice.HasValue && p.SalePrice < p.GiaBan)
             {
-                discount = ((p.GiaGoc - p.SalePrice) / p.GiaGoc) * 100;
+                discount = ((p.GiaBan - p.SalePrice) / p.GiaBan) * 100;
             }
             <div class="product-card" @*style="height: 370px;"*@>
                 <div class="discount-badge">-@p.DiscountPercent%</div>
@@ -70,7 +84,7 @@
                         </span>
                         @if (discount > 0)
                         {
-                            <span class="original-price">@((p.GiaGoc ?? 0).ToString("N0")) đ</span>
+                            <span class="original-price">@((p.GiaBan ?? 0).ToString("N0")) đ</span>
                         }
                     </div>
                     <div class="flashsale-progress-container mt-2">
